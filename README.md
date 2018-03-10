@@ -10,6 +10,11 @@ Some stack templates to easily start new projects
 
 see template and project details in the template subdirectories
 
+# Template installation
+```
+stack new my-project https://raw.githubusercontent.com/Greif-IT/hs-stack-templates/master/yesod-riot-auth.hsfiles
+```
+
 # .hsfile generation
 ```
 $ sh join_hsfiles.sh yesod-riot-auth
