@@ -57,7 +57,7 @@ getInitDbR adminEmail = do
     case maybeConfigEmailFrom of
       Nothing -> do
         _ <- insert $ Config { configCode = "email_from"
-                             , configStringValue = Just "info@greif-it.de"
+                             , configStringValue = Just "info@example.com"
                              , configIntValue = Nothing
                              , configDoubleValue = Nothing
                              , configBoolValue = False

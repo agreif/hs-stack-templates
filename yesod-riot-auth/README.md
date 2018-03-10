@@ -3,6 +3,8 @@
    - auth-hashdb
    - riot-js component-based UI library
    - UIkit front-end framework
+   - model create and edit forms are generated
+   - send email on user creation and password change by admin
 
 # Screenshots
 
@@ -56,7 +58,8 @@ will generate the hash: sha256|17|sm/d6UdH7+nRXZt7bJaAeg==|HVpHzSBOHQPwZiqmfEHiC
 then you can update the apprpriate database row for the admin user or some other user
 
 # Generate model code
-if model definitions changed
+most of the models are generated with the 'ginger' haskell templating engine. All model definitions and the ginger templates are in the hs-generator subproject.
+If model definitions changed you can regenerate the haskell code with
 ```
 cd my-project
 sh run_gen.sh
