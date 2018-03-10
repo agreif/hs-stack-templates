@@ -57,7 +57,23 @@ will generate the hash: sha256|17|sm/d6UdH7+nRXZt7bJaAeg==|HVpHzSBOHQPwZiqmfEHiC
 then you can update the apprpriate database row for the admin user or some other user
 
 # Generate model code
-most of the models are generated with the 'ginger' haskell templating engine. All model definitions and the ginger templates are in the hs-generator subproject.
+most of the models are generated with the 'ginger' haskell templating engine.
+In the haskell code you see the generator markers like
+```
+-- gen data edit - start
+data VEditConfig = VEditConfig
+  { vEditConfigCode :: Maybe Text
+  , vEditConfigStringValue :: Maybe Text
+  , vEditConfigIntValue :: Maybe Int
+  , vEditConfigDoubleValue :: Maybe Double
+  , vEditConfigBoolValue :: Bool
+  , vEditConfigVersion :: Int
+  }
+-- gen data edit - end
+```
+
+
+All model definitions and the ginger templates are in the hs-generator subproject.
 If model definitions changed you can regenerate the haskell code with
 ```
 cd my-project
