@@ -6,7 +6,7 @@
 
 # Screenshots
 
-![Home](../../screenshots/home.png)
+![Home](../screenshots/home.png)
 
 
 # Template installation
