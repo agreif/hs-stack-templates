@@ -7,10 +7,9 @@
 # Screenshots
 
 ![Home](../screenshots/yesod-riot-auth/home.png)
+![MyProfile-Edit](../screenshots/yesod-riot-auth/myprofile-edit.png)
 ![Admin-User](../screenshots/yesod-riot-auth/admin-user.png)
 ![Admin-Config](../screenshots/yesod-riot-auth/admin-config.png)
-![MyProfile-Edit](../screenshots/yesod-riot-auth/myprofile-edit.png)
-
 
 # Template installation
 ```
