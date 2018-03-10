@@ -1,0 +1,2 @@
+*.hamlet linguist-language=Haskell
+*.julius linguist-language=JavaScript
