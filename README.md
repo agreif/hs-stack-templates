@@ -9,3 +9,8 @@ Some stack templates to easily start new projects
    - UIkit front-end framework
 
 see template and project details in the template subdirectories
+
+# .hsfile generation
+```
+$ sh join_hsfiles.sh yesod-riot-auth
+```
