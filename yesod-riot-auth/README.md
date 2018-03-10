@@ -7,7 +7,6 @@
    - send email on user creation and password change by admin
 
 # Screenshots
-
 ![Home](../screenshots/yesod-riot-auth/home.png)
 ![MyProfile-Edit](../screenshots/yesod-riot-auth/myprofile-edit.png)
 ![Admin-User](../screenshots/yesod-riot-auth/admin-user.png)
