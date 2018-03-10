@@ -4,6 +4,11 @@
    - riot-js component-based UI library
    - UIkit front-end framework
 
+# Screenshots
+
+![Home](../../screenshots/home.png)
+
+
 # Template installation
 ```
 stack new my-project https://raw.githubusercontent.com/Greif-IT/hs-stack-templates/master/yesod-riot-auth.hsfiles
@@ -27,7 +32,6 @@ curl http://localhost:3000/initdb/me@example.com
 ```
 
 you can see the generated password in the yesod logs like
-
 ```
 [Error] ###############################
 [Error] admin login:         admin
@@ -39,15 +43,15 @@ you can see the generated password in the yesod logs like
 thus the generated password of the 'admin' user in this sample is: XpISNqkWAGFfrlryWxNzbtkvJzFkszVj
 
 # Generate new password hashes
-```
-sh run_passwd.sh foo12345
+normally you set the password on the browser while the server is running
+but in case you have to reset them hard in the database
 ```
 sh run_passwd.sh mySecretPassword78574
 ```
 
 will generate the hash: sha256|17|sm/d6UdH7+nRXZt7bJaAeg==|HVpHzSBOHQPwZiqmfEHiCZZPZh4tFLQyEuDKsNdqcN0=
 
-then you can update the apprpriate database ro for the admin user or some other user
+then you can update the apprpriate database row for the admin user or some other user
 
 # Generate model code
 if model definitions changed
