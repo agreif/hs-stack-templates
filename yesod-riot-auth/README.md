@@ -59,7 +59,7 @@ then you can update the apprpriate database row for the admin user or some other
 # Generate model code
 most of the models are generated with the 'ginger' haskell templating engine.
 In the haskell code you see the generator markers like
-```
+```haskell
 -- gen data edit - start
 data VEditConfig = VEditConfig
   { vEditConfigCode :: Maybe Text
