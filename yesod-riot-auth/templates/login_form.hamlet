@@ -1,0 +1,6 @@
+<form method=post action=@{loginRoute}>
+  $maybe token <- maybeToken
+    <input type=hidden name=#{defaultCsrfParamName} value=#{token}>
+    <input type="text" name="username" placeholder="Anmeldename" required autofocus>
+    <input type="password" name="password" placeholder="Passwort" required>
+    <button href="@{AuthR LoginR}">Login
