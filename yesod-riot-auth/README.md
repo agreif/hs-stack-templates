@@ -6,28 +6,57 @@
 
 # Template installation
 ```
-$ stack new my-project https://raw.githubusercontent.com/Greif-IT/hs-stack-templates/master/yesod-riot-auth.hsfiles
+stack new my-project https://raw.githubusercontent.com/Greif-IT/hs-stack-templates/master/yesod-riot-auth.hsfiles
 ```
 
 # Create PostgreSQL Database (ubuntu)
 ```
-$ sudo su postgres -c 'createuser --createdb --encrypted --no-inherit --login --pwprompt --no-createrole --no-superuser --no-replication my-project'
-$ sudo su postgres -c 'createdb --encoding=UTF-8 --owner=my-project --template=template0 my-project'
+sudo su postgres -c 'createuser --createdb --encrypted --no-inherit --login --pwprompt --no-createrole --no-superuser --no-replication my-project'
+sudo su postgres -c 'createdb --encoding=UTF-8 --owner=my-project --template=template0 my-project'
 ```
 
 # Run Yesod server
 ```
-$ cd my-project
-$ sh run_dev.sh
+cd my-project
+sh run_dev.sh
 ```
+# Initialize admin user
+only needed after the first start
+```
+curl http://localhost:3000/initdb/me@example.com
+```
+
+you can see the generated password in the yesod logs like
+
+```
+[Error] ###############################
+[Error] admin login:         admin
+[Error] admin password:      XpISNqkWAGFfrlryWxNzbtkvJzFkszVj
+[Error] admin password hash: sha256|17|CPlYqS5DBuHSZRtbJjUasQ==|wptBAbVHgSSRnJJ+7X1P6PbsJcM+oZ+JaGjs1xVNJns=
+[Error] admin email:         me@example.com
+[Error] ###############################
+```
+thus the generated password of the 'admin' user in this sample is: XpISNqkWAGFfrlryWxNzbtkvJzFkszVj
+
+# Generate new password hashes
+```
+sh run_passwd.sh foo12345
+```
+sh run_passwd.sh mySecretPassword78574
+```
+
+will generate the hash: sha256|17|sm/d6UdH7+nRXZt7bJaAeg==|HVpHzSBOHQPwZiqmfEHiCZZPZh4tFLQyEuDKsNdqcN0=
+
+then you can update the apprpriate database ro for the admin user or some other user
 
 # Generate model code
+if model definitions changed
 ```
-$ cd my-project
-$ sh run_gen.sh
+cd my-project
+sh run_gen.sh
 ```
 
-# vvv original jesod README.md vvv
+# Original yesod README.md
 
 ## Database Setup
 
