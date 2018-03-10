@@ -1,0 +1,31 @@
+/static StaticR Static appStatic
+/auth   AuthR   Auth   getAuth
+
+/favicon.ico FaviconR GET
+/robots.txt RobotsR GET
+
+/ HomeR GET
+/initdb/#Text InitDbR GET
+
+/simulation SimulationR:
+  home SimulationHomeR GET
+  -- populatedb PopulateDbR GET
+  riotTags RiotTagsR GET
+
+  homePageDataJson HomePageDataJsonR GET
+
+  admin AdminR GET
+  adminPageDataJson AdminPageDataJsonR GET
+
+  addUserForm AddUserFormR GET
+  addUser AddUserR POST
+  editUserForm/#UserId EditUserFormR GET
+  editUser/#UserId EditUserR POST
+  deleteUserForm/#UserId DeleteUserFormR GET
+  deleteUser/#UserId DeleteUserR POST
+
+  editConfigForm/#ConfigId EditConfigFormR GET
+  editConfig/#ConfigId EditConfigR POST
+
+  editMyProfileForm EditMyprofileFormR GET
+  editMyProfile EditMyprofileR POST

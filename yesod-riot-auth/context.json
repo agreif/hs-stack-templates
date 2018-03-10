@@ -1,0 +1,1224 @@
+[
+    {
+        "deleteFormDataJsonUrl": "SimulationR AdminPageDataJsonR",
+        "hsDerivings": [],
+        "deleteFormEntityLoader": null,
+        "nameCap": "User",
+        "addViewFields": [
+            {
+                "labelDe": "Login",
+                "isHsTypeBool": false,
+                "nameCap": "Ident",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                },
+                "formFieldType": "textField",
+                "name": "ident",
+                "dbColumnName": "ident",
+                "labelEn": "Login",
+                "hsType": "Text",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": false,
+                    "isNotNullable": true
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                }
+            },
+            {
+                "labelDe": "Email",
+                "isHsTypeBool": false,
+                "nameCap": "Email",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                },
+                "formFieldType": "textField",
+                "name": "email",
+                "dbColumnName": "email",
+                "labelEn": "Email",
+                "hsType": "Text",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": false,
+                    "isNotNullable": true
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                }
+            }
+        ],
+        "dbUniquenesses": [
+            "UniqueUser ident"
+        ],
+        "editViewFields": [
+            {
+                "labelDe": "Login",
+                "isHsTypeBool": false,
+                "nameCap": "Ident",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                },
+                "formFieldType": "textField",
+                "name": "ident",
+                "dbColumnName": "ident",
+                "labelEn": "Login",
+                "hsType": "Text",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": false,
+                    "isNotNullable": true
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                }
+            },
+            {
+                "labelDe": "Email",
+                "isHsTypeBool": false,
+                "nameCap": "Email",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                },
+                "formFieldType": "textField",
+                "name": "email",
+                "dbColumnName": "email",
+                "labelEn": "Email",
+                "hsType": "Text",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": false,
+                    "isNotNullable": true
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                }
+            },
+            {
+                "labelDe": "Neues Passwort generieren?",
+                "isHsTypeBool": true,
+                "nameCap": "IsResetPassword",
+                "isForeignKey": false,
+                "addView": null,
+                "formFieldType": "checkBoxField",
+                "name": "isResetPassword",
+                "dbColumnName": "is_reset_password",
+                "labelEn": "Generate new password?",
+                "hsType": "Bool",
+                "db": null,
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-checkbox",
+                            "key": "class"
+                        }
+                    ],
+                    "default": "Nothing",
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                }
+            }
+        ],
+        "isInDb": true,
+        "addFormHasDefaultModel": false,
+        "editFormDataJsonUrl": null,
+        "dbUpdatableFields": [
+            {
+                "labelDe": "Login",
+                "isHsTypeBool": false,
+                "nameCap": "Ident",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                },
+                "formFieldType": "textField",
+                "name": "ident",
+                "dbColumnName": "ident",
+                "labelEn": "Login",
+                "hsType": "Text",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": false,
+                    "isNotNullable": true
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                }
+            },
+            {
+                "labelDe": "Email",
+                "isHsTypeBool": false,
+                "nameCap": "Email",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                },
+                "formFieldType": "textField",
+                "name": "email",
+                "dbColumnName": "email",
+                "labelEn": "Email",
+                "hsType": "Text",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": false,
+                    "isNotNullable": true
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                }
+            }
+        ],
+        "addFormDataJsonUrl": null,
+        "name": "user",
+        "parentHsType": null,
+        "dbTableName": "user",
+        "isJson": false,
+        "dbHistoryTableName": "user_history",
+        "parentHsParamId": "",
+        "addFormEntityLoader": null,
+        "editFormEntityLoader": null,
+        "formHasProgressBar": false,
+        "dbHasHistoryTable": true,
+        "deletePostLoadsModel": false,
+        "editPostLoadsModel": false,
+        "label": "User",
+        "fields": [
+            {
+                "labelDe": "Login",
+                "isHsTypeBool": false,
+                "nameCap": "Ident",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                },
+                "formFieldType": "textField",
+                "name": "ident",
+                "dbColumnName": "ident",
+                "labelEn": "Login",
+                "hsType": "Text",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": false,
+                    "isNotNullable": true
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                }
+            },
+            {
+                "labelDe": "Passwort",
+                "isHsTypeBool": false,
+                "nameCap": "Password",
+                "isForeignKey": false,
+                "addView": null,
+                "formFieldType": null,
+                "name": "password",
+                "dbColumnName": "password",
+                "labelEn": "Password",
+                "hsType": "Text",
+                "db": {
+                    "canUpdate": false,
+                    "default": null,
+                    "isNullable": true,
+                    "isNotNullable": false
+                },
+                "editView": null
+            },
+            {
+                "labelDe": "Email",
+                "isHsTypeBool": false,
+                "nameCap": "Email",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                },
+                "formFieldType": "textField",
+                "name": "email",
+                "dbColumnName": "email",
+                "labelEn": "Email",
+                "hsType": "Text",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": false,
+                    "isNotNullable": true
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                }
+            },
+            {
+                "labelDe": "Neues Passwort generieren?",
+                "isHsTypeBool": true,
+                "nameCap": "IsResetPassword",
+                "isForeignKey": false,
+                "addView": null,
+                "formFieldType": "checkBoxField",
+                "name": "isResetPassword",
+                "dbColumnName": "is_reset_password",
+                "labelEn": "Generate new password?",
+                "hsType": "Bool",
+                "db": null,
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-checkbox",
+                            "key": "class"
+                        }
+                    ],
+                    "default": "Nothing",
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                }
+            }
+        ]
+    },
+    {
+        "deleteFormDataJsonUrl": null,
+        "hsDerivings": [],
+        "deleteFormEntityLoader": null,
+        "nameCap": "Config",
+        "addViewFields": [
+            {
+                "labelDe": "String-Wert",
+                "isHsTypeBool": false,
+                "nameCap": "StringValue",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                },
+                "formFieldType": "textField",
+                "name": "stringValue",
+                "dbColumnName": "string_value",
+                "labelEn": "String-Value",
+                "hsType": "Text",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": true,
+                    "isNotNullable": false
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                }
+            },
+            {
+                "labelDe": "Integer-Wert",
+                "isHsTypeBool": false,
+                "nameCap": "IntValue",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-medium uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                },
+                "formFieldType": "intField",
+                "name": "intValue",
+                "dbColumnName": "int_value",
+                "labelEn": "Integer-Value",
+                "hsType": "Int",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": true,
+                    "isNotNullable": false
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-medium uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                }
+            },
+            {
+                "labelDe": "Double-Wert",
+                "isHsTypeBool": false,
+                "nameCap": "DoubleValue",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-medium uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                },
+                "formFieldType": "doubleField",
+                "name": "doubleValue",
+                "dbColumnName": "double_value",
+                "labelEn": "Double-Value",
+                "hsType": "Double",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": true,
+                    "isNotNullable": false
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-medium uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                }
+            },
+            {
+                "labelDe": "Boolean-Wert",
+                "isHsTypeBool": true,
+                "nameCap": "BoolValue",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                },
+                "formFieldType": "checkBoxField",
+                "name": "boolValue",
+                "dbColumnName": "bool_value",
+                "labelEn": "Boolean-Value",
+                "hsType": "Bool",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": false,
+                    "isNotNullable": true
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-checkbox",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                }
+            }
+        ],
+        "dbUniquenesses": [
+            "UniqueCode code"
+        ],
+        "editViewFields": [
+            {
+                "labelDe": "Code",
+                "isHsTypeBool": false,
+                "nameCap": "Code",
+                "isForeignKey": false,
+                "addView": null,
+                "formFieldType": "textField",
+                "name": "code",
+                "dbColumnName": "code",
+                "labelEn": "Code",
+                "hsType": "Text",
+                "db": {
+                    "canUpdate": false,
+                    "default": null,
+                    "isNullable": false,
+                    "isNotNullable": true
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "",
+                            "key": "disabled"
+                        },
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": false,
+                    "isDisabled": true,
+                    "isRequired": false
+                }
+            },
+            {
+                "labelDe": "String-Wert",
+                "isHsTypeBool": false,
+                "nameCap": "StringValue",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                },
+                "formFieldType": "textField",
+                "name": "stringValue",
+                "dbColumnName": "string_value",
+                "labelEn": "String-Value",
+                "hsType": "Text",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": true,
+                    "isNotNullable": false
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                }
+            },
+            {
+                "labelDe": "Integer-Wert",
+                "isHsTypeBool": false,
+                "nameCap": "IntValue",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-medium uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                },
+                "formFieldType": "intField",
+                "name": "intValue",
+                "dbColumnName": "int_value",
+                "labelEn": "Integer-Value",
+                "hsType": "Int",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": true,
+                    "isNotNullable": false
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-medium uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                }
+            },
+            {
+                "labelDe": "Double-Wert",
+                "isHsTypeBool": false,
+                "nameCap": "DoubleValue",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-medium uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                },
+                "formFieldType": "doubleField",
+                "name": "doubleValue",
+                "dbColumnName": "double_value",
+                "labelEn": "Double-Value",
+                "hsType": "Double",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": true,
+                    "isNotNullable": false
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-medium uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                }
+            },
+            {
+                "labelDe": "Boolean-Wert",
+                "isHsTypeBool": true,
+                "nameCap": "BoolValue",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                },
+                "formFieldType": "checkBoxField",
+                "name": "boolValue",
+                "dbColumnName": "bool_value",
+                "labelEn": "Boolean-Value",
+                "hsType": "Bool",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": false,
+                    "isNotNullable": true
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-checkbox",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                }
+            }
+        ],
+        "isInDb": true,
+        "addFormHasDefaultModel": false,
+        "editFormDataJsonUrl": "SimulationR AdminPageDataJsonR",
+        "dbUpdatableFields": [
+            {
+                "labelDe": "String-Wert",
+                "isHsTypeBool": false,
+                "nameCap": "StringValue",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                },
+                "formFieldType": "textField",
+                "name": "stringValue",
+                "dbColumnName": "string_value",
+                "labelEn": "String-Value",
+                "hsType": "Text",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": true,
+                    "isNotNullable": false
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                }
+            },
+            {
+                "labelDe": "Integer-Wert",
+                "isHsTypeBool": false,
+                "nameCap": "IntValue",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-medium uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                },
+                "formFieldType": "intField",
+                "name": "intValue",
+                "dbColumnName": "int_value",
+                "labelEn": "Integer-Value",
+                "hsType": "Int",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": true,
+                    "isNotNullable": false
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-medium uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                }
+            },
+            {
+                "labelDe": "Double-Wert",
+                "isHsTypeBool": false,
+                "nameCap": "DoubleValue",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-medium uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                },
+                "formFieldType": "doubleField",
+                "name": "doubleValue",
+                "dbColumnName": "double_value",
+                "labelEn": "Double-Value",
+                "hsType": "Double",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": true,
+                    "isNotNullable": false
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-medium uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                }
+            },
+            {
+                "labelDe": "Boolean-Wert",
+                "isHsTypeBool": true,
+                "nameCap": "BoolValue",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                },
+                "formFieldType": "checkBoxField",
+                "name": "boolValue",
+                "dbColumnName": "bool_value",
+                "labelEn": "Boolean-Value",
+                "hsType": "Bool",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": false,
+                    "isNotNullable": true
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-checkbox",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                }
+            }
+        ],
+        "addFormDataJsonUrl": null,
+        "name": "config",
+        "parentHsType": null,
+        "dbTableName": "config",
+        "isJson": true,
+        "dbHistoryTableName": "config_history",
+        "parentHsParamId": "",
+        "addFormEntityLoader": null,
+        "editFormEntityLoader": null,
+        "formHasProgressBar": false,
+        "dbHasHistoryTable": true,
+        "deletePostLoadsModel": false,
+        "editPostLoadsModel": false,
+        "label": "Config",
+        "fields": [
+            {
+                "labelDe": "Code",
+                "isHsTypeBool": false,
+                "nameCap": "Code",
+                "isForeignKey": false,
+                "addView": null,
+                "formFieldType": "textField",
+                "name": "code",
+                "dbColumnName": "code",
+                "labelEn": "Code",
+                "hsType": "Text",
+                "db": {
+                    "canUpdate": false,
+                    "default": null,
+                    "isNullable": false,
+                    "isNotNullable": true
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "",
+                            "key": "disabled"
+                        },
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": false,
+                    "isDisabled": true,
+                    "isRequired": false
+                }
+            },
+            {
+                "labelDe": "String-Wert",
+                "isHsTypeBool": false,
+                "nameCap": "StringValue",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                },
+                "formFieldType": "textField",
+                "name": "stringValue",
+                "dbColumnName": "string_value",
+                "labelEn": "String-Value",
+                "hsType": "Text",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": true,
+                    "isNotNullable": false
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-large uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                }
+            },
+            {
+                "labelDe": "Integer-Wert",
+                "isHsTypeBool": false,
+                "nameCap": "IntValue",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-medium uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                },
+                "formFieldType": "intField",
+                "name": "intValue",
+                "dbColumnName": "int_value",
+                "labelEn": "Integer-Value",
+                "hsType": "Int",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": true,
+                    "isNotNullable": false
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-medium uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                }
+            },
+            {
+                "labelDe": "Double-Wert",
+                "isHsTypeBool": false,
+                "nameCap": "DoubleValue",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-medium uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                },
+                "formFieldType": "doubleField",
+                "name": "doubleValue",
+                "dbColumnName": "double_value",
+                "labelEn": "Double-Value",
+                "hsType": "Double",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": true,
+                    "isNotNullable": false
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-form-width-medium uk-input uk-form-small",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": true,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": false
+                }
+            },
+            {
+                "labelDe": "Boolean-Wert",
+                "isHsTypeBool": true,
+                "nameCap": "BoolValue",
+                "isForeignKey": false,
+                "addView": {
+                    "attrs": [],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                },
+                "formFieldType": "checkBoxField",
+                "name": "boolValue",
+                "dbColumnName": "bool_value",
+                "labelEn": "Boolean-Value",
+                "hsType": "Bool",
+                "db": {
+                    "canUpdate": true,
+                    "default": null,
+                    "isNullable": false,
+                    "isNotNullable": true
+                },
+                "editView": {
+                    "attrs": [
+                        {
+                            "value": "uk-checkbox",
+                            "key": "class"
+                        }
+                    ],
+                    "default": null,
+                    "isOptional": false,
+                    "isEnabled": true,
+                    "isDisabled": false,
+                    "isRequired": true
+                }
+            }
+        ]
+    }
+]
+

@@ -1,0 +1,307 @@
+<body-tag>
+  <div .uk-container .uk-margin-left if="{data}">
+    <nav-tag>
+    <home-page-tag>
+    <admin-page-tag>
+  <script>
+    \ tag = this
+    \ tag.data = null
+    \ tag.refreshData = function(dataJsonUrl, storeInHistory, scrollToTop) {
+    \   $.ajax({
+    \     url: dataJsonUrl,
+    \     type: "GET",
+    \     dataType: "json",
+    \   }).done(function(data, textStatus, jqXHR) {
+    \     tag.data = data
+    \     tag.update()
+    \     if (scrollToTop) {
+    \       window.scrollTo(0, 0)
+    \     }
+    \     if (data.historyState && storeInHistory) {
+    \       window.history.pushState({dataJsonUrl: dataJsonUrl}, data.historyState.title, data.historyState.url);
+    \     }
+    \   }).fail(function(jqXHR, textStatus) {
+    \     if (jqXHR.status == 401)
+    \       window.location.href = "@{AuthR LoginR}"
+    \     else
+    \       alert("error" + jqXHR.status + " ------ " + textStatus)
+    \   })
+    \ }
+    \ tag.showModalForm = function(modalFormUrl, dataJsonUrl) {
+    \   var modal = new tingle.modal({
+    \     footer: true,
+    \     stickyFooter: true,
+    \     cssClass: [],
+    \     closeMethods: ['escape'],
+    \   });
+    \   $.get(modalFormUrl, function(data) {
+    \     modal.setContent(data);
+    \     modal.open();
+    \   })
+    \   modal.addFooterBtn('OK', 'tingle-btn tingle-btn--primary tingle-btn--pull-right', function() {
+    \     var formElem = $("#modal-form");
+    \     var serializedElems = formElem.serializeArray();
+    \     var formData = new FormData();
+    \     $.each($('input[type=file]'), function(i, field) {
+    \       formData.append("file", field.files[0]);
+    \     })
+    \     $.each(serializedElems, function(i, field) {
+    \       formData.append(field.name, field.value)
+    \     })
+    \     var progressBar = document.getElementById("modal-form-progressbar")
+    \     var xhr = new XMLHttpRequest();
+    \     xhr.open("POST", formElem.attr("action"), true);
+    \     xhr.upload.onprogress = function(pe) {
+    \       if(progressBar && pe.lengthComputable) {
+    \         progressBar.max = pe.total
+    \         progressBar.value = pe.loaded
+    \       }
+    \     }
+    \     xhr.onload = function () {
+    \       if (xhr.readyState === xhr.DONE) {
+    \         if (xhr.status === 200) {
+    \           var data = jQuery.parseJSON(xhr.response)
+    \           if (data.isStaleObjectState) {
+    \             alert("Speicherung ist fehlfeschlagen!\nDaten wurden zwischenzeitlich von einem anderen User verändert.\nBitte nehmen Sie Ihre Änderungen nochmal vor.")
+    \             tag.refreshData(dataJsonUrl ? dataJsonUrl : data.dataJsonUrl, false, false)
+    \             modal.close();
+    \             modal.destroy();
+    \           } else if (data.isFormValid) {
+    \             tag.refreshData(dataJsonUrl ? dataJsonUrl : data.dataJsonUrl, false, false)
+    \             modal.close();
+    \             modal.destroy();
+    \           } else {
+    \             if (progressBar)
+    \               progressBar.value = 0
+    \             $("#modal-form-widget").html(data.modalWidgetHtml);
+    \           }
+    \         } else {
+    \           alert("error " + xhr.status)
+    \         }
+    \       }
+    \     };
+    \     xhr.send(formData);
+    \   });
+    \   modal.addFooterBtn('Cancel', 'tingle-btn tingle-btn--default tingle-btn--pull-right', function() {
+    \     modal.close();
+    \     modal.destroy();
+    \   });
+    \ }
+    \ tag.showModalInfo = function(modalContentUrl) {
+    \   var modal = new tingle.modal({
+    \     footer: true,
+    \     stickyFooter: true,
+    \     cssClass: [],
+    \     closeMethods: ['escape'],
+    \   });
+    \   $.get(modalContentUrl, function(data) {
+    \     modal.setContent(data);
+    \     modal.open();
+    \   })
+    \   modal.addFooterBtn('OK', 'tingle-btn tingle-btn--primary tingle-btn--pull-right', function() {
+    \     modal.close();
+    \     modal.destroy();
+    \   })
+    \ }
+    \ tag.postRequest = function(url) {
+    \   headers = {}
+    \   headers[tag.data.csrfHeaderName] = tag.data.csrfToken
+    \   $.ajax({
+    \       url: url,
+    \       type: "POST",
+    \       dataType: "json",
+    \       headers: headers
+    \   }).done(function(data, textStatus, jqXHR) {
+    \       tag.refreshData(data.dataJsonUrl, false, false)
+    \   }).fail(function(jqXHR, textStatus) {
+    \     if (jqXHR.status == 401)
+    \       window.location.href = "@{AuthR LoginR}"
+    \     else
+    \       alert("error" + jqXHR.status + " ------ " + textStatus)
+    \   })
+    \ }
+    \ i18n.setLanguage(navigator.languages[0])
+    \ tag.localizeMsg = function(message) {
+    \   return i18n.localise(message)
+    \ }
+    \ // gen i18n dict - start
+    \ i18n.dictionary({
+    \  "de": {
+    \    "MsgGlobalHome": "Home",
+    \    "MsgGlobalAdmin": "Admin",
+    \    "MsgGlobalLogout": "Logout",
+    \    "MsgGlobalMyProfile": "Mein profil",
+    \    "MsgGlobalUsers": "Nutzer",
+    \    "MsgGlobalAddUser": "Nutzer hinzufügen",
+    \    "MsgGlobalEditUser": "Nutzer bearbeiten",
+    \    "MsgGlobalDeleteUser": "Nutzer löschen",
+    \    "MsgGlobalConfigurations": "Konfigurationen",
+    \    "MsgGlobalEditConfig": "Konfiguration bearbeiten",
+    \    "MsgUserIdent": "Login",
+    \    "MsgUserPassword": "Passwort",
+    \    "MsgUserEmail": "Email",
+    \    "MsgUserIsResetPassword": "Neues Passwort generieren?",
+    \    "MsgConfigCode": "Code",
+    \    "MsgConfigStringValue": "String-Wert",
+    \    "MsgConfigIntValue": "Integer-Wert",
+    \    "MsgConfigDoubleValue": "Double-Wert",
+    \    "MsgConfigBoolValue": "Boolean-Wert",
+    \  },
+    \  "en-US": {
+    \    "MsgGlobalHome": "Home",
+    \    "MsgGlobalAdmin": "Admin",
+    \    "MsgGlobalLogout": "Logout",
+    \    "MsgGlobalMyProfile": "My Profile",
+    \    "MsgGlobalUsers": "Users",
+    \    "MsgGlobalAddUser": "Add user",
+    \    "MsgGlobalEditUser": "Edit user",
+    \    "MsgGlobalDeleteUser": "Delete user",
+    \    "MsgGlobalConfigurations": "Configurations",
+    \    "MsgGlobalEditConfig": "Edit config",
+    \    "MsgUserIdent": "Login",
+    \    "MsgUserPassword": "Password",
+    \    "MsgUserEmail": "Email",
+    \    "MsgUserIsResetPassword": "Generate new password?",
+    \    "MsgConfigCode": "Code",
+    \    "MsgConfigStringValue": "String-Value",
+    \    "MsgConfigIntValue": "Integer-Value",
+    \    "MsgConfigDoubleValue": "Double-Value",
+    \    "MsgConfigBoolValue": "Boolean-Value",
+    \   }
+    \ })
+    \ // gen i18n dict - end
+
+<nav-tag>
+  <nav .uk-navbar-container .uk-margin-small-top uk-navbar>
+    <div .uk-navbar-left>
+      <div .uk-navbar-item .uk-logo>{parent.data.appName}
+      <ul .uk-navbar-nav>
+        <li each="{parent.data.mainNavItems}" class="{uk-active: isActive}">
+          <a onclick="{switchNav}">
+            {label}
+            <span if="{badge}" .uk-badge .uk-margin-small-left>
+              {badge}
+    <div .uk-navbar-right>
+      <ul .uk-navbar-nav>
+        <li>
+          <a onclick="{editMyProfile}">
+            <i1-8n>MsgGlobalMyProfile
+        <li>
+          <a href=@{AuthR LogoutR}>
+            <div>
+              <i1-8n>MsgGlobalLogout
+              <div .uk-navbar-subtitle>
+                 {parent.data.userIdent}
+  <div if="{parent.data.subNavItems.length != 0}" uk-grid>
+    <div .uk-width-1-1>
+      <ul .uk-subnav .uk-subnav-divider>
+        <li each="{parent.data.subNavItems}" class="{uk-active: isActive}">
+          <a onclick="{switchNav}">{label}
+  <div .uk-child-width-expand .uk-margin-small-top .uk-margin-small-right uk-grid>
+    <div .uk-width-1-1>
+      <div .uk-align-right>
+        <ul .uk-breadcrumb>
+          <li each="{parent.data.breadcrumbItems}">
+            <a onclick="{switchBreadcrumb}">{label}
+  <script>
+    \ switchNav(event) {
+    \   parent.tag.refreshData(event.item.dataUrl, true, false)
+    \ }
+    \ switchBreadcrumb(event) {
+    \   parent.tag.refreshData(event.item.dataUrl, true, false)
+    \ }
+    \ editMyProfile(event) {
+    \   dataJsonUrl = window.history.state ? window.history.state.dataJsonUrl : "@{SimulationR HomePageDataJsonR}"
+    \   parent.tag.showModalForm("@{SimulationR EditMyprofileFormR}", dataJsonUrl)
+    \ }
+
+<home-page-tag>
+  <div if="{parent.data.pages.home}">
+    <h1>Homepage {parent.data.pages.home.content}
+
+<admin-page-tag>
+  <div if="{parent.data.pages.admin}">
+    <h1>
+      <i1-8n>MsgGlobalAdmin
+    <ul uk-tab>
+      <li>
+        <a href="#">
+          <i1-8n>MsgGlobalUsers
+      <li>
+        <a href="#">
+          <i1-8n>MsgGlobalConfigurations
+    <ul class="uk-switcher uk-margin">
+      <li>
+        <!-- user list -->
+        <table .uk-table .uk-table-small .uk-table-divider .uk-table-hover .uk-background-muted>
+          <thead>
+            <tr>
+              <th>
+                <i1-8n>MsgUserIdent
+              <th>
+                <i1-8n>MsgUserEmail
+              <th .uk-align-right>
+                <button .modal-form-link .uk-button .uk-button-link title="{localizeMsg('MsgGlobalAddUser')}" uk-tooltip onclick="{addUser}">
+                  <span uk-icon="icon: plus">
+          <tbody>
+            <tr each="{parent.data.pages.admin.users}">
+              <td .uk-table-link>
+                <a onclick="{editUser}" .uk-link-reset>{entity.ident}
+              <td .uk-table-link>
+                <a onclick="{editUser}" .uk-link-reset>{entity.email}
+              <td .uk-width-small>
+                <button .uk-float-right .uk-button .uk-button-link title="{localizeMsg('MsgGlobalDeleteUser')}" uk-tooltip onclick="{deleteUser}">
+                  <span uk-icon="icon: trash">
+                <button .uk-float-right .uk-button .uk-button-link title="{localizeMsg('MsgGlobalEditUser')}" uk-tooltip onclick="{editUser}">
+                  <span uk-icon="icon: pencil">
+      <li>
+        <!-- config list -->
+        <table .uk-table .uk-table-small .uk-table-divider .uk-table-hover .uk-background-muted>
+          <thead>
+            <tr>
+              <th>
+                <i1-8n>MsgConfigCode
+              <th>
+                <i1-8n>MsgConfigStringValue
+              <th>
+                <i1-8n>MsgConfigIntValue
+              <th>
+                <i1-8n>MsgConfigDoubleValue
+              <th>
+                <i1-8n>MsgConfigBoolValue
+              <th .uk-align-right>
+          <tbody>
+            <tr each="{parent.data.pages.admin.configs}">
+              <td .uk-table-link>
+                <a onclick="{editConfig}" .uk-link-reset>{entity.code}
+              <td .uk-table-link>
+                <a onclick="{editConfig}" .uk-link-reset>{entity.stringValue}
+              <td .uk-table-link>
+                <a onclick="{editConfig}" .uk-link-reset>{entity.intValue}
+              <td .uk-table-link>
+                <a onclick="{editConfig}" .uk-link-reset>{formatDouble(entity.doubleValue)}
+              <td>
+                <span uk-icon="icon: check" if="{ entity.boolValue }">
+              <td .uk-width-small>
+                <button .uk-float-right .uk-button .uk-button-link title="{localizeMsg('MsgGlobalEditConfig')}" uk-tooltip onclick="{editConfig}">
+                  <span uk-icon="icon: pencil">
+  <script>
+    \ localizeMsg(m) {
+    \    return parent.tag.localizeMsg(m)
+    \ }
+    \ addUser(event) {
+    \   parent.tag.showModalForm("@{SimulationR AddUserFormR}")
+    \   event.currentTarget.blur()
+    \ }
+    \ editUser(event) {
+    \   parent.tag.showModalForm(event.item.editFormUrl)
+    \   event.currentTarget.blur()
+    \ }
+    \ deleteUser(event) {
+    \   parent.tag.showModalForm(event.item.deleteFormUrl)
+    \   event.currentTarget.blur()
+    \ }
+    \ editConfig(event) {
+    \   parent.tag.showModalForm(event.item.editFormUrl)
+    \   event.currentTarget.blur()
+    \ }

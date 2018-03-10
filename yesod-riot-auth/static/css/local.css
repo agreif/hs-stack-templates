@@ -1,0 +1,58 @@
+/* Container
+ ========================================================================== */
+.uk-container {
+  box-sizing: border-box;
+  max-width: 5000px; /* changed ! */
+  padding: 0 25px;
+}
+/* Large screen and bigger */
+@media (min-width: 1220px) {
+  .uk-container {
+    max-width: 5000px; /* changed ! */
+    padding: 0 35px;
+  }
+}
+/*
+ * Micro clearfix
+ */
+.uk-container:before,
+.uk-container:after {
+  content: "";
+  display: table;
+}
+.uk-container:after {
+  clear: both;
+}
+/*
+ * Center container
+ */
+.uk-container-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Custom
+ ========================================================================== */
+th.uk-align-right {
+    margin-bottom: 0px;
+}
+
+ul.uk-breadcrumb {
+    margin-bottom: 0px;
+}
+
+.textarea-wrap {
+    white-space: pre-wrap;
+}
+
+/* Tingle Modals
+ ========================================================================== */
+.tingle-modal {
+    background: rgba(0, 0, 0, .3);
+    transition: none;
+}
+
+.tingle-modal-box {
+    transition: none;
+    transform: none;
+}

@@ -1,0 +1,56 @@
+-- gen models - start
+
+
+User
+    ident Text
+    password Text Maybe
+    email Text
+    version Int
+    createdAt UTCTime
+    createdBy Text
+    updatedAt UTCTime
+    updatedBy Text
+    UniqueUser ident
+
+
+UserHistory
+    Id sql=vid
+    id Int MigrationOnly
+    ident Text
+    password Text Maybe
+    email Text
+    version Int
+    createdAt UTCTime
+    createdBy Text
+    updatedAt UTCTime
+    updatedBy Text
+
+Config json
+    code Text
+    stringValue Text Maybe
+    intValue Int Maybe
+    doubleValue Double Maybe
+    boolValue Bool
+    version Int
+    createdAt UTCTime
+    createdBy Text
+    updatedAt UTCTime
+    updatedBy Text
+    UniqueCode code
+
+
+ConfigHistory
+    Id sql=vid
+    id Int MigrationOnly
+    code Text
+    stringValue Text Maybe
+    intValue Int Maybe
+    doubleValue Double Maybe
+    boolValue Bool
+    version Int
+    createdAt UTCTime
+    createdBy Text
+    updatedAt UTCTime
+    updatedBy Text
+
+-- gen models - end
