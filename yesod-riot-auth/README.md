@@ -6,7 +6,7 @@
 
 # Screenshots
 
-![Home](../screenshots/home.png)
+![Home](../screenshots/yesod-riot-auth/home.png)
 
 
 # Template installation
