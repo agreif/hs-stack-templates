@@ -1,3 +1,34 @@
+# Project specifics
+   - yesod-postgres template
+   - auth-hashdb
+   - riot-js component-based UI library
+   - UIkit front-end framework
+
+# Template installation
+```
+$ stack new my-project https://raw.githubusercontent.com/Greif-IT/hs-stack-templates/master/yesod-riot-auth.hsfiles
+```
+
+# Create PostgreSQL Database (ubuntu)
+```
+$ sudo su postgres -c 'createuser --createdb --encrypted --no-inherit --login --pwprompt --no-createrole --no-superuser --no-replication my-project'
+$ sudo su postgres -c 'createdb --encoding=UTF-8 --owner=my-project --template=template0 my-project'
+```
+
+# Run Yesod server
+```
+$ cd my-project
+$ sh run_dev.sh
+```
+
+# Generate model code
+```
+$ cd my-project
+$ sh run_gen.sh
+```
+
+# vvv original jesod README.md vvv
+
 ## Database Setup
 
 After installing Postgres, run:
