@@ -139,7 +139,7 @@ Start a development server with:
 stack exec -- yesod devel
 ```
 
-As your code changes, your site will be automatically be recompiled and redeployed to localhost.
+As your code changes, your site will be automatically recompiled and redeployed to localhost.
 
 ## Tests
 
@@ -465,6 +465,9 @@ ConfigHistory
 User-agent: *
 
 {-# START_FILE config/routes #-}
+-- By default this file is used by `parseRoutesFile` in Foundation.hs
+-- Syntax for this file here: https://www.yesodweb.com/book/routing-and-handlers
+
 /static StaticR Static appStatic
 /auth   AuthR   Auth   getAuth
 
@@ -474,8 +477,8 @@ User-agent: *
 / HomeR GET
 /initdb/#Text InitDbR GET
 
-/simulation SimulationR:
-  home SimulationHomeR GET
+/myproject MyprojectR:
+  home MyprojectHomeR GET
   -- populatedb PopulateDbR GET
   riotTags RiotTagsR GET
 
@@ -552,1232 +555,6 @@ database:
   database: {{name}}_test
 
 auth-dummy-login: true
-
-{-# START_FILE context.json #-}
-[
-    {
-        "deleteFormDataJsonUrl": "SimulationR AdminPageDataJsonR",
-        "hsDerivings": [],
-        "deleteFormEntityLoader": null,
-        "nameCap": "User",
-        "addViewFields": [
-            {
-                "labelDe": "Login",
-                "isHsTypeBool": false,
-                "nameCap": "Ident",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                },
-                "formFieldType": "textField",
-                "name": "ident",
-                "dbColumnName": "ident",
-                "labelEn": "Login",
-                "hsType": "Text",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": false,
-                    "isNotNullable": true
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                }
-            },
-            {
-                "labelDe": "Email",
-                "isHsTypeBool": false,
-                "nameCap": "Email",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                },
-                "formFieldType": "textField",
-                "name": "email",
-                "dbColumnName": "email",
-                "labelEn": "Email",
-                "hsType": "Text",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": false,
-                    "isNotNullable": true
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                }
-            }
-        ],
-        "dbUniquenesses": [
-            "UniqueUser ident"
-        ],
-        "editViewFields": [
-            {
-                "labelDe": "Login",
-                "isHsTypeBool": false,
-                "nameCap": "Ident",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                },
-                "formFieldType": "textField",
-                "name": "ident",
-                "dbColumnName": "ident",
-                "labelEn": "Login",
-                "hsType": "Text",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": false,
-                    "isNotNullable": true
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                }
-            },
-            {
-                "labelDe": "Email",
-                "isHsTypeBool": false,
-                "nameCap": "Email",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                },
-                "formFieldType": "textField",
-                "name": "email",
-                "dbColumnName": "email",
-                "labelEn": "Email",
-                "hsType": "Text",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": false,
-                    "isNotNullable": true
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                }
-            },
-            {
-                "labelDe": "Neues Passwort generieren?",
-                "isHsTypeBool": true,
-                "nameCap": "IsResetPassword",
-                "isForeignKey": false,
-                "addView": null,
-                "formFieldType": "checkBoxField",
-                "name": "isResetPassword",
-                "dbColumnName": "is_reset_password",
-                "labelEn": "Generate new password?",
-                "hsType": "Bool",
-                "db": null,
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-checkbox",
-                            "key": "class"
-                        }
-                    ],
-                    "default": "Nothing",
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                }
-            }
-        ],
-        "isInDb": true,
-        "addFormHasDefaultModel": false,
-        "editFormDataJsonUrl": null,
-        "dbUpdatableFields": [
-            {
-                "labelDe": "Login",
-                "isHsTypeBool": false,
-                "nameCap": "Ident",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                },
-                "formFieldType": "textField",
-                "name": "ident",
-                "dbColumnName": "ident",
-                "labelEn": "Login",
-                "hsType": "Text",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": false,
-                    "isNotNullable": true
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                }
-            },
-            {
-                "labelDe": "Email",
-                "isHsTypeBool": false,
-                "nameCap": "Email",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                },
-                "formFieldType": "textField",
-                "name": "email",
-                "dbColumnName": "email",
-                "labelEn": "Email",
-                "hsType": "Text",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": false,
-                    "isNotNullable": true
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                }
-            }
-        ],
-        "addFormDataJsonUrl": null,
-        "name": "user",
-        "parentHsType": null,
-        "dbTableName": "user",
-        "isJson": false,
-        "dbHistoryTableName": "user_history",
-        "parentHsParamId": "",
-        "addFormEntityLoader": null,
-        "editFormEntityLoader": null,
-        "formHasProgressBar": false,
-        "dbHasHistoryTable": true,
-        "deletePostLoadsModel": false,
-        "editPostLoadsModel": false,
-        "label": "User",
-        "fields": [
-            {
-                "labelDe": "Login",
-                "isHsTypeBool": false,
-                "nameCap": "Ident",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                },
-                "formFieldType": "textField",
-                "name": "ident",
-                "dbColumnName": "ident",
-                "labelEn": "Login",
-                "hsType": "Text",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": false,
-                    "isNotNullable": true
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                }
-            },
-            {
-                "labelDe": "Passwort",
-                "isHsTypeBool": false,
-                "nameCap": "Password",
-                "isForeignKey": false,
-                "addView": null,
-                "formFieldType": null,
-                "name": "password",
-                "dbColumnName": "password",
-                "labelEn": "Password",
-                "hsType": "Text",
-                "db": {
-                    "canUpdate": false,
-                    "default": null,
-                    "isNullable": true,
-                    "isNotNullable": false
-                },
-                "editView": null
-            },
-            {
-                "labelDe": "Email",
-                "isHsTypeBool": false,
-                "nameCap": "Email",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                },
-                "formFieldType": "textField",
-                "name": "email",
-                "dbColumnName": "email",
-                "labelEn": "Email",
-                "hsType": "Text",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": false,
-                    "isNotNullable": true
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                }
-            },
-            {
-                "labelDe": "Neues Passwort generieren?",
-                "isHsTypeBool": true,
-                "nameCap": "IsResetPassword",
-                "isForeignKey": false,
-                "addView": null,
-                "formFieldType": "checkBoxField",
-                "name": "isResetPassword",
-                "dbColumnName": "is_reset_password",
-                "labelEn": "Generate new password?",
-                "hsType": "Bool",
-                "db": null,
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-checkbox",
-                            "key": "class"
-                        }
-                    ],
-                    "default": "Nothing",
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                }
-            }
-        ]
-    },
-    {
-        "deleteFormDataJsonUrl": null,
-        "hsDerivings": [],
-        "deleteFormEntityLoader": null,
-        "nameCap": "Config",
-        "addViewFields": [
-            {
-                "labelDe": "String-Wert",
-                "isHsTypeBool": false,
-                "nameCap": "StringValue",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                },
-                "formFieldType": "textField",
-                "name": "stringValue",
-                "dbColumnName": "string_value",
-                "labelEn": "String-Value",
-                "hsType": "Text",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": true,
-                    "isNotNullable": false
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                }
-            },
-            {
-                "labelDe": "Integer-Wert",
-                "isHsTypeBool": false,
-                "nameCap": "IntValue",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-medium uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                },
-                "formFieldType": "intField",
-                "name": "intValue",
-                "dbColumnName": "int_value",
-                "labelEn": "Integer-Value",
-                "hsType": "Int",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": true,
-                    "isNotNullable": false
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-medium uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                }
-            },
-            {
-                "labelDe": "Double-Wert",
-                "isHsTypeBool": false,
-                "nameCap": "DoubleValue",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-medium uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                },
-                "formFieldType": "doubleField",
-                "name": "doubleValue",
-                "dbColumnName": "double_value",
-                "labelEn": "Double-Value",
-                "hsType": "Double",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": true,
-                    "isNotNullable": false
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-medium uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                }
-            },
-            {
-                "labelDe": "Boolean-Wert",
-                "isHsTypeBool": true,
-                "nameCap": "BoolValue",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                },
-                "formFieldType": "checkBoxField",
-                "name": "boolValue",
-                "dbColumnName": "bool_value",
-                "labelEn": "Boolean-Value",
-                "hsType": "Bool",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": false,
-                    "isNotNullable": true
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-checkbox",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                }
-            }
-        ],
-        "dbUniquenesses": [
-            "UniqueCode code"
-        ],
-        "editViewFields": [
-            {
-                "labelDe": "Code",
-                "isHsTypeBool": false,
-                "nameCap": "Code",
-                "isForeignKey": false,
-                "addView": null,
-                "formFieldType": "textField",
-                "name": "code",
-                "dbColumnName": "code",
-                "labelEn": "Code",
-                "hsType": "Text",
-                "db": {
-                    "canUpdate": false,
-                    "default": null,
-                    "isNullable": false,
-                    "isNotNullable": true
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "",
-                            "key": "disabled"
-                        },
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": false,
-                    "isDisabled": true,
-                    "isRequired": false
-                }
-            },
-            {
-                "labelDe": "String-Wert",
-                "isHsTypeBool": false,
-                "nameCap": "StringValue",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                },
-                "formFieldType": "textField",
-                "name": "stringValue",
-                "dbColumnName": "string_value",
-                "labelEn": "String-Value",
-                "hsType": "Text",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": true,
-                    "isNotNullable": false
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                }
-            },
-            {
-                "labelDe": "Integer-Wert",
-                "isHsTypeBool": false,
-                "nameCap": "IntValue",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-medium uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                },
-                "formFieldType": "intField",
-                "name": "intValue",
-                "dbColumnName": "int_value",
-                "labelEn": "Integer-Value",
-                "hsType": "Int",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": true,
-                    "isNotNullable": false
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-medium uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                }
-            },
-            {
-                "labelDe": "Double-Wert",
-                "isHsTypeBool": false,
-                "nameCap": "DoubleValue",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-medium uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                },
-                "formFieldType": "doubleField",
-                "name": "doubleValue",
-                "dbColumnName": "double_value",
-                "labelEn": "Double-Value",
-                "hsType": "Double",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": true,
-                    "isNotNullable": false
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-medium uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                }
-            },
-            {
-                "labelDe": "Boolean-Wert",
-                "isHsTypeBool": true,
-                "nameCap": "BoolValue",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                },
-                "formFieldType": "checkBoxField",
-                "name": "boolValue",
-                "dbColumnName": "bool_value",
-                "labelEn": "Boolean-Value",
-                "hsType": "Bool",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": false,
-                    "isNotNullable": true
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-checkbox",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                }
-            }
-        ],
-        "isInDb": true,
-        "addFormHasDefaultModel": false,
-        "editFormDataJsonUrl": "SimulationR AdminPageDataJsonR",
-        "dbUpdatableFields": [
-            {
-                "labelDe": "String-Wert",
-                "isHsTypeBool": false,
-                "nameCap": "StringValue",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                },
-                "formFieldType": "textField",
-                "name": "stringValue",
-                "dbColumnName": "string_value",
-                "labelEn": "String-Value",
-                "hsType": "Text",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": true,
-                    "isNotNullable": false
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                }
-            },
-            {
-                "labelDe": "Integer-Wert",
-                "isHsTypeBool": false,
-                "nameCap": "IntValue",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-medium uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                },
-                "formFieldType": "intField",
-                "name": "intValue",
-                "dbColumnName": "int_value",
-                "labelEn": "Integer-Value",
-                "hsType": "Int",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": true,
-                    "isNotNullable": false
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-medium uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                }
-            },
-            {
-                "labelDe": "Double-Wert",
-                "isHsTypeBool": false,
-                "nameCap": "DoubleValue",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-medium uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                },
-                "formFieldType": "doubleField",
-                "name": "doubleValue",
-                "dbColumnName": "double_value",
-                "labelEn": "Double-Value",
-                "hsType": "Double",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": true,
-                    "isNotNullable": false
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-medium uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                }
-            },
-            {
-                "labelDe": "Boolean-Wert",
-                "isHsTypeBool": true,
-                "nameCap": "BoolValue",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                },
-                "formFieldType": "checkBoxField",
-                "name": "boolValue",
-                "dbColumnName": "bool_value",
-                "labelEn": "Boolean-Value",
-                "hsType": "Bool",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": false,
-                    "isNotNullable": true
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-checkbox",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                }
-            }
-        ],
-        "addFormDataJsonUrl": null,
-        "name": "config",
-        "parentHsType": null,
-        "dbTableName": "config",
-        "isJson": true,
-        "dbHistoryTableName": "config_history",
-        "parentHsParamId": "",
-        "addFormEntityLoader": null,
-        "editFormEntityLoader": null,
-        "formHasProgressBar": false,
-        "dbHasHistoryTable": true,
-        "deletePostLoadsModel": false,
-        "editPostLoadsModel": false,
-        "label": "Config",
-        "fields": [
-            {
-                "labelDe": "Code",
-                "isHsTypeBool": false,
-                "nameCap": "Code",
-                "isForeignKey": false,
-                "addView": null,
-                "formFieldType": "textField",
-                "name": "code",
-                "dbColumnName": "code",
-                "labelEn": "Code",
-                "hsType": "Text",
-                "db": {
-                    "canUpdate": false,
-                    "default": null,
-                    "isNullable": false,
-                    "isNotNullable": true
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "",
-                            "key": "disabled"
-                        },
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": false,
-                    "isDisabled": true,
-                    "isRequired": false
-                }
-            },
-            {
-                "labelDe": "String-Wert",
-                "isHsTypeBool": false,
-                "nameCap": "StringValue",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                },
-                "formFieldType": "textField",
-                "name": "stringValue",
-                "dbColumnName": "string_value",
-                "labelEn": "String-Value",
-                "hsType": "Text",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": true,
-                    "isNotNullable": false
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-large uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                }
-            },
-            {
-                "labelDe": "Integer-Wert",
-                "isHsTypeBool": false,
-                "nameCap": "IntValue",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-medium uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                },
-                "formFieldType": "intField",
-                "name": "intValue",
-                "dbColumnName": "int_value",
-                "labelEn": "Integer-Value",
-                "hsType": "Int",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": true,
-                    "isNotNullable": false
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-medium uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                }
-            },
-            {
-                "labelDe": "Double-Wert",
-                "isHsTypeBool": false,
-                "nameCap": "DoubleValue",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-medium uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                },
-                "formFieldType": "doubleField",
-                "name": "doubleValue",
-                "dbColumnName": "double_value",
-                "labelEn": "Double-Value",
-                "hsType": "Double",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": true,
-                    "isNotNullable": false
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-form-width-medium uk-input uk-form-small",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": true,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": false
-                }
-            },
-            {
-                "labelDe": "Boolean-Wert",
-                "isHsTypeBool": true,
-                "nameCap": "BoolValue",
-                "isForeignKey": false,
-                "addView": {
-                    "attrs": [],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                },
-                "formFieldType": "checkBoxField",
-                "name": "boolValue",
-                "dbColumnName": "bool_value",
-                "labelEn": "Boolean-Value",
-                "hsType": "Bool",
-                "db": {
-                    "canUpdate": true,
-                    "default": null,
-                    "isNullable": false,
-                    "isNotNullable": true
-                },
-                "editView": {
-                    "attrs": [
-                        {
-                            "value": "uk-checkbox",
-                            "key": "class"
-                        }
-                    ],
-                    "default": null,
-                    "isOptional": false,
-                    "isEnabled": true,
-                    "isDisabled": false,
-                    "isRequired": true
-                }
-            }
-        ]
-    }
-]
-
 
 {-# START_FILE hs-generator/LICENSE #-}
 Copyright Author name here (c) 2018
@@ -2863,7 +1640,7 @@ context =
         , bModelDeleteFormEntityLoader = Nothing
         , bModelAddFormDataJsonUrl = Nothing
         , bModelEditFormDataJsonUrl = Nothing
-        , bModelDeleteFormDataJsonUrl = Just "SimulationR AdminPageDataJsonR"
+        , bModelDeleteFormDataJsonUrl = Just "MyprojectR AdminPageDataJsonR"
         , bModelAddFormHasDefaultModel = False
         , bModelEditPostLoadsModel = False
         , bModelDeletePostLoadsModel = False
@@ -3004,7 +1781,7 @@ context =
         , bModelEditFormEntityLoader = Nothing
         , bModelDeleteFormEntityLoader = Nothing
         , bModelAddFormDataJsonUrl = Nothing
-        , bModelEditFormDataJsonUrl = Just "SimulationR AdminPageDataJsonR"
+        , bModelEditFormDataJsonUrl = Just "MyprojectR AdminPageDataJsonR"
         , bModelDeleteFormDataJsonUrl = Nothing
         , bModelAddFormHasDefaultModel = False
         , bModelEditPostLoadsModel = False
@@ -3311,7 +2088,7 @@ executables:
 
 # Test suite
 tests:
-  test:
+  {{name}}-test:
     main: Spec.hs
     source-dirs: test
     ghc-options: -Wall
@@ -3727,7 +2504,7 @@ handler :: Handler a -> IO a
 handler h = getAppSettings >>= makeFoundation >>= flip unsafeHandler h
 
 -- | Run DB queries
-db :: ReaderT SqlBackend (HandlerT App IO) a -> IO a
+db :: ReaderT SqlBackend Handler a -> IO a
 db = handler . runDB
 
 {-# START_FILE src/Foundation.hs #-}
@@ -3739,6 +2516,7 @@ db = handler . runDB
 {-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE ExplicitForAll #-}
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE QuasiQuotes #-}
 
 module Foundation where
@@ -3747,6 +2525,7 @@ import Import.NoFoundation
 import Database.Persist.Sql (ConnectionPool, runSqlPool)
 import Text.Hamlet          (hamletFile)
 import Text.Jasmine         (minifym)
+import Control.Monad.Logger (LogSource)
 import Yesod.Auth.Message   (AuthMessage(InvalidLogin))
 import Control.Monad.Trans.Maybe
 
@@ -3798,6 +2577,7 @@ type DB a = forall (m :: * -> *).
 instance Yesod App where
     -- Controls the base of generated URLs. For more information on modifying,
     -- see: https://github.com/yesodweb/yesod/wiki/Overriding-approot
+    approot :: Approot App
     approot = ApprootRequest $ \app req ->
         case appRoot $ appSettings app of
             Nothing -> getApprootText guessApproot app req
@@ -3805,6 +2585,7 @@ instance Yesod App where
 
     -- Store session data on the client in encrypted cookies,
     -- default session idle timeout is 120 minutes
+    makeSessionBackend :: App -> IO (Maybe SessionBackend)
     makeSessionBackend _ = Just <$> defaultClientSessionBackend
         120    -- timeout in minutes
         "config/client_session_key.aes"
@@ -3816,8 +2597,10 @@ instance Yesod App where
     --   b) Validates that incoming write requests include that token in either a header or POST parameter.
     -- To add it, chain it together with the defaultMiddleware: yesodMiddleware = defaultYesodMiddleware . defaultCsrfMiddleware
     -- For details, see the CSRF documentation in the Yesod.Core.Handler module of the yesod-core package.
+    yesodMiddleware :: ToTypedContent res => Handler res -> Handler res
     yesodMiddleware = defaultYesodMiddleware . defaultCsrfMiddleware
 
+    defaultLayout :: Widget -> Handler Html
     defaultLayout widget = do
         pc <- widgetToPageContent $ do
             addStylesheet $ StaticR css_local_css
@@ -3831,7 +2614,7 @@ instance Yesod App where
     isAuthorized (HomeR) _ = do
         _ <- requireAuthId
         return Authorized
-    isAuthorized (SimulationR _) _ = do
+    isAuthorized (MyprojectR _) _ = do
         _ <- requireAuthId
         return Authorized
     isAuthorized _ _ = return Authorized
@@ -3840,6 +2623,11 @@ instance Yesod App where
     -- and names them based on a hash of their content. This allows
     -- expiration dates to be set far in the future without worry of
     -- users receiving stale content.
+    addStaticContent
+        :: Text  -- ^ The file extension
+        -> Text -- ^ The MIME content type
+        -> LByteString -- ^ The contents of the file
+        -> Handler (Maybe (Either Text (Route App, [(Text, Text)])))
     addStaticContent ext mime content = do
         master <- getYesod
         let staticDir = appStaticDir $ appSettings master
@@ -3857,11 +2645,14 @@ instance Yesod App where
 
     -- What messages should be logged. The following includes all messages when
     -- in development, and warnings and errors in production.
-    shouldLog app _source level =
+    shouldLogIO :: App -> LogSource -> LogLevel -> IO Bool
+    shouldLogIO app _source level =
+        return $
         appShouldLogAll (appSettings app)
             || level == LevelWarn
             || level == LevelError
 
+    makeLogger :: App -> IO Logger
     makeLogger = return . appLogger
 
 formLayout :: WidgetT App IO () -> Handler Html
@@ -3872,10 +2663,13 @@ formLayout widget = do
 -- How to run database actions.
 instance YesodPersist App where
     type YesodPersistBackend App = SqlBackend
+    runDB :: SqlPersistT Handler a -> Handler a
     runDB action = do
         master <- getYesod
         runSqlPool action $ appConnPool master
+
 instance YesodPersistRunner App where
+    getDBRunner :: Handler (DBRunner App, Handler ())
     getDBRunner = defaultGetDBRunner appConnPool
 
 instance YesodAuth App where
@@ -3886,12 +2680,17 @@ instance YesodAuth App where
         withUrlRenderer $(hamletFile "templates/login-layout-wrapper.hamlet")
 
     -- Where to send a user after successful login
-    loginDest _ = SimulationR SimulationHomeR
+    loginDest :: App -> Route App
+    loginDest _ = MyprojectR MyprojectHomeR
     -- Where to send a user after logout
-    logoutDest _ = SimulationR SimulationHomeR
+    logoutDest :: App -> Route App
+    logoutDest _ = MyprojectR MyprojectHomeR
     -- Override the above two destinations when a Referer: header is present
+    redirectToReferer :: App -> Bool
     redirectToReferer _ = True
 
+    -- authenticate :: (MonadHandler m, HandlerSite m ~ App)
+    --              => Creds App -> m (AuthenticationResult App)
     authenticate creds = runDB $ do
         x <- getBy $ UniqueUser $ credsIdent creds
         case x of
@@ -3899,6 +2698,7 @@ instance YesodAuth App where
             Nothing -> return $ UserError InvalidLogin
 
     -- You can add other plugins like Google Email, email or OAuth here
+    authPlugins :: App -> [AuthPlugin App]
     authPlugins _ = [authHashDBWithForm myLoginForm (Just . UniqueUser)]
 
     -- authPlugins app = [authOpenId Claimed []] ++ extraAuthPlugins
@@ -3936,9 +2736,11 @@ instance YesodAuthPersist App
 -- This instance is required to use forms. You can modify renderMessage to
 -- achieve customized and internationalized form validation messages.
 -- instance RenderMessage App FormMessage where
+--     renderMessage :: App -> [Lang] -> FormMessage -> Text
 --     renderMessage _ _ = defaultFormMessage
 
 instance RenderMessage App FormMessage where
+  renderMessage :: App -> [Lang] -> FormMessage -> Text
   renderMessage _ []        = germanFormMessage -- Default to German
   renderMessage _ ("de":_) = germanFormMessage
   renderMessage _ ("en-US":_) = defaultFormMessage
@@ -3948,6 +2750,7 @@ instance RenderMessage App FormMessage where
 -- An example is background jobs that send email.
 -- This can also be useful for writing code that works across multiple Yesod applications.
 instance HasHttpManager App where
+    getHttpManager :: App -> Manager
     getHttpManager = appHttpManager
 
 unsafeHandler :: App -> Handler a -> IO a
@@ -3984,7 +2787,7 @@ getAdminR = defaultLayout $ do
                    <script>
                      \ riot.compile(function() {
                      \   bodyTag = riot.mount('body-tag')[0]
-                     \   bodyTag.refreshData("@{SimulationR $ AdminPageDataJsonR}")
+                     \   bodyTag.refreshData("@{MyprojectR $ AdminPageDataJsonR}")
                      \ })
                    |]
 
@@ -4014,17 +2817,17 @@ getAdminPageDataJsonR = do
     , jDataSubNavItems = []
     , jDataPages = pages
     , jDataHistoryState = Just JDataHistoryState
-      { jDataHistoryStateUrl = urlRenderer $ SimulationR AdminR
+      { jDataHistoryStateUrl = urlRenderer $ MyprojectR AdminR
       , jDataHistoryStateTitle = msgAdmin
       }
     , jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName
     , jDataCsrfToken = reqToken req
     , jDataBreadcrumbItems = [ JDataBreadcrumbItem
                                { jDataBreadcrumbItemLabel = msgHome
-                               , jDataBreadcrumbItemDataUrl = urlRenderer $ SimulationR HomePageDataJsonR }
+                               , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomePageDataJsonR }
                              , JDataBreadcrumbItem
                                { jDataBreadcrumbItemLabel = msgAdmin
-                               , jDataBreadcrumbItemDataUrl = urlRenderer $ SimulationR AdminPageDataJsonR }
+                               , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
                              ]
     }
 
@@ -4035,8 +2838,8 @@ userListJDataEnts = do
   let jUserList = map (\(userEnt@(Entity userId _)) ->
                            JDataUser
                            { jDataUserEnt = userEnt
-                           , jDataUserEditFormUrl = urlRenderer $ SimulationR $ EditUserFormR userId
-                           , jDataUserDeleteFormUrl = urlRenderer $ SimulationR $ DeleteUserFormR userId
+                           , jDataUserEditFormUrl = urlRenderer $ MyprojectR $ EditUserFormR userId
+                           , jDataUserDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteUserFormR userId
                            }
                         ) userTuples
   return jUserList
@@ -4055,7 +2858,7 @@ configListJDataEnts = do
   let jConfigList = map (\(configEnt@(Entity configId _)) ->
                            JDataConfig
                            { jDataConfigEnt = configEnt
-                           , jDataConfigEditFormUrl = urlRenderer $ SimulationR $ EditConfigFormR configId
+                           , jDataConfigEditFormUrl = urlRenderer $ MyprojectR $ EditConfigFormR configId
                            }
                         ) configTuples
   return jConfigList
@@ -4289,13 +3092,13 @@ mainNavData mainNav = do
     [ JDataNavItem
       { jDataNavItemLabel = msgHome
       , jDataNavItemIsActive = mainNav == MainNavHome
-      , jDataNavItemPageDataUrl = urlRenderer $ SimulationR HomePageDataJsonR
+      , jDataNavItemPageDataUrl = urlRenderer $ MyprojectR HomePageDataJsonR
       , jDataNavItemBadge = Nothing
       }
     , JDataNavItem
       { jDataNavItemLabel = msgAdmin
       , jDataNavItemIsActive = mainNav == MainNavAdmin
-      , jDataNavItemPageDataUrl = urlRenderer $ SimulationR AdminPageDataJsonR
+      , jDataNavItemPageDataUrl = urlRenderer $ MyprojectR AdminPageDataJsonR
       , jDataNavItemBadge = Nothing
       }
     ]
@@ -4576,7 +3379,7 @@ getEditConfigFormR configId = do
   formLayout $ do
     toWidget [whamlet|
       <h1>Edit Config
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{SimulationR $ EditConfigR configId}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ EditConfigR configId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -4604,8 +3407,8 @@ postEditConfigR configId = do
                                               , ConfigVersion ==. vEditConfigVersion vEditConfig
                                               ] persistFields
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ SimulationR AdminPageDataJsonR }
-        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ SimulationR AdminPageDataJsonR }
+        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
+        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
@@ -4767,16 +3570,16 @@ import qualified Data.Text.Encoding as TE
 import qualified Data.CaseInsensitive as CI
 
 getHomeR :: Handler Html
-getHomeR = redirect $ SimulationR SimulationHomeR
+getHomeR = redirect $ MyprojectR MyprojectHomeR
 
-getSimulationHomeR :: Handler Html
-getSimulationHomeR = defaultLayout $ do
+getMyprojectHomeR :: Handler Html
+getMyprojectHomeR = defaultLayout $ do
   toWidget [whamlet|
                    <body-tag>
                    <script>
                      \ riot.compile(function() {
                      \   bodyTag = riot.mount('body-tag')[0]
-                     \   bodyTag.refreshData("@{SimulationR $ HomePageDataJsonR}")
+                     \   bodyTag.refreshData("@{MyprojectR $ HomePageDataJsonR}")
                      \ })
                    |]
 
@@ -4798,14 +3601,14 @@ getHomePageDataJsonR = do
     , jDataSubNavItems = []
     , jDataPages = pages
     , jDataHistoryState = Just JDataHistoryState
-      { jDataHistoryStateUrl = urlRenderer $ SimulationR SimulationHomeR
+      { jDataHistoryStateUrl = urlRenderer $ MyprojectR MyprojectHomeR
       , jDataHistoryStateTitle = msgHome
       }
     , jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName
     , jDataCsrfToken = reqToken req
     , jDataBreadcrumbItems = [ JDataBreadcrumbItem
                                { jDataBreadcrumbItemLabel = msgHome
-                               , jDataBreadcrumbItemDataUrl = urlRenderer $ SimulationR HomePageDataJsonR }
+                               , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomePageDataJsonR }
                              ]
     }
 
@@ -5044,8 +3847,8 @@ postEditMyprofileR = do
         user' <- runDB $ get404 userId
         sendPasswordResetMail user' passwd
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ SimulationR HomePageDataJsonR }
-        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ SimulationR HomePageDataJsonR }
+        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR HomePageDataJsonR }
+        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ MyprojectR HomePageDataJsonR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
@@ -5065,7 +3868,7 @@ getEditMyprofileFormR = do
   formLayout $ do
     toWidget [whamlet|
       <h1>Mein Profil
-      <form #modal-form .uk-form-horizontal method=post action=@{SimulationR $ EditMyprofileR}>
+      <form #modal-form .uk-form-horizontal method=post action=@{MyprojectR $ EditMyprofileR}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -5160,7 +3963,7 @@ getAddUserFormR = do
   formLayout $ do
     toWidget [whamlet|
       <h1>Add User
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{SimulationR $ AddUserR}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ AddUserR}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -5187,7 +3990,7 @@ postAddUserR = do
             }
       _ <- runDB $ insert user
       sendPasswordNewAccountMail user passwd
-      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ SimulationR AdminPageDataJsonR }
+      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
@@ -5279,7 +4082,7 @@ getEditUserFormR userId = do
   formLayout $ do
     toWidget [whamlet|
       <h1>Edit User
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{SimulationR $ EditUserR userId}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ EditUserR userId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -5313,8 +4116,8 @@ postEditUserR userId = do
         user' <- runDB $ get404 userId
         sendPasswordResetMail user' passwd
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ SimulationR AdminPageDataJsonR }
-        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ SimulationR AdminPageDataJsonR }
+        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
+        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
@@ -5436,7 +4239,7 @@ getDeleteUserFormR userId = do
   formLayout $ do
     toWidget [whamlet|
       <h1>Delete User
-      <form #modal-form .uk-form-horizontal method=post action=@{SimulationR $ DeleteUserR userId}>
+      <form #modal-form .uk-form-horizontal method=post action=@{MyprojectR $ DeleteUserR userId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -5447,7 +4250,7 @@ postDeleteUserR :: UserId -> Handler Value
 postDeleteUserR userId = do
   runDB $ delete userId
   urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ SimulationR AdminPageDataJsonR }
+  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
 -- gen post delete form - end
 
 {-# START_FILE src/Import.hs #-}
@@ -5792,7 +4595,7 @@ Cg==
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tingle/0.12.0/tingle.min.css" rel="stylesheet" type="text/css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tingle/0.12.0/tingle.min.js" type="text/javascript">
 
-    <script data-src="@{SimulationR RiotTagsR}" type="riot/tag">
+    <script data-src="@{MyprojectR RiotTagsR}" type="riot/tag">
     ^{pageHead pc}
 
   <body>
@@ -6012,8 +4815,8 @@ Cg==
     \   parent.tag.refreshData(event.item.dataUrl, true, false)
     \ }
     \ editMyProfile(event) {
-    \   dataJsonUrl = window.history.state ? window.history.state.dataJsonUrl : "@{SimulationR HomePageDataJsonR}"
-    \   parent.tag.showModalForm("@{SimulationR EditMyprofileFormR}", dataJsonUrl)
+    \   dataJsonUrl = window.history.state ? window.history.state.dataJsonUrl : "@{MyprojectR HomePageDataJsonR}"
+    \   parent.tag.showModalForm("@{MyprojectR EditMyprofileFormR}", dataJsonUrl)
     \ }
 
 <home-page-tag>
@@ -6091,7 +4894,7 @@ Cg==
     \    return parent.tag.localizeMsg(m)
     \ }
     \ addUser(event) {
-    \   parent.tag.showModalForm("@{SimulationR AddUserFormR}")
+    \   parent.tag.showModalForm("@{MyprojectR AddUserFormR}")
     \   event.currentTarget.blur()
     \ }
     \ editUser(event) {
@@ -6191,8 +4994,8 @@ spec = withApp $ do
               setMethod "POST"
               setUrl HomeR
               addToken
-              fileByLabel "Choose a file" "test/Spec.hs" "text/plain" -- talk about self-reference
-              byLabel "What's on the file?" "Some Content"
+              fileByLabelExact "Choose a file" "test/Spec.hs" "text/plain" -- talk about self-reference
+              byLabelExact "What's on the file?" "Some Content"
 
           statusIs 200
           -- more debugging printBody
