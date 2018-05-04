@@ -211,8 +211,8 @@
     \   parent.tag.refreshData(event.item.dataUrl, true, false)
     \ }
     \ editMyProfile(event) {
-    \   dataJsonUrl = window.history.state ? window.history.state.dataJsonUrl : "@{SimulationR HomePageDataJsonR}"
-    \   parent.tag.showModalForm("@{SimulationR EditMyprofileFormR}", dataJsonUrl)
+    \   dataJsonUrl = window.history.state ? window.history.state.dataJsonUrl : "@{MyprojectR HomePageDataJsonR}"
+    \   parent.tag.showModalForm("@{MyprojectR EditMyprofileFormR}", dataJsonUrl)
     \ }
 
 <home-page-tag>
@@ -290,7 +290,7 @@
     \    return parent.tag.localizeMsg(m)
     \ }
     \ addUser(event) {
-    \   parent.tag.showModalForm("@{SimulationR AddUserFormR}")
+    \   parent.tag.showModalForm("@{MyprojectR AddUserFormR}")
     \   event.currentTarget.blur()
     \ }
     \ editUser(event) {

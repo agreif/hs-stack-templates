@@ -26,6 +26,7 @@ cabal.sandbox.config
 *~
 \#*
 *.cabal
+context.json
 
 {-# START_FILE README.md #-}
 # Project specifics
