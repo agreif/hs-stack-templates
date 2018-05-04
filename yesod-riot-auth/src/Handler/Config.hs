@@ -35,7 +35,7 @@ getEditConfigFormR configId = do
   formLayout $ do
     toWidget [whamlet|
       <h1>Edit Config
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{SimulationR $ EditConfigR configId}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ EditConfigR configId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -63,8 +63,8 @@ postEditConfigR configId = do
                                               , ConfigVersion ==. vEditConfigVersion vEditConfig
                                               ] persistFields
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ SimulationR AdminPageDataJsonR }
-        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ SimulationR AdminPageDataJsonR }
+        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
+        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid

@@ -14,16 +14,16 @@ import qualified Data.Text.Encoding as TE
 import qualified Data.CaseInsensitive as CI
 
 getHomeR :: Handler Html
-getHomeR = redirect $ SimulationR SimulationHomeR
+getHomeR = redirect $ MyprojectR MyprojectHomeR
 
-getSimulationHomeR :: Handler Html
-getSimulationHomeR = defaultLayout $ do
+getMyprojectHomeR :: Handler Html
+getMyprojectHomeR = defaultLayout $ do
   toWidget [whamlet|
                    <body-tag>
                    <script>
                      \ riot.compile(function() {
                      \   bodyTag = riot.mount('body-tag')[0]
-                     \   bodyTag.refreshData("@{SimulationR $ HomePageDataJsonR}")
+                     \   bodyTag.refreshData("@{MyprojectR $ HomePageDataJsonR}")
                      \ })
                    |]
 
@@ -45,14 +45,14 @@ getHomePageDataJsonR = do
     , jDataSubNavItems = []
     , jDataPages = pages
     , jDataHistoryState = Just JDataHistoryState
-      { jDataHistoryStateUrl = urlRenderer $ SimulationR SimulationHomeR
+      { jDataHistoryStateUrl = urlRenderer $ MyprojectR MyprojectHomeR
       , jDataHistoryStateTitle = msgHome
       }
     , jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName
     , jDataCsrfToken = reqToken req
     , jDataBreadcrumbItems = [ JDataBreadcrumbItem
                                { jDataBreadcrumbItemLabel = msgHome
-                               , jDataBreadcrumbItemDataUrl = urlRenderer $ SimulationR HomePageDataJsonR }
+                               , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomePageDataJsonR }
                              ]
     }
 

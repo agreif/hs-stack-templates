@@ -90,7 +90,7 @@ executables:
 
 # Test suite
 tests:
-  test:
+  yesod-riot-auth-test:
     main: Spec.hs
     source-dirs: test
     ghc-options: -Wall

@@ -219,13 +219,13 @@ mainNavData mainNav = do
     [ JDataNavItem
       { jDataNavItemLabel = msgHome
       , jDataNavItemIsActive = mainNav == MainNavHome
-      , jDataNavItemPageDataUrl = urlRenderer $ SimulationR HomePageDataJsonR
+      , jDataNavItemPageDataUrl = urlRenderer $ MyprojectR HomePageDataJsonR
       , jDataNavItemBadge = Nothing
       }
     , JDataNavItem
       { jDataNavItemLabel = msgAdmin
       , jDataNavItemIsActive = mainNav == MainNavAdmin
-      , jDataNavItemPageDataUrl = urlRenderer $ SimulationR AdminPageDataJsonR
+      , jDataNavItemPageDataUrl = urlRenderer $ MyprojectR AdminPageDataJsonR
       , jDataNavItemBadge = Nothing
       }
     ]

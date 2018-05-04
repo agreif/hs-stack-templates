@@ -32,7 +32,7 @@ getAddUserFormR = do
   formLayout $ do
     toWidget [whamlet|
       <h1>Add User
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{SimulationR $ AddUserR}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ AddUserR}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -59,7 +59,7 @@ postAddUserR = do
             }
       _ <- runDB $ insert user
       sendPasswordNewAccountMail user passwd
-      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ SimulationR AdminPageDataJsonR }
+      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
@@ -151,7 +151,7 @@ getEditUserFormR userId = do
   formLayout $ do
     toWidget [whamlet|
       <h1>Edit User
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{SimulationR $ EditUserR userId}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ EditUserR userId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -185,8 +185,8 @@ postEditUserR userId = do
         user' <- runDB $ get404 userId
         sendPasswordResetMail user' passwd
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ SimulationR AdminPageDataJsonR }
-        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ SimulationR AdminPageDataJsonR }
+        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
+        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
@@ -308,7 +308,7 @@ getDeleteUserFormR userId = do
   formLayout $ do
     toWidget [whamlet|
       <h1>Delete User
-      <form #modal-form .uk-form-horizontal method=post action=@{SimulationR $ DeleteUserR userId}>
+      <form #modal-form .uk-form-horizontal method=post action=@{MyprojectR $ DeleteUserR userId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -319,5 +319,5 @@ postDeleteUserR :: UserId -> Handler Value
 postDeleteUserR userId = do
   runDB $ delete userId
   urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ SimulationR AdminPageDataJsonR }
+  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
 -- gen post delete form - end

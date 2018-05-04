@@ -20,7 +20,7 @@ getAdminR = defaultLayout $ do
                    <script>
                      \ riot.compile(function() {
                      \   bodyTag = riot.mount('body-tag')[0]
-                     \   bodyTag.refreshData("@{SimulationR $ AdminPageDataJsonR}")
+                     \   bodyTag.refreshData("@{MyprojectR $ AdminPageDataJsonR}")
                      \ })
                    |]
 
@@ -50,17 +50,17 @@ getAdminPageDataJsonR = do
     , jDataSubNavItems = []
     , jDataPages = pages
     , jDataHistoryState = Just JDataHistoryState
-      { jDataHistoryStateUrl = urlRenderer $ SimulationR AdminR
+      { jDataHistoryStateUrl = urlRenderer $ MyprojectR AdminR
       , jDataHistoryStateTitle = msgAdmin
       }
     , jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName
     , jDataCsrfToken = reqToken req
     , jDataBreadcrumbItems = [ JDataBreadcrumbItem
                                { jDataBreadcrumbItemLabel = msgHome
-                               , jDataBreadcrumbItemDataUrl = urlRenderer $ SimulationR HomePageDataJsonR }
+                               , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomePageDataJsonR }
                              , JDataBreadcrumbItem
                                { jDataBreadcrumbItemLabel = msgAdmin
-                               , jDataBreadcrumbItemDataUrl = urlRenderer $ SimulationR AdminPageDataJsonR }
+                               , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
                              ]
     }
 
@@ -71,8 +71,8 @@ userListJDataEnts = do
   let jUserList = map (\(userEnt@(Entity userId _)) ->
                            JDataUser
                            { jDataUserEnt = userEnt
-                           , jDataUserEditFormUrl = urlRenderer $ SimulationR $ EditUserFormR userId
-                           , jDataUserDeleteFormUrl = urlRenderer $ SimulationR $ DeleteUserFormR userId
+                           , jDataUserEditFormUrl = urlRenderer $ MyprojectR $ EditUserFormR userId
+                           , jDataUserDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteUserFormR userId
                            }
                         ) userTuples
   return jUserList
@@ -91,7 +91,7 @@ configListJDataEnts = do
   let jConfigList = map (\(configEnt@(Entity configId _)) ->
                            JDataConfig
                            { jDataConfigEnt = configEnt
-                           , jDataConfigEditFormUrl = urlRenderer $ SimulationR $ EditConfigFormR configId
+                           , jDataConfigEditFormUrl = urlRenderer $ MyprojectR $ EditConfigFormR configId
                            }
                         ) configTuples
   return jConfigList
