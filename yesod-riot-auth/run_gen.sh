@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export LC_ALL=C.UTF-8
+
 cd hs-generator
 
 if test -f ginger.tar; then
