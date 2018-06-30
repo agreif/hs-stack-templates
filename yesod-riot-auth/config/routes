@@ -32,3 +32,6 @@
 
   editMyProfileForm EditMyprofileFormR GET
   editMyProfile EditMyprofileR POST
+
+  sendTestMailForm AddTestmailFormR GET
+  sendTestMail AddTestmailR POST

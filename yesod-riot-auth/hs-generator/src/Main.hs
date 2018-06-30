@@ -602,6 +602,49 @@ context =
               }
             ]
         }
+      , BModel
+        { bModelName = "testmail"
+        , bModelLabel = "Test Mail"
+        , bModelIsJson = False
+        , bModelDbUniquenesses = []
+        , bModelDbHasHistoryTable = False
+        , bModelHsDerivings = []
+        , bModelAddFormEntityLoader = Nothing
+        , bModelEditFormEntityLoader = Nothing
+        , bModelDeleteFormEntityLoader = Nothing
+        , bModelAddFormDataJsonUrl = Nothing
+        , bModelEditFormDataJsonUrl = Just "MyprojectR TestMailDataJsonR"
+        , bModelDeleteFormDataJsonUrl = Nothing
+        , bModelAddFormHasDefaultModel = False
+        , bModelEditPostLoadsModel = False
+        , bModelDeletePostLoadsModel = False
+        , bModelParentHsType = Nothing
+        , bModelFields =
+            [ BField
+              { bFieldName = "email"
+              , bFieldLabelDe = Just "Email"
+              , bFieldLabelEn = Just "Email"
+              , bFieldHsType = "Text"
+              , bFieldDb = Nothing
+              , bFieldFormFieldType = Just "textField"
+              , bFieldAddView =
+                  Just $
+                  BFieldAddView
+                  { bFieldAddViewIsRequired = True
+                  , bFieldAddViewIsDisabled = False
+                  , bFieldAddViewAttrs =
+                      [ BFieldAttr
+                        { bFieldAttrKey = "class"
+                        , bFieldAttrValue =
+                            "uk-form-width-large uk-input uk-form-small"
+                        }
+                      ]
+                  , bFieldAddViewDefault = Nothing
+                  }
+              , bFieldEditView = Nothing
+              }
+            ]
+        }
       ]
   , bContextTranslations =
     [ BTranslation { bTranslationKey = "home", bTranslationDe = "Home", bTranslationEn = "Home" }
@@ -614,5 +657,7 @@ context =
     , BTranslation { bTranslationKey = "deleteUser", bTranslationDe = "Nutzer löschen", bTranslationEn = "Delete user" }
     , BTranslation { bTranslationKey = "configurations", bTranslationDe = "Konfigurationen", bTranslationEn = "Configurations" }
     , BTranslation { bTranslationKey = "editConfig", bTranslationDe = "Konfiguration bearbeiten", bTranslationEn = "Edit config" }
+    , BTranslation { bTranslationKey = "testMail", bTranslationDe = "Test-Mail", bTranslationEn = "Test-Mail" }
+    , BTranslation { bTranslationKey = "sendTestMail", bTranslationDe = "Test-Mail senden...", bTranslationEn = "Send Test-Mail..." }
     ]
   }

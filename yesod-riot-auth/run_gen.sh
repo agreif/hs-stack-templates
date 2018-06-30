@@ -98,6 +98,13 @@ if test -z "$1" -o "$1" = $m; then
     exec_ginger2 $m handler_edit_form.gtmpl $f '-- gen edit form'
 fi
 
+f=src/Handler/TestMail.hs
+m=testmail
+if test -z "$1" -o "$1" = $m; then
+    exec_ginger2 $m handler_data_add.gtmpl $f '-- gen data add'
+    exec_ginger2 $m handler_get_add_form.gtmpl $f '-- gen get add form'
+    exec_ginger2 $m handler_add_form.gtmpl $f '-- gen add form'
+fi
 
 
 
