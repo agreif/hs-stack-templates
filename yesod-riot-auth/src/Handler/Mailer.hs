@@ -15,6 +15,18 @@ import Text.Blaze.Html.Renderer.Utf8 (renderHtml)
 import qualified Data.ByteString.Lazy.Internal as LBS
 import Control.Concurrent (forkIO)
 
+sendTestMail :: Text -> Handler ()
+sendTestMail email = do
+  do
+    appName <- runDB $ configAppName
+    sendMail' email
+      ("[" ++ appName ++ "] Test-Mail")
+      (textPartContent)
+      (htmlPartContent)
+  where
+    textPartContent = encodeUtf8 [stext| Test-Mail |]
+    htmlPartContent = renderHtml [shamlet| Test-Mail |]
+
 sendPasswordNewAccountMail :: User -> Text -> Handler ()
 sendPasswordNewAccountMail user passwd = do
   do

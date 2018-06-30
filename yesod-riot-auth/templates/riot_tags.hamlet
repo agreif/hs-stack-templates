@@ -230,6 +230,9 @@
       <li>
         <a href="#">
           <i1-8n>MsgGlobalConfigurations
+      <li>
+        <a href="#">
+          <i1-8n>MsgGlobalTestMail
     <ul class="uk-switcher uk-margin">
       <li>
         <!-- user list -->
@@ -285,6 +288,10 @@
               <td .uk-width-small>
                 <button .uk-float-right .uk-button .uk-button-link title="{localizeMsg('MsgGlobalEditConfig')}" uk-tooltip onclick="{editConfig}">
                   <span uk-icon="icon: pencil">
+      <li>
+        <!-- test mail -->
+        <button .uk-button .uk-button-primary onclick="{sendTestMail}">
+          <i1-8n>MsgGlobalSendTestMail
   <script>
     \ localizeMsg(m) {
     \    return parent.tag.localizeMsg(m)
@@ -304,4 +311,7 @@
     \ editConfig(event) {
     \   parent.tag.showModalForm(event.item.editFormUrl)
     \   event.currentTarget.blur()
+    \ }
+    \ sendTestMail(event) {
+    \   parent.tag.showModalForm("@{MyprojectR AddTestmailFormR}")
     \ }
