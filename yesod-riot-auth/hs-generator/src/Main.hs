@@ -13,9 +13,11 @@ import qualified System.IO.Strict as SIOS
 import qualified System.IO.Error as SIOE
 import qualified Options.Applicative as O
 import Data.Semigroup ((<>))
+import qualified GHC.IO.Encoding as E
 
 main :: IO ()
 main = do
+  E.setLocaleEncoding E.utf8
   templFile <- O.execParser argInfo
   template <- loadTemplate templFile
   putStrLn . Text.unpack $ G.easyRender context template
