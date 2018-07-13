@@ -24,7 +24,7 @@ postAddTestmailR = do
     FormSuccess vAddTestmail -> do
       urlRenderer <- getUrlRender
       sendTestMail $ vAddTestmailEmail vAddTestmail
-      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
+      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
@@ -42,8 +42,8 @@ getAddTestmailFormR = do
   (formWidget, _) <- generateFormPost $ vAddTestmailForm Nothing
   formLayout $ do
     toWidget [whamlet|
-      <h1>Add Test Mail
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ AddTestmailR}>
+      <h1>_{MsgGlobalSendTestMail}
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ AddTestmailR}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -82,6 +82,7 @@ data MsgAddTestmail =
 instance RenderMessage App MsgAddTestmail where
   renderMessage _ []        = renderAddTestmailGerman
   renderMessage _ ("de":_) = renderAddTestmailGerman
+  renderMessage _ ("en":_) = renderAddTestmailEnglish
   renderMessage _ ("en-US":_) = renderAddTestmailEnglish
   renderMessage m (_   :ls) = renderMessage m ls
 

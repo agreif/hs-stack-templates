@@ -21,6 +21,7 @@ getInitDbR adminEmail = do
         _ <- insert $ User { userIdent = "admin"
                            , userPassword = (Just adminPasswdHash)
                            , userEmail = adminEmail
+                           , userIsAdmin = True
                            , userVersion = 1
                            , userCreatedAt = curTime
                            , userCreatedBy = dbSystemUser

@@ -13,14 +13,14 @@ import qualified Database.Esqueleto as E
 import qualified Data.Text.Encoding as TE
 import qualified Data.CaseInsensitive as CI
 
-getAdminR :: Handler Html
-getAdminR = defaultLayout $ do
+getAdminHomeR :: Handler Html
+getAdminHomeR = defaultLayout $ do
   toWidget [whamlet|
                    <body-tag>
                    <script>
                      \ riot.compile(function() {
                      \   bodyTag = riot.mount('body-tag')[0]
-                     \   bodyTag.refreshData("@{MyprojectR $ AdminPageDataJsonR}")
+                     \   bodyTag.refreshData("@{AdminR $ AdminPageDataJsonR}")
                      \ })
                    |]
 
@@ -30,7 +30,7 @@ getAdminPageDataJsonR = do
   req <- getRequest
   appName <- runDB $ configAppName
   urlRenderer <- getUrlRender
-  mainNavItems <- mainNavData MainNavAdmin
+  mainNavItems <- mainNavData user MainNavAdmin
   jDataUsers <- userListJDataEnts
   jDataConfigs <- configListJDataEnts
   let pages =
@@ -43,6 +43,9 @@ getAdminPageDataJsonR = do
         }
   msgHome <- localizedMsg MsgGlobalHome
   msgAdmin <- localizedMsg MsgGlobalAdmin
+  currentLanguage <- getLanguage
+  translation <- getTranslation
+  let currentPageDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR
   returnJson JData
     { jDataAppName = appName
     , jDataUserIdent = userIdent user
@@ -50,7 +53,7 @@ getAdminPageDataJsonR = do
     , jDataSubNavItems = []
     , jDataPages = pages
     , jDataHistoryState = Just JDataHistoryState
-      { jDataHistoryStateUrl = urlRenderer $ MyprojectR AdminR
+      { jDataHistoryStateUrl = urlRenderer $ AdminR AdminHomeR
       , jDataHistoryStateTitle = msgAdmin
       }
     , jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName
@@ -60,8 +63,12 @@ getAdminPageDataJsonR = do
                                , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomePageDataJsonR }
                              , JDataBreadcrumbItem
                                { jDataBreadcrumbItemLabel = msgAdmin
-                               , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
+                               , jDataBreadcrumbItemDataUrl = currentPageDataJsonUrl }
                              ]
+    , jDataCurrentLanguage = currentLanguage
+    , jDataTranslation = translation
+    , jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentPageDataJsonUrl
+    , jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentPageDataJsonUrl
     }
 
 userListJDataEnts :: Handler [JDataUser]
@@ -71,8 +78,8 @@ userListJDataEnts = do
   let jUserList = map (\(userEnt@(Entity userId _)) ->
                            JDataUser
                            { jDataUserEnt = userEnt
-                           , jDataUserEditFormUrl = urlRenderer $ MyprojectR $ EditUserFormR userId
-                           , jDataUserDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteUserFormR userId
+                           , jDataUserEditFormUrl = urlRenderer $ AdminR $ EditUserFormR userId
+                           , jDataUserDeleteFormUrl = urlRenderer $ AdminR $ DeleteUserFormR userId
                            }
                         ) userTuples
   return jUserList
@@ -91,7 +98,7 @@ configListJDataEnts = do
   let jConfigList = map (\(configEnt@(Entity configId _)) ->
                            JDataConfig
                            { jDataConfigEnt = configEnt
-                           , jDataConfigEditFormUrl = urlRenderer $ MyprojectR $ EditConfigFormR configId
+                           , jDataConfigEditFormUrl = urlRenderer $ AdminR $ EditConfigFormR configId
                            }
                         ) configTuples
   return jConfigList

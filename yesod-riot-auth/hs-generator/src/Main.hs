@@ -103,7 +103,11 @@ data BModel = BModel
   , bModelAddFormHasDefaultModel :: Bool
   , bModelEditPostLoadsModel :: Bool
   , bModelDeletePostLoadsModel :: Bool
+  , bModelAddFormTitleMsg :: Maybe Text
+  , bModelEditFormTitleMsg :: Maybe Text
+  , bModelDeleteFormTitleMsg :: Maybe Text
   , bModelParentHsType :: Maybe Text
+  , bModelFormRouteHsType :: Text
   }
 
 instance ToJSON BModel where
@@ -116,10 +120,12 @@ instance ToJSON BModel where
     , "dbHasHistoryTable" .= bModelDbHasHistoryTable o
     , "dbTableName" .= (TC.toQuietSnake $ TC.fromAny (Text.unpack $ bModelName o))
     , "dbHistoryTableName" .= ((TC.toQuietSnake $ TC.fromAny (Text.unpack $ bModelName o)) ++ "_history")
+    , "dbFields" .= getDbFields o
     , "dbUpdatableFields" .= (filter (\field -> case bFieldDb field of
-                                                Just BFieldDb {bFieldDbCanUpdate = canUpdate} -> canUpdate
-                                                Nothing -> False
-                                   ) $ bModelFields o)
+                                                  Just BFieldDb {bFieldDbCanUpdate = canUpdate} -> canUpdate && (M.isJust $ bFieldEditView field)
+                                                  Nothing -> False
+                                     ) $ bModelFields o)
+    , "hsAddAssignmentLines" .= getAddAssignmentLines o
     , "hsDerivings" .= bModelHsDerivings o
     , "fields" .= bModelFields o
     , "addViewFields" .= (filter (\field -> M.isJust $ bFieldAddView field) $ bModelFields o)
@@ -134,12 +140,40 @@ instance ToJSON BModel where
     , "addFormHasDefaultModel" .= bModelAddFormHasDefaultModel o
     , "editPostLoadsModel" .= bModelEditPostLoadsModel o
     , "deletePostLoadsModel" .= bModelDeletePostLoadsModel o
+    , "addFormTitleMsg" .= bModelAddFormTitleMsg o
+    , "editFormTitleMsg" .= bModelEditFormTitleMsg o
+    , "deleteFormTitleMsg" .= bModelDeleteFormTitleMsg o
     , "parentHsType" .= bModelParentHsType o
-    , "parentHsParamId" .= (case bModelParentHsType o of
-                              Just parentHsType -> lowerFirst $ Text.append parentHsType "Id"
-                              _ -> "")
+    , "formRouteHsType" .= bModelFormRouteHsType o
+    , "parentHsParamId" .= getParentHsParamId o
     , "formHasProgressBar" .= (any (\field -> bFieldHsType field == "FileInfo") $ bModelFields o)
     ]
+
+getDbFields :: BModel -> [BField]
+getDbFields m = filter (\field -> M.isJust $ bFieldDb field) $ bModelFields m
+
+getAddAssignmentLines :: BModel -> [Text]
+getAddAssignmentLines m =
+  (if M.isJust $ bModelParentHsType m then [ Text.concat [bModelName m, M.fromJust $ bModelParentHsType m, "Id", " = ", getParentHsParamId m]] else [])
+  ++
+  ( map (\f -> Text.concat [bModelName m, upperFirst $ bFieldName f, " = ",
+                            case bFieldAddView f of
+                              Just _ -> Text.concat ["vAdd", upperFirst $ bModelName m, upperFirst $ bFieldName f, " vAdd", upperFirst $ bModelName m]
+                              _ -> "Nothing"
+                           ]
+        )
+    $ filter (\f -> case bModelParentHsType m of
+                 Just hsType -> Text.concat [hsType, "Id"] /= bFieldHsType f
+                 _ -> True
+             )
+    $ getDbFields m
+  )
+
+
+getParentHsParamId :: BModel -> Text
+getParentHsParamId m = case bModelParentHsType m of
+                         Just parentHsType -> lowerFirst $ Text.append parentHsType "Id"
+                         _ -> ""
 
 
 data BTranslation = BTranslation
@@ -264,11 +298,15 @@ context =
         , bModelDeleteFormEntityLoader = Nothing
         , bModelAddFormDataJsonUrl = Nothing
         , bModelEditFormDataJsonUrl = Nothing
-        , bModelDeleteFormDataJsonUrl = Just "MyprojectR AdminPageDataJsonR"
+        , bModelDeleteFormDataJsonUrl = Just "AdminR AdminPageDataJsonR"
         , bModelAddFormHasDefaultModel = False
         , bModelEditPostLoadsModel = False
         , bModelDeletePostLoadsModel = False
+        , bModelAddFormTitleMsg = Just "MsgGlobalAddUser"
+        , bModelEditFormTitleMsg = Just "MsgGlobalEditUser"
+        , bModelDeleteFormTitleMsg = Just "MsgGlobalDeleteUser"
         , bModelParentHsType = Nothing
+        , bModelFormRouteHsType = "AdminR"
         , bModelFields =
             [ BField
               { bFieldName = "ident"
@@ -371,9 +409,49 @@ context =
                   }
               }
             , BField
+              { bFieldName = "isAdmin"
+              , bFieldLabelDe = Just "Ist Admin?"
+              , bFieldLabelEn = Just "Is admin?"
+              , bFieldHsType = "Bool"
+              , bFieldDb =
+                  Just $
+                  BFieldDb
+                  { bFieldDbIsNullable = False
+                  , bFieldDbDefault = Nothing
+                  , bFieldDbCanUpdate = True
+                  }
+              , bFieldFormFieldType = Just "checkBoxField"
+              , bFieldAddView =
+                  Just $
+                  BFieldAddView
+                  { bFieldAddViewIsRequired = True
+                  , bFieldAddViewIsDisabled = False
+                  , bFieldAddViewAttrs =
+                      [ BFieldAttr
+                        { bFieldAttrKey = "class"
+                        , bFieldAttrValue = "uk-checkbox"
+                        }
+                      ]
+                  , bFieldAddViewDefault = Nothing
+                  }
+              , bFieldEditView =
+                  Just $
+                  BFieldEditView
+                  { bFieldEditViewIsRequired = True
+                  , bFieldEditViewIsDisabled = False
+                  , bFieldEditViewAttrs =
+                      [ BFieldAttr
+                        { bFieldAttrKey = "class"
+                        , bFieldAttrValue = "uk-checkbox"
+                        }
+                      ]
+                  , bFieldEditViewDefault = Nothing
+                  }
+              }
+            , BField
               { bFieldName = "isResetPassword"
-              , bFieldLabelDe = Just "Neues Passwort generieren?"
-              , bFieldLabelEn = Just "Generate new password?"
+              , bFieldLabelDe = Just "Neues Passwort generieren? (Wird per Email zugesendet)"
+              , bFieldLabelEn = Just "Generate new password? (Will be sent by email)"
               , bFieldHsType = "Bool"
               , bFieldDb = Nothing
               , bFieldFormFieldType = Just "checkBoxField"
@@ -405,12 +483,16 @@ context =
         , bModelEditFormEntityLoader = Nothing
         , bModelDeleteFormEntityLoader = Nothing
         , bModelAddFormDataJsonUrl = Nothing
-        , bModelEditFormDataJsonUrl = Just "MyprojectR AdminPageDataJsonR"
+        , bModelEditFormDataJsonUrl = Just "AdminR AdminPageDataJsonR"
         , bModelDeleteFormDataJsonUrl = Nothing
         , bModelAddFormHasDefaultModel = False
         , bModelEditPostLoadsModel = False
         , bModelDeletePostLoadsModel = False
+        , bModelAddFormTitleMsg = Nothing
+        , bModelEditFormTitleMsg = Just "MsgGlobalEditConfig"
+        , bModelDeleteFormTitleMsg = Nothing
         , bModelParentHsType = Nothing
+        , bModelFormRouteHsType = "AdminR"
         , bModelFields =
             [ BField
               { bFieldName = "code"
@@ -620,7 +702,11 @@ context =
         , bModelAddFormHasDefaultModel = False
         , bModelEditPostLoadsModel = False
         , bModelDeletePostLoadsModel = False
+        , bModelAddFormTitleMsg = Just "MsgGlobalSendTestMail"
+        , bModelEditFormTitleMsg = Nothing
+        , bModelDeleteFormTitleMsg = Nothing
         , bModelParentHsType = Nothing
+        , bModelFormRouteHsType = "AdminR"
         , bModelFields =
             [ BField
               { bFieldName = "email"
@@ -652,7 +738,10 @@ context =
     [ BTranslation { bTranslationKey = "home", bTranslationDe = "Home", bTranslationEn = "Home" }
     , BTranslation { bTranslationKey = "admin", bTranslationDe = "Admin", bTranslationEn = "Admin" }
     , BTranslation { bTranslationKey = "logout", bTranslationDe = "Logout", bTranslationEn = "Logout" }
-    , BTranslation { bTranslationKey = "myProfile", bTranslationDe = "Mein profil", bTranslationEn = "My Profile" }
+    , BTranslation { bTranslationKey = "language", bTranslationDe = "Sprache", bTranslationEn = "Language" }
+    , BTranslation { bTranslationKey = "myProfile", bTranslationDe = "Mein Profil", bTranslationEn = "My Profile" }
+    , BTranslation { bTranslationKey = "editMyProfile", bTranslationDe = "Mein Profil bearbeiten", bTranslationEn = "Edit my profile" }
+    , BTranslation { bTranslationKey = "reallyDelete", bTranslationDe = "Möchten sie wirklich löschen?", bTranslationEn = "Are you sure to delete?" }
     , BTranslation { bTranslationKey = "users", bTranslationDe = "Nutzer", bTranslationEn = "Users" }
     , BTranslation { bTranslationKey = "addUser", bTranslationDe = "Nutzer hinzufügen", bTranslationEn = "Add user" }
     , BTranslation { bTranslationKey = "editUser", bTranslationDe = "Nutzer bearbeiten", bTranslationEn = "Edit user" }
@@ -661,5 +750,6 @@ context =
     , BTranslation { bTranslationKey = "editConfig", bTranslationDe = "Konfiguration bearbeiten", bTranslationEn = "Edit config" }
     , BTranslation { bTranslationKey = "testMail", bTranslationDe = "Test-Mail", bTranslationEn = "Test-Mail" }
     , BTranslation { bTranslationKey = "sendTestMail", bTranslationDe = "Test-Mail senden...", bTranslationEn = "Send Test-Mail..." }
+    , BTranslation { bTranslationKey = "cancel", bTranslationDe = "Abbrechen", bTranslationEn = "Cancel" }
     ]
   }

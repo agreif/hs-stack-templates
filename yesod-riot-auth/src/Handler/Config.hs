@@ -34,8 +34,8 @@ getEditConfigFormR configId = do
   (formWidget, _) <- generateFormPost $ vEditConfigForm $ Just config
   formLayout $ do
     toWidget [whamlet|
-      <h1>Edit Config
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ EditConfigR configId}>
+      <h1>_{MsgGlobalEditConfig}
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ EditConfigR configId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -63,8 +63,8 @@ postEditConfigR configId = do
                                               , ConfigVersion ==. vEditConfigVersion vEditConfig
                                               ] persistFields
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
-        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
+        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR }
+        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
@@ -189,6 +189,7 @@ data MsgEditConfig =
 instance RenderMessage App MsgEditConfig where
   renderMessage _ []        = renderEditConfigGerman
   renderMessage _ ("de":_) = renderEditConfigGerman
+  renderMessage _ ("en":_) = renderEditConfigEnglish
   renderMessage _ ("en-US":_) = renderEditConfigEnglish
   renderMessage m (_   :ls) = renderMessage m ls
 

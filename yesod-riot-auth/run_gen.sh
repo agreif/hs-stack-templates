@@ -70,7 +70,6 @@ fi
 exec_ginger debug_json.gtmpl context.json
 exec_ginger models.gtmpl config/models_migrate '-- gen models'
 exec_ginger postgresql_triggers.gtmpl postgresql_setup.sql '-- gen triggers'
-exec_ginger riot_i18n_dict.gtmpl templates/riot_tags.hamlet 'gen i18n dict'
 exec_ginger handler_common_i18n.gtmpl src/Handler/Common.hs '-- gen i18n global'
 
 f=src/Handler/User.hs
