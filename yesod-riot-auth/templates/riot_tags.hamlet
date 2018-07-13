@@ -82,7 +82,7 @@
     \     };
     \     xhr.send(formData);
     \   });
-    \   modal.addFooterBtn('Cancel', 'tingle-btn tingle-btn--default tingle-btn--pull-right', function() {
+    \   modal.addFooterBtn(tag.data.translation.msgGlobalCancel, 'tingle-btn tingle-btn--default tingle-btn--pull-right', function() {
     \     modal.close();
     \     modal.destroy();
     \   });
@@ -120,56 +120,6 @@
     \       alert("error" + jqXHR.status + " ------ " + textStatus)
     \   })
     \ }
-    \ i18n.setLanguage(navigator.languages[0])
-    \ tag.localizeMsg = function(message) {
-    \   return i18n.localise(message)
-    \ }
-    \ // gen i18n dict - start
-    \ i18n.dictionary({
-    \  "de": {
-    \    "MsgGlobalHome": "Home",
-    \    "MsgGlobalAdmin": "Admin",
-    \    "MsgGlobalLogout": "Logout",
-    \    "MsgGlobalMyProfile": "Mein profil",
-    \    "MsgGlobalUsers": "Nutzer",
-    \    "MsgGlobalAddUser": "Nutzer hinzufügen",
-    \    "MsgGlobalEditUser": "Nutzer bearbeiten",
-    \    "MsgGlobalDeleteUser": "Nutzer löschen",
-    \    "MsgGlobalConfigurations": "Konfigurationen",
-    \    "MsgGlobalEditConfig": "Konfiguration bearbeiten",
-    \    "MsgUserIdent": "Login",
-    \    "MsgUserPassword": "Passwort",
-    \    "MsgUserEmail": "Email",
-    \    "MsgUserIsResetPassword": "Neues Passwort generieren?",
-    \    "MsgConfigCode": "Code",
-    \    "MsgConfigStringValue": "String-Wert",
-    \    "MsgConfigIntValue": "Integer-Wert",
-    \    "MsgConfigDoubleValue": "Double-Wert",
-    \    "MsgConfigBoolValue": "Boolean-Wert",
-    \  },
-    \  "en-US": {
-    \    "MsgGlobalHome": "Home",
-    \    "MsgGlobalAdmin": "Admin",
-    \    "MsgGlobalLogout": "Logout",
-    \    "MsgGlobalMyProfile": "My Profile",
-    \    "MsgGlobalUsers": "Users",
-    \    "MsgGlobalAddUser": "Add user",
-    \    "MsgGlobalEditUser": "Edit user",
-    \    "MsgGlobalDeleteUser": "Delete user",
-    \    "MsgGlobalConfigurations": "Configurations",
-    \    "MsgGlobalEditConfig": "Edit config",
-    \    "MsgUserIdent": "Login",
-    \    "MsgUserPassword": "Password",
-    \    "MsgUserEmail": "Email",
-    \    "MsgUserIsResetPassword": "Generate new password?",
-    \    "MsgConfigCode": "Code",
-    \    "MsgConfigStringValue": "String-Value",
-    \    "MsgConfigIntValue": "Integer-Value",
-    \    "MsgConfigDoubleValue": "Double-Value",
-    \    "MsgConfigBoolValue": "Boolean-Value",
-    \   }
-    \ })
-    \ // gen i18n dict - end
 
 <nav-tag>
   <nav .uk-navbar-container .uk-margin-small-top uk-navbar>
@@ -184,12 +134,21 @@
     <div .uk-navbar-right>
       <ul .uk-navbar-nav>
         <li>
+          <a href="#">
+            {parent.data.translation.msgGlobalLanguage}
+          <div .uk-navbar-dropdown>
+            <ul .uk-nav .uk-navbar-dropdown-nav>
+              <li class="{uk-active: parent.data.currentLanguage == 'DE'}">
+                <a onclick="{changeLanguageDe}">DE
+              <li class="{uk-active: parent.data.currentLanguage == 'EN'}">
+                <a onclick="{changeLanguageEn}">EN
+        <li>
           <a onclick="{editMyProfile}">
-            <i1-8n>MsgGlobalMyProfile
+            {parent.data.translation.msgGlobalMyProfile}
         <li>
           <a href=@{AuthR LogoutR}>
             <div>
-              <i1-8n>MsgGlobalLogout
+              {parent.data.translation.msgGlobalLogout}
               <div .uk-navbar-subtitle>
                  {parent.data.userIdent}
   <div if="{parent.data.subNavItems.length != 0}" uk-grid>
@@ -214,6 +173,14 @@
     \   dataJsonUrl = window.history.state ? window.history.state.dataJsonUrl : "@{MyprojectR HomePageDataJsonR}"
     \   parent.tag.showModalForm("@{MyprojectR EditMyprofileFormR}", dataJsonUrl)
     \ }
+    \ changeLanguageDe(event) {
+    \   parent.tag.postRequest(parent.tag.data.languageDeUrl)
+    \   event.currentTarget.blur()
+    \ }
+    \ changeLanguageEn(event) {
+    \   parent.tag.postRequest(parent.tag.data.languageEnUrl)
+    \   event.currentTarget.blur()
+    \ }
 
 <home-page-tag>
   <div if="{parent.data.pages.home}">
@@ -222,29 +189,31 @@
 <admin-page-tag>
   <div if="{parent.data.pages.admin}">
     <h1>
-      <i1-8n>MsgGlobalAdmin
+      {parent.data.translation.msgGlobalAdmin}
     <ul uk-tab>
       <li>
         <a href="#">
-          <i1-8n>MsgGlobalUsers
+          {parent.data.translation.msgGlobalUsers}
       <li>
         <a href="#">
-          <i1-8n>MsgGlobalConfigurations
+          {parent.data.translation.msgGlobalConfigurations}
       <li>
         <a href="#">
-          <i1-8n>MsgGlobalTestMail
-    <ul class="uk-switcher uk-margin">
+          {parent.data.translation.msgGlobalTestMail}
+    <ul .uk-switcher .uk-margin>
       <li>
         <!-- user list -->
         <table .uk-table .uk-table-small .uk-table-divider .uk-table-hover .uk-background-muted>
           <thead>
             <tr>
               <th>
-                <i1-8n>MsgUserIdent
+                {parent.data.translation.msgUserIdent}
               <th>
-                <i1-8n>MsgUserEmail
+                {parent.data.translation.msgUserEmail}
+              <th>
+                {parent.data.translation.msgUserIsAdmin}
               <th .uk-align-right>
-                <button .modal-form-link .uk-button .uk-button-link title="{localizeMsg('MsgGlobalAddUser')}" uk-tooltip onclick="{addUser}">
+                <button .modal-form-link .uk-button .uk-button-link title="{parent.data.translation.msgGlobalAddUser}" uk-tooltip onclick="{addUser}">
                   <span uk-icon="icon: plus">
           <tbody>
             <tr each="{parent.data.pages.admin.users}">
@@ -252,10 +221,13 @@
                 <a onclick="{editUser}" .uk-link-reset>{entity.ident}
               <td .uk-table-link>
                 <a onclick="{editUser}" .uk-link-reset>{entity.email}
+              <td .uk-table-link>
+                <a onclick="{editUser}" .uk-link-reset>
+                  <span uk-icon="icon: check" if="{entity.isAdmin}">
               <td .uk-width-small>
-                <button .uk-float-right .uk-button .uk-button-link title="{localizeMsg('MsgGlobalDeleteUser')}" uk-tooltip onclick="{deleteUser}">
+                <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgGlobalDeleteUser}" uk-tooltip onclick="{deleteUser}">
                   <span uk-icon="icon: trash">
-                <button .uk-float-right .uk-button .uk-button-link title="{localizeMsg('MsgGlobalEditUser')}" uk-tooltip onclick="{editUser}">
+                <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgGlobalEditUser}" uk-tooltip onclick="{editUser}">
                   <span uk-icon="icon: pencil">
       <li>
         <!-- config list -->
@@ -263,41 +235,42 @@
           <thead>
             <tr>
               <th>
-                <i1-8n>MsgConfigCode
+                {parent.data.translation.msgConfigCode}
               <th>
-                <i1-8n>MsgConfigStringValue
+                {parent.data.translation.msgConfigStringValue}
               <th>
-                <i1-8n>MsgConfigIntValue
+                {parent.data.translation.msgConfigIntValue}
               <th>
-                <i1-8n>MsgConfigDoubleValue
+                {parent.data.translation.msgConfigDoubleValue}
               <th>
-                <i1-8n>MsgConfigBoolValue
+                {parent.data.translation.msgConfigBoolValue}
               <th .uk-align-right>
           <tbody>
             <tr each="{parent.data.pages.admin.configs}">
               <td .uk-table-link>
-                <a onclick="{editConfig}" .uk-link-reset>{entity.code}
+                <a onclick="{editConfig}" .uk-link-reset>
+                  {entity.code}
               <td .uk-table-link>
-                <a onclick="{editConfig}" .uk-link-reset>{entity.stringValue}
+                <a onclick="{editConfig}" .uk-link-reset>
+                  {entity.stringValue}
               <td .uk-table-link>
-                <a onclick="{editConfig}" .uk-link-reset>{entity.intValue}
+                <a onclick="{editConfig}" .uk-link-reset>
+                  {entity.intValue}
               <td .uk-table-link>
-                <a onclick="{editConfig}" .uk-link-reset>{formatDouble(entity.doubleValue)}
+                <a onclick="{editConfig}" .uk-link-reset>
+                  {formatDouble(entity.doubleValue, parent.parent.data.currentLanguage)}
               <td>
-                <span uk-icon="icon: check" if="{ entity.boolValue }">
+                <span uk-icon="icon: check" if="{entity.boolValue}">
               <td .uk-width-small>
-                <button .uk-float-right .uk-button .uk-button-link title="{localizeMsg('MsgGlobalEditConfig')}" uk-tooltip onclick="{editConfig}">
+                <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgGlobalEditConfig}" uk-tooltip onclick="{editConfig}">
                   <span uk-icon="icon: pencil">
       <li>
         <!-- test mail -->
         <button .uk-button .uk-button-primary onclick="{sendTestMail}">
-          <i1-8n>MsgGlobalSendTestMail
+          {parent.data.translation.msgGlobalSendTestMail}
   <script>
-    \ localizeMsg(m) {
-    \    return parent.tag.localizeMsg(m)
-    \ }
     \ addUser(event) {
-    \   parent.tag.showModalForm("@{MyprojectR AddUserFormR}")
+    \   parent.tag.showModalForm("@{AdminR AddUserFormR}")
     \   event.currentTarget.blur()
     \ }
     \ editUser(event) {
@@ -313,5 +286,5 @@
     \   event.currentTarget.blur()
     \ }
     \ sendTestMail(event) {
-    \   parent.tag.showModalForm("@{MyprojectR AddTestmailFormR}")
+    \   parent.tag.showModalForm("@{AdminR AddTestmailFormR}")
     \ }

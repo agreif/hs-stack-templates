@@ -60,7 +60,7 @@ getEditMyprofileFormR = do
   (formWidget, _) <- generateFormPost $ vEditMyprofileForm $ Just myProfile
   formLayout $ do
     toWidget [whamlet|
-      <h1>Mein Profil
+      <h1>_{MsgGlobalEditMyProfile}
       <form #modal-form .uk-form-horizontal method=post action=@{MyprojectR $ EditMyprofileR}>
         <div #modal-form-widget>
           ^{formWidget}

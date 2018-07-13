@@ -105,14 +105,29 @@ Ihr #{appName} Team
 sendMail' :: Text -> Text -> LBS.ByteString -> LBS.ByteString -> Handler ()
 sendMail' to subject textPartContent htmlPartContent = do
   from <- runDB $ configEmailFrom
-  _ <- liftIO $ forkIO $ renderSendMail (emptyMail $ Address Nothing from)
-    { mailTo = [Address Nothing to]
-    , mailHeaders =
-         [ ("Subject", subject),
-           ("Reply-To", from)
-         ]
-    , mailParts = [[textPart', htmlPart']] }
+  let mail = Mail
+        { mailFrom = Address Nothing from
+        , mailTo = [Address Nothing to]
+        , mailCc = []
+        , mailBcc = []
+        , mailHeaders =
+            [ ("Subject", subject),
+              ("Reply-To", from)
+            ]
+        , mailParts = [[textPart', htmlPart']]
+        }
+
+  _ <- liftIO $ forkIO $ renderSendMailCustom "/run/wrappers/bin/sendmail" ["-t"] mail
   return ()
+
+  -- _ <- liftIO $ forkIO $ renderSendMail (emptyMail $ Address Nothing from)
+  --   { mailTo = [Address Nothing to]
+  --   , mailHeaders =
+  --        [ ("Subject", subject),
+  --          ("Reply-To", from)
+  --        ]
+  --   , mailParts = [[textPart', htmlPart']] }
+  -- return ()
   where
     textPart' = Part { partType = "text/plain; charset=utf-8"
                      , partEncoding = None

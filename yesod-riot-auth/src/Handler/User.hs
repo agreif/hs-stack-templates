@@ -22,6 +22,7 @@ import Database.Persist.Sql (updateWhereCount)
 data VAddUser = VAddUser
   { vAddUserIdent :: Text
   , vAddUserEmail :: Text
+  , vAddUserIsAdmin :: Bool
   }
 -- gen data add - end
 
@@ -31,8 +32,8 @@ getAddUserFormR = do
   (formWidget, _) <- generateFormPost $ vAddUserForm Nothing
   formLayout $ do
     toWidget [whamlet|
-      <h1>Add User
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ AddUserR}>
+      <h1>_{MsgGlobalAddUser}
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ AddUserR}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -47,10 +48,11 @@ postAddUserR = do
       Entity _ authUser <- requireAuth
       (passwd, passwdHash) <- liftIO $ generatePassword 32
       urlRenderer <- getUrlRender
-      let user = User {
-            userIdent = vAddUserIdent vAddUser
+      let user = User
+            { userIdent = vAddUserIdent vAddUser
             , userPassword = (Just passwdHash)
             , userEmail = vAddUserEmail vAddUser
+            , userIsAdmin = vAddUserIsAdmin vAddUser
             , userVersion = 1
             , userCreatedAt = curTime
             , userCreatedBy = userIdent authUser
@@ -59,7 +61,7 @@ postAddUserR = do
             }
       _ <- runDB $ insert user
       sendPasswordNewAccountMail user passwd
-      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
+      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
@@ -74,7 +76,10 @@ vAddUserForm maybeUser extra = do
   (emailResult, emailView) <- mreq textField
     emailFs
     (userEmail <$> maybeUser)
-  let vAddUserResult = VAddUser <$> identResult <*> emailResult
+  (isAdminResult, isAdminView) <- mreq checkBoxField
+    isAdminFs
+    (userIsAdmin <$> maybeUser)
+  let vAddUserResult = VAddUser <$> identResult <*> emailResult <*> isAdminResult
   let formWidget = toWidget [whamlet|
     #{extra}
     <div .uk-margin-small :not $ null $ fvErrors identView:.uk-form-danger>
@@ -88,6 +93,12 @@ vAddUserForm maybeUser extra = do
       <div .uk-form-controls>
         ^{fvInput emailView}
         $maybe err <- fvErrors emailView
+          &nbsp;#{err}
+    <div .uk-margin-small :not $ null $ fvErrors isAdminView:.uk-form-danger>
+      <label .uk-form-label :not $ null $ fvErrors isAdminView:.uk-text-danger for=#{fvId isAdminView}>#{fvLabel isAdminView}
+      <div .uk-form-controls>
+        ^{fvInput isAdminView}
+        $maybe err <- fvErrors isAdminView
           &nbsp;#{err}
     |]
   return (vAddUserResult, formWidget)
@@ -108,25 +119,37 @@ vAddUserForm maybeUser extra = do
       , fsName = Just "email"
       , fsAttrs = [ ("class","uk-form-width-large uk-input uk-form-small") ]
       }
+    isAdminFs :: FieldSettings App
+    isAdminFs = FieldSettings
+      { fsLabel = SomeMessage MsgAddUserIsAdmin
+      , fsTooltip = Nothing
+      , fsId = Just "isAdmin"
+      , fsName = Just "isAdmin"
+      , fsAttrs = [ ("class","uk-checkbox") ]
+      }
 
 data MsgAddUser =
   MsgAddUserIdent
   | MsgAddUserEmail
+  | MsgAddUserIsAdmin
 
 instance RenderMessage App MsgAddUser where
   renderMessage _ []        = renderAddUserGerman
   renderMessage _ ("de":_) = renderAddUserGerman
+  renderMessage _ ("en":_) = renderAddUserEnglish
   renderMessage _ ("en-US":_) = renderAddUserEnglish
   renderMessage m (_   :ls) = renderMessage m ls
 
 renderAddUserGerman :: MsgAddUser -> Text
 renderAddUserGerman MsgAddUserIdent = "Login"
 renderAddUserGerman MsgAddUserEmail = "Email"
+renderAddUserGerman MsgAddUserIsAdmin = "Ist Admin?"
 
 
 renderAddUserEnglish :: MsgAddUser -> Text
 renderAddUserEnglish MsgAddUserIdent = "Login"
 renderAddUserEnglish MsgAddUserEmail = "Email"
+renderAddUserEnglish MsgAddUserIsAdmin = "Is admin?"
 
 -- gen add form - end
 
@@ -138,6 +161,7 @@ renderAddUserEnglish MsgAddUserEmail = "Email"
 data VEditUser = VEditUser
   { vEditUserIdent :: Text
   , vEditUserEmail :: Text
+  , vEditUserIsAdmin :: Bool
   , vEditUserIsResetPassword :: Bool
   , vEditUserVersion :: Int
   }
@@ -150,8 +174,8 @@ getEditUserFormR userId = do
   (formWidget, _) <- generateFormPost $ vEditUserForm $ Just user
   formLayout $ do
     toWidget [whamlet|
-      <h1>Edit User
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ EditUserR userId}>
+      <h1>_{MsgGlobalEditUser}
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ EditUserR userId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -166,9 +190,10 @@ postEditUserR userId = do
       Entity _ authUser <- requireAuth
       (passwd, passwdHash) <- liftIO $ generatePassword 32
       urlRenderer <- getUrlRender
-      let persistFields = [
-            UserIdent =. vEditUserIdent vEditUser
+      let persistFields =
+            [ UserIdent =. vEditUserIdent vEditUser
             , UserEmail =. vEditUserEmail vEditUser
+            , UserIsAdmin =. vEditUserIsAdmin vEditUser
             , UserVersion =. vEditUserVersion vEditUser + 1
             , UserUpdatedAt =. curTime
             , UserUpdatedBy =. userIdent authUser
@@ -185,8 +210,8 @@ postEditUserR userId = do
         user' <- runDB $ get404 userId
         sendPasswordResetMail user' passwd
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
-        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
+        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR }
+        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
@@ -201,13 +226,16 @@ vEditUserForm maybeUser extra = do
   (emailResult, emailView) <- mreq textField
     emailFs
     (userEmail <$> maybeUser)
+  (isAdminResult, isAdminView) <- mreq checkBoxField
+    isAdminFs
+    (userIsAdmin <$> maybeUser)
   (isResetPasswordResult, isResetPasswordView) <- mreq checkBoxField
     isResetPasswordFs
     (Nothing)
   (versionResult, versionView) <- mreq hiddenField
     versionFs
     (userVersion <$> maybeUser)
-  let vEditUserResult = VEditUser <$> identResult <*> emailResult <*> isResetPasswordResult <*> versionResult
+  let vEditUserResult = VEditUser <$> identResult <*> emailResult <*> isAdminResult <*> isResetPasswordResult <*> versionResult
   let formWidget = toWidget [whamlet|
     #{extra}
     ^{fvInput versionView}
@@ -222,6 +250,12 @@ vEditUserForm maybeUser extra = do
       <div .uk-form-controls>
         ^{fvInput emailView}
         $maybe err <- fvErrors emailView
+          &nbsp;#{err}
+    <div .uk-margin-small :not $ null $ fvErrors isAdminView:.uk-form-danger>
+      <label .uk-form-label :not $ null $ fvErrors isAdminView:.uk-text-danger for=#{fvId isAdminView}>#{fvLabel isAdminView}
+      <div .uk-form-controls>
+        ^{fvInput isAdminView}
+        $maybe err <- fvErrors isAdminView
           &nbsp;#{err}
     <div .uk-margin-small :not $ null $ fvErrors isResetPasswordView:.uk-form-danger>
       <label .uk-form-label :not $ null $ fvErrors isResetPasswordView:.uk-text-danger for=#{fvId isResetPasswordView}>#{fvLabel isResetPasswordView}
@@ -248,6 +282,14 @@ vEditUserForm maybeUser extra = do
       , fsName = Just "email"
       , fsAttrs = [ ("class","uk-form-width-large uk-input uk-form-small") ]
       }
+    isAdminFs :: FieldSettings App
+    isAdminFs = FieldSettings
+      { fsLabel = SomeMessage MsgEditUserIsAdmin
+      , fsTooltip = Nothing
+      , fsId = Just "isAdmin"
+      , fsName = Just "isAdmin"
+      , fsAttrs = [ ("class","uk-checkbox") ]
+      }
     isResetPasswordFs :: FieldSettings App
     isResetPasswordFs = FieldSettings
       { fsLabel = SomeMessage MsgEditUserIsResetPassword
@@ -268,24 +310,28 @@ vEditUserForm maybeUser extra = do
 data MsgEditUser =
   MsgEditUserIdent
   | MsgEditUserEmail
+  | MsgEditUserIsAdmin
   | MsgEditUserIsResetPassword
 
 instance RenderMessage App MsgEditUser where
   renderMessage _ []        = renderEditUserGerman
   renderMessage _ ("de":_) = renderEditUserGerman
+  renderMessage _ ("en":_) = renderEditUserEnglish
   renderMessage _ ("en-US":_) = renderEditUserEnglish
   renderMessage m (_   :ls) = renderMessage m ls
 
 renderEditUserGerman :: MsgEditUser -> Text
 renderEditUserGerman MsgEditUserIdent = "Login"
 renderEditUserGerman MsgEditUserEmail = "Email"
-renderEditUserGerman MsgEditUserIsResetPassword = "Neues Passwort generieren?"
+renderEditUserGerman MsgEditUserIsAdmin = "Ist Admin?"
+renderEditUserGerman MsgEditUserIsResetPassword = "Neues Passwort generieren? (Wird per Email zugesendet)"
 
 
 renderEditUserEnglish :: MsgEditUser -> Text
 renderEditUserEnglish MsgEditUserIdent = "Login"
 renderEditUserEnglish MsgEditUserEmail = "Email"
-renderEditUserEnglish MsgEditUserIsResetPassword = "Generate new password?"
+renderEditUserEnglish MsgEditUserIsAdmin = "Is admin?"
+renderEditUserEnglish MsgEditUserIsResetPassword = "Generate new password? (Will be sent by email)"
 
 -- gen edit form - end
 
@@ -297,7 +343,7 @@ renderEditUserEnglish MsgEditUserIsResetPassword = "Generate new password?"
 vDeleteUserForm :: Html -> MForm Handler (FormResult (), Widget)
 vDeleteUserForm extra = do
   let formResult = mempty
-  let formWidget = [whamlet|#{extra} Really delete?|]
+  let formWidget = [whamlet|#{extra} _{MsgGlobalReallyDelete}|]
   return (formResult, formWidget)
 -- gen delete form - end
 
@@ -307,8 +353,8 @@ getDeleteUserFormR userId = do
   (formWidget, _) <- generateFormPost $ vDeleteUserForm
   formLayout $ do
     toWidget [whamlet|
-      <h1>Delete User
-      <form #modal-form .uk-form-horizontal method=post action=@{MyprojectR $ DeleteUserR userId}>
+      <h1>_{MsgGlobalDeleteUser}
+      <form #modal-form .uk-form-horizontal method=post action=@{AdminR $ DeleteUserR userId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -319,5 +365,5 @@ postDeleteUserR :: UserId -> Handler Value
 postDeleteUserR userId = do
   runDB $ delete userId
   urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR AdminPageDataJsonR }
+  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR }
 -- gen post delete form - end

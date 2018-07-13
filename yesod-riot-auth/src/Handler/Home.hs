@@ -33,11 +33,14 @@ getHomePageDataJsonR = do
   req <- getRequest
   appName <- runDB $ configAppName
   urlRenderer <- getUrlRender
-  mainNavItems <- mainNavData MainNavHome
+  mainNavItems <- mainNavData user MainNavHome
   let pages = defaultDataPages
         { jDataPageHome = Just $ JDataPageHome { jDataPageHomeContent = "todo" }
         }
   msgHome <- localizedMsg MsgGlobalHome
+  currentLanguage <- getLanguage
+  translation <- getTranslation
+  let currentPageDataJsonUrl = urlRenderer $ MyprojectR HomePageDataJsonR
   returnJson JData
     { jDataAppName = appName
     , jDataUserIdent = userIdent user
@@ -50,11 +53,26 @@ getHomePageDataJsonR = do
       }
     , jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName
     , jDataCsrfToken = reqToken req
-    , jDataBreadcrumbItems = [ JDataBreadcrumbItem
-                               { jDataBreadcrumbItemLabel = msgHome
-                               , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomePageDataJsonR }
-                             ]
+    , jDataBreadcrumbItems =
+      [ JDataBreadcrumbItem
+        { jDataBreadcrumbItemLabel = msgHome
+        , jDataBreadcrumbItemDataUrl = currentPageDataJsonUrl }
+      ]
+    , jDataCurrentLanguage = currentLanguage
+    , jDataTranslation = translation
+    , jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentPageDataJsonUrl
+    , jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentPageDataJsonUrl
     }
 
 getRiotTagsR :: Handler Html
 getRiotTagsR = withUrlRenderer $(hamletFile "templates/riot_tags.hamlet")
+
+postLanguageDeR :: Text -> Handler Value
+postLanguageDeR dataUrlStr = do
+  setLanguage "de"
+  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = dataUrlStr }
+
+postLanguageEnR :: Text -> Handler Value
+postLanguageEnR dataUrlStr = do
+  setLanguage "en-US"
+  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = dataUrlStr }

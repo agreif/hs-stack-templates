@@ -107,6 +107,12 @@ instance Yesod App where
     isAuthorized (MyprojectR _) _ = do
         _ <- requireAuthId
         return Authorized
+    isAuthorized (AdminR _) _ = do
+        userId <- requireAuthId
+        user <- runDB $ get404 userId
+        return $ case userIsAdmin user of
+                   True -> Authorized
+                   False -> Unauthorized "Admins Only!"
     isAuthorized _ _ = return Authorized
 
     -- This function creates static content files in the static folder
@@ -171,13 +177,16 @@ instance YesodAuth App where
 
     -- Where to send a user after successful login
     loginDest :: App -> Route App
-    loginDest _ = MyprojectR MyprojectHomeR
+    loginDest _ = HomeR
     -- Where to send a user after logout
     logoutDest :: App -> Route App
-    logoutDest _ = MyprojectR MyprojectHomeR
+    logoutDest _ = HomeR
     -- Override the above two destinations when a Referer: header is present
     redirectToReferer :: App -> Bool
-    redirectToReferer _ = True
+    redirectToReferer _ = False
+    -- When being redirected to the login page should the current page be set to redirect back to
+    redirectToCurrent :: App -> Bool
+    redirectToCurrent _ = False
 
     -- authenticate :: (MonadHandler m, HandlerSite m ~ App)
     --              => Creds App -> m (AuthenticationResult App)
@@ -230,11 +239,12 @@ instance YesodAuthPersist App
 --     renderMessage _ _ = defaultFormMessage
 
 instance RenderMessage App FormMessage where
-  renderMessage :: App -> [Lang] -> FormMessage -> Text
-  renderMessage _ []        = germanFormMessage -- Default to German
-  renderMessage _ ("de":_) = germanFormMessage
-  renderMessage _ ("en-US":_) = defaultFormMessage
-  renderMessage master (_   :langs) = renderMessage master langs
+    renderMessage :: App -> [Lang] -> FormMessage -> Text
+    renderMessage _ []        = germanFormMessage -- Default to German
+    renderMessage _ ("de":_) = germanFormMessage
+    renderMessage _ ("en-US":_) = defaultFormMessage
+    renderMessage _ ("en":_) = defaultFormMessage
+    renderMessage master (_   :langs) = renderMessage master langs
 
 -- Useful when writing code that is re-usable outside of the Handler context.
 -- An example is background jobs that send email.

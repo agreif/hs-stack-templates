@@ -1,6 +1,3 @@
--- By default this file is used by `parseRoutesFile` in Foundation.hs
--- Syntax for this file here: https://www.yesodweb.com/book/routing-and-handlers
-
 /static StaticR Static appStatic
 /auth   AuthR   Auth   getAuth
 
@@ -10,14 +7,8 @@
 / HomeR GET
 /initdb/#Text InitDbR GET
 
-/myproject MyprojectR:
-  home MyprojectHomeR GET
-  -- populatedb PopulateDbR GET
-  riotTags RiotTagsR GET
-
-  homePageDataJson HomePageDataJsonR GET
-
-  admin AdminR GET
+/myproject/admin AdminR:
+  home AdminHomeR GET
   adminPageDataJson AdminPageDataJsonR GET
 
   addUserForm AddUserFormR GET
@@ -30,8 +21,17 @@
   editConfigForm/#ConfigId EditConfigFormR GET
   editConfig/#ConfigId EditConfigR POST
 
-  editMyProfileForm EditMyprofileFormR GET
-  editMyProfile EditMyprofileR POST
-
   sendTestMailForm AddTestmailFormR GET
   sendTestMail AddTestmailR POST
+
+/myproject MyprojectR:
+  home MyprojectHomeR GET
+  riotTags RiotTagsR GET
+
+  homePageDataJson HomePageDataJsonR GET
+
+  language/de/#Text LanguageDeR POST
+  language/en/#Text LanguageEnR POST
+
+  editMyProfileForm EditMyprofileFormR GET
+  editMyProfile EditMyprofileR POST
