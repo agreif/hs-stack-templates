@@ -508,6 +508,7 @@ data MsgGlobal =
   | MsgGlobalEditConfig
   | MsgGlobalTestMail
   | MsgGlobalSendTestMail
+  | MsgGlobalCancel
 
 instance RenderMessage App MsgGlobal where
   renderMessage _ []        = renderGlobalGerman
@@ -532,6 +533,7 @@ renderGlobalGerman MsgGlobalConfigurations = "Konfigurationen"
 renderGlobalGerman MsgGlobalEditConfig = "Konfiguration bearbeiten"
 renderGlobalGerman MsgGlobalTestMail = "Test-Mail"
 renderGlobalGerman MsgGlobalSendTestMail = "Test-Mail senden..."
+renderGlobalGerman MsgGlobalCancel = "Abbrechen"
 
 renderGlobalEnglish :: MsgGlobal -> Text
 renderGlobalEnglish MsgGlobalHome = "Home"
@@ -549,6 +551,7 @@ renderGlobalEnglish MsgGlobalConfigurations = "Configurations"
 renderGlobalEnglish MsgGlobalEditConfig = "Edit config"
 renderGlobalEnglish MsgGlobalTestMail = "Test-Mail"
 renderGlobalEnglish MsgGlobalSendTestMail = "Send Test-Mail..."
+renderGlobalEnglish MsgGlobalCancel = "Cancel"
 
 data Translation = Translation
   { msgGlobalHome :: Maybe Text
@@ -566,6 +569,7 @@ data Translation = Translation
   , msgGlobalEditConfig :: Maybe Text
   , msgGlobalTestMail :: Maybe Text
   , msgGlobalSendTestMail :: Maybe Text
+  , msgGlobalCancel :: Maybe Text
   , msgUserIdent :: Maybe Text
   , msgUserPassword :: Maybe Text
   , msgUserEmail :: Maybe Text
@@ -598,6 +602,7 @@ translationDe = Translation
   , msgGlobalEditConfig = Just "Konfiguration bearbeiten"
   , msgGlobalTestMail = Just "Test-Mail"
   , msgGlobalSendTestMail = Just "Test-Mail senden..."
+  , msgGlobalCancel = Just "Abbrechen"
   , msgUserIdent = Just "Login"
   , msgUserPassword = Just "Passwort"
   , msgUserEmail = Just "Email"
@@ -628,6 +633,7 @@ translationEn = Translation
   , msgGlobalEditConfig = Just "Edit config"
   , msgGlobalTestMail = Just "Test-Mail"
   , msgGlobalSendTestMail = Just "Send Test-Mail..."
+  , msgGlobalCancel = Just "Cancel"
   , msgUserIdent = Just "Login"
   , msgUserPassword = Just "Password"
   , msgUserEmail = Just "Email"
