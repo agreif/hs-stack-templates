@@ -17,3 +17,11 @@ if test $? -eq 0; then
     # sudo su postgres -c 'createdb --encoding=UTF-8 --owner=yesod-riot-auth --template=template0 yesod-riot-auth'
     sudo su postgres -c 'EDITOR=emacs psql -U yesod-riot-auth yesod-riot-auth'
 fi
+
+
+uname -a | grep -q NixOS
+if test $? -eq 0; then
+  # createuser -U postgres --createdb --encrypted --no-inherit --login --pwprompt --no-createrole --no-superuser --no-replication yesod-riot-auth
+  # createdb -U postgres --encoding=UTF-8 --owner=yesod-riot-auth --template=template0 yesod-riot-auth
+  psql -U yesod-riot-auth yesod-riot-auth
+fi
