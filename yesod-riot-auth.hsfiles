@@ -2464,6 +2464,14 @@ if test $? -eq 0; then
     sudo su postgres -c 'EDITOR=emacs psql -U {{name}} {{name}}'
 fi
 
+
+uname -a | grep -q NixOS
+if test $? -eq 0; then
+  # createuser -U postgres --createdb --encrypted --no-inherit --login --pwprompt --no-createrole --no-superuser --no-replication {{name}}
+  # createdb -U postgres --encoding=UTF-8 --owner={{name}} --template=template0 {{name}}
+  psql -U {{name}} {{name}}
+fi
+
 {-# START_FILE src/Application.hs #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
