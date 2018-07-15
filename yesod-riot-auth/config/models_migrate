@@ -5,7 +5,7 @@ User
     ident Text
     password Text Maybe
     email Text
-    isAdmin Bool default=False
+    isAdmin Bool
     version Int
     createdAt UTCTime
     createdBy Text
@@ -20,7 +20,7 @@ UserHistory
     ident Text
     password Text Maybe
     email Text
-    isAdmin Bool default=False
+    isAdmin Bool
     version Int
     createdAt UTCTime
     createdBy Text
