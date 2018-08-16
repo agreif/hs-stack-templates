@@ -150,7 +150,7 @@ instance ToJSON BModel where
     ]
 
 getDbFields :: BModel -> [BField]
-getDbFields m = filter (\field -> M.isJust $ bFieldDb field) $ bModelFields m
+getDbFields m = filter (M.isJust . bFieldDb) $ bModelFields m
 
 getAddAssignmentLines :: BModel -> [Text]
 getAddAssignmentLines m =
