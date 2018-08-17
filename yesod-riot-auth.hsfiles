@@ -3341,9 +3341,10 @@ cryptoHashText text = do
 
 generatePassword :: Int -> IO (Text, Text)
 generatePassword len = do
-  passwdStr <- randomMixedCaseString len
-  passwdHash <- cryptoHashText $ pack passwdStr
-  return (pack passwdStr, passwdHash)
+  passwdStr' <- randomMixedCaseString len
+  let passwdStr = T.replace "i" "2" $ T.replace "I" "3" $ T.replace "l" "4" $ T.replace "L" "5" $ T.replace "o" "6" $ T.replace "O" "7" $ T.replace "0" "8" $ T.replace "1" "9" $ pack passwdStr'
+  passwdHash <- cryptoHashText passwdStr
+  return (passwdStr, passwdHash)
 
 renderUrlToText :: Route App -> Handler Text
 renderUrlToText route = do
