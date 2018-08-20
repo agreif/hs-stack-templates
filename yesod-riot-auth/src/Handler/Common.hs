@@ -106,15 +106,19 @@ instance ToJSON JData where
 data JDataNavItem = JDataNavItem
   { jDataNavItemLabel :: Text
   , jDataNavItemIsActive :: Bool
+  , jDataNavItemUrl :: Text
   , jDataNavItemPageDataUrl :: Text
   , jDataNavItemBadge :: Maybe Text
+  , jDataNavItemDropdownItems :: Maybe [JDataNavItem]
   }
 instance ToJSON JDataNavItem where
   toJSON o = object
     [ "label" .= jDataNavItemLabel o
     , "isActive" .= jDataNavItemIsActive o
+    , "url" .= jDataNavItemUrl o
     , "dataUrl" .= jDataNavItemPageDataUrl o
     , "badge" .= jDataNavItemBadge o
+    , "dropdownItems" .= jDataNavItemDropdownItems o
     ]
 
 
@@ -224,8 +228,10 @@ mainNavData user mainNav = do
     [ JDataNavItem
       { jDataNavItemLabel = msgHome
       , jDataNavItemIsActive = mainNav == MainNavHome
+      , jDataNavItemUrl = urlRenderer $ MyprojectR MyprojectHomeR
       , jDataNavItemPageDataUrl = urlRenderer $ MyprojectR HomePageDataJsonR
       , jDataNavItemBadge = Nothing
+      , jDataNavItemDropdownItems = Nothing
       }
     ]
     ++
@@ -233,8 +239,10 @@ mainNavData user mainNav = do
       True -> [ JDataNavItem
                 { jDataNavItemLabel = msgAdmin
                 , jDataNavItemIsActive = mainNav == MainNavAdmin
+                , jDataNavItemUrl = urlRenderer $ AdminR AdminHomeR
                 , jDataNavItemPageDataUrl = urlRenderer $ AdminR AdminPageDataJsonR
                 , jDataNavItemBadge = Nothing
+                , jDataNavItemDropdownItems = Nothing
                 } ]
       False -> []
 
