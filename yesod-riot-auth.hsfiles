@@ -3173,15 +3173,19 @@ instance ToJSON JData where
 data JDataNavItem = JDataNavItem
   { jDataNavItemLabel :: Text
   , jDataNavItemIsActive :: Bool
+  , jDataNavItemUrl :: Text
   , jDataNavItemPageDataUrl :: Text
   , jDataNavItemBadge :: Maybe Text
+  , jDataNavItemDropdownItems :: Maybe [JDataNavItem]
   }
 instance ToJSON JDataNavItem where
   toJSON o = object
     [ "label" .= jDataNavItemLabel o
     , "isActive" .= jDataNavItemIsActive o
+    , "url" .= jDataNavItemUrl o
     , "dataUrl" .= jDataNavItemPageDataUrl o
     , "badge" .= jDataNavItemBadge o
+    , "dropdownItems" .= jDataNavItemDropdownItems o
     ]
 
 
@@ -3291,8 +3295,10 @@ mainNavData user mainNav = do
     [ JDataNavItem
       { jDataNavItemLabel = msgHome
       , jDataNavItemIsActive = mainNav == MainNavHome
+      , jDataNavItemUrl = urlRenderer $ MyprojectR MyprojectHomeR
       , jDataNavItemPageDataUrl = urlRenderer $ MyprojectR HomePageDataJsonR
       , jDataNavItemBadge = Nothing
+      , jDataNavItemDropdownItems = Nothing
       }
     ]
     ++
@@ -3300,8 +3306,10 @@ mainNavData user mainNav = do
       True -> [ JDataNavItem
                 { jDataNavItemLabel = msgAdmin
                 , jDataNavItemIsActive = mainNav == MainNavAdmin
+                , jDataNavItemUrl = urlRenderer $ AdminR AdminHomeR
                 , jDataNavItemPageDataUrl = urlRenderer $ AdminR AdminPageDataJsonR
                 , jDataNavItemBadge = Nothing
+                , jDataNavItemDropdownItems = Nothing
                 } ]
       False -> []
 
@@ -5972,10 +5980,17 @@ dCk6ZS5yaW90PXQoKTsK
       <div .uk-navbar-item .uk-logo>{parent.data.appName}
       <ul .uk-navbar-nav>
         <li each="{parent.data.mainNavItems}" class="{uk-active: isActive}">
-          <a onclick="{switchNav}">
+          <a href="{url}" onclick="{switchNav}" if="{!Array.isArray(dropdownItems) || !dropdownItems.length}">
             {label}
             <span if="{badge}" .uk-badge .uk-margin-small-left>
               {badge}
+          <a href="#" if="{dropdownItems}">
+            {label}
+          <div .uk-navbar-dropdown .uk-navbar-dropdown-width-2 if="{dropdownItems}">
+            <ul .uk-nav .uk-navbar-dropdown-nav>
+              <li each="{dropdownItems}">
+                <a onclick="{switchNav}">
+                  {label}
     <div .uk-navbar-right>
       <ul .uk-navbar-nav>
         <li>
@@ -6009,20 +6024,25 @@ dCk6ZS5yaW90PXQoKTsK
             <a onclick="{switchBreadcrumb}">{label}
   <script>
     \ switchNav(event) {
+    \   event.preventDefault()
     \   parent.tag.refreshData(event.item.dataUrl, true, false)
     \ }
     \ switchBreadcrumb(event) {
+    \   event.preventDefault()
     \   parent.tag.refreshData(event.item.dataUrl, true, false)
     \ }
     \ editMyProfile(event) {
+    \   event.preventDefault()
     \   dataJsonUrl = window.history.state ? window.history.state.dataJsonUrl : "@{MyprojectR HomePageDataJsonR}"
     \   parent.tag.showModalForm("@{MyprojectR EditMyprofileFormR}", dataJsonUrl)
     \ }
     \ changeLanguageDe(event) {
+    \   event.preventDefault()
     \   parent.tag.postRequest(parent.tag.data.languageDeUrl)
     \   event.currentTarget.blur()
     \ }
     \ changeLanguageEn(event) {
+    \   event.preventDefault()
     \   parent.tag.postRequest(parent.tag.data.languageEnUrl)
     \   event.currentTarget.blur()
     \ }
@@ -6115,22 +6135,27 @@ dCk6ZS5yaW90PXQoKTsK
           {parent.data.translation.msgGlobalSendTestMail}
   <script>
     \ addUser(event) {
+    \   event.preventDefault()
     \   parent.tag.showModalForm("@{AdminR AddUserFormR}")
     \   event.currentTarget.blur()
     \ }
     \ editUser(event) {
+    \   event.preventDefault()
     \   parent.tag.showModalForm(event.item.editFormUrl)
     \   event.currentTarget.blur()
     \ }
     \ deleteUser(event) {
+    \   event.preventDefault()
     \   parent.tag.showModalForm(event.item.deleteFormUrl)
     \   event.currentTarget.blur()
     \ }
     \ editConfig(event) {
+    \   event.preventDefault()
     \   parent.tag.showModalForm(event.item.editFormUrl)
     \   event.currentTarget.blur()
     \ }
     \ sendTestMail(event) {
+    \   event.preventDefault()
     \   parent.tag.showModalForm("@{AdminR AddTestmailFormR}")
     \ }
 
