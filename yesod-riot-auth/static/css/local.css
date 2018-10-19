@@ -45,6 +45,14 @@ ul.uk-breadcrumb {
     white-space: pre-wrap;
 }
 
+#login-form.uk-form-horizontal .uk-form-controls {
+    margin-left: 100px;
+}
+
+#login-form.uk-form-horizontal .uk-form-label {
+    width: 100px;
+}
+
 /* Tingle Modals
  ========================================================================== */
 .tingle-modal {
