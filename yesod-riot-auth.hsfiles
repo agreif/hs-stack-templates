@@ -3845,7 +3845,6 @@ module ModelNomigrate where
 
 import ClassyPrelude.Yesod
 import Database.Persist.Quasi
-import ModelMigrate
 
 -- You can define all of your database entities in the entities file.
 -- You can find more information on persistent and how to declare entities
@@ -4820,7 +4819,7 @@ dCk6ZS5yaW90PXQoKTsK
     <link href="@{StaticR css_tingle_0_13_2_min_css}" rel="stylesheet" type="text/css">
     <script src="@{StaticR js_tingle_0_13_2_min_js}" type="text/javascript">
 
-    <script data-src="@{CrmR RiotTagsR}" type="riot/tag">
+    <script data-src="@{MyprojectR RiotTagsR}" type="riot/tag">
 
     ^{pageHead pc}
 
