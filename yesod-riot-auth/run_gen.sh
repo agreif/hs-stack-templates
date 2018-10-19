@@ -20,20 +20,37 @@ generator_exec=`find . -name hs-generator -type f`
 exec_ginger2() {
     model_name=$1
     template_file=$2
-    tmp_file_name=tmp-`cat /dev/urandom | tr -cd 'a-f0-9' | head -c 32`.gtmpl
-    echo "{%- set model = ${model_name}Model -%}" > ginger/$tmp_file_name
-    cat ginger/$template_file >> ginger/$tmp_file_name
-    exec_ginger $tmp_file_name "$3" "$4" "$5"
-    rm ginger/tmp-*.gtmpl
+    dest_file=$yesod_dir/$3
+    echo $dest_file
+    if test -n "$4"; then
+        if test -n "$5"; then
+	    comment_start="$4"
+	    comment_end="$5"
+        else
+	    comment_start="$4 - start"
+	    comment_end="$4 - end"
+        fi
+    fi
+    $generator_exec $template_file $model_name > $tmp_file
+    if test ! -f $dest_file; then
+        touch $dest_file
+    fi
+    if test -n "$4"; then
+        grep -q -- "$comment_start" $dest_file
+        if test ! $? -eq 0; then
+	    echo "$comment_start" >> $dest_file
+	    echo "$comment_end" >> $dest_file
+        fi
+        sed -i -e "/$comment_start/,/$comment_end/{//p;d;}" $dest_file
+        sed -i -e "/$comment_start/ r $tmp_file" $dest_file
+    else
+        cat $tmp_file > $dest_file
+    fi
 }
 
 exec_ginger() {
     template_file=$1
     dest_file=$yesod_dir/$2
-    if test ! -f ginger/$template_file; then
-        echo "Error: template file missing: $template_file"
-        exit 1
-    fi
     echo $dest_file
     if test -n "$3"; then
         if test -n "$4"; then
@@ -45,7 +62,6 @@ exec_ginger() {
         fi
     fi
     $generator_exec $template_file > $tmp_file
-    # stack exec -- runghc src/Main.hs $template_file > $tmp_file
     if test ! -f $dest_file; then
         touch $dest_file
     fi
