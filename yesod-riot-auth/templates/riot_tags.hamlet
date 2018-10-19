@@ -13,6 +13,7 @@
     \     dataType: "json",
     \   }).done(function(data, textStatus, jqXHR) {
     \     tag.data = data
+    \     document.title = data.appName
     \     tag.update()
     \     if (scrollToTop) {
     \       window.scrollTo(0, 0)
@@ -87,6 +88,22 @@
     \     modal.destroy();
     \   });
     \ }
+    \ tag.showModalInfo = function(modalInfoUrl) {
+    \   var modal = new tingle.modal({
+    \     footer: true,
+    \     stickyFooter: true,
+    \     cssClass: [],
+    \     closeMethods: ['escape'],
+    \   });
+    \   $.get(modalInfoUrl, function(data) {
+    \     modal.setContent(data);
+    \     modal.open();
+    \   })
+    \   modal.addFooterBtn('OK', 'tingle-btn tingle-btn--primary tingle-btn--pull-right', function() {
+    \     modal.close();
+    \     modal.destroy();
+    \   });
+    \ }
     \ tag.showModalInfo = function(modalContentUrl) {
     \   var modal = new tingle.modal({
     \     footer: true,
@@ -103,7 +120,7 @@
     \     modal.destroy();
     \   })
     \ }
-    \ tag.postRequest = function(url) {
+    \ tag.postRequest = function(url, scrollToTop) {
     \   headers = {}
     \   headers[tag.data.csrfHeaderName] = tag.data.csrfToken
     \   $.ajax({
@@ -112,7 +129,7 @@
     \       dataType: "json",
     \       headers: headers
     \   }).done(function(data, textStatus, jqXHR) {
-    \       tag.refreshData(data.dataJsonUrl, false, false)
+    \       tag.refreshData(data.dataJsonUrl, false, scrollToTop)
     \   }).fail(function(jqXHR, textStatus) {
     \     if (jqXHR.status == 401)
     \       window.location.href = "@{AuthR LoginR}"
@@ -121,8 +138,17 @@
     \   })
     \ }
 
+<raw>
+  <span>
+    {replaceContent(opts.content)}
+  <script>
+    // e.g.: <raw content="{var}">
+    replaceContent(content) {
+      this.root.innerHTML = content
+    }
+
 <nav-tag>
-  <nav .uk-navbar-container .uk-margin-small-top uk-navbar>
+  <nav .uk-navbar-container .uk-margin-small-top uk-navbar="offset: -10">
     <div .uk-navbar-left>
       <div .uk-navbar-item .uk-logo>{parent.data.appName}
       <ul .uk-navbar-nav>
@@ -194,6 +220,25 @@
     \   event.currentTarget.blur()
     \ }
 
+<pagination-tag>
+  <ul .uk-pagination .uk-flex-center uk-margin if="{opts.items}">
+    <li class="{uk-active: isActive}" each="{opts.items}">
+      <a onclick="{showPage}" if="{!isDisabled}">
+        <span if="{label}">
+          {label}
+        <span .uk-pagination-previous if="{isPrevious}">
+          <span uk-icon="icon: chevron-left">
+        <span .uk-pagination-next if="{isNext}">
+          <span uk-icon="icon: chevron-right">
+      <span if="{isDisabled}">
+        {label}
+  <script>
+    \ showPage(event) {
+    \   event.preventDefault()
+    \   parent.tag.postRequest(event.item.dataUrl, true)
+    \   event.currentTarget.blur()
+    \ }
+
 <home-page-tag>
   <div if="{parent.data.pages.home}">
     <h1>Homepage {parent.data.pages.home.content}
@@ -225,7 +270,7 @@
               <th>
                 {parent.data.translation.msgUserIsAdmin}
               <th .uk-align-right>
-                <button .modal-form-link .uk-button .uk-button-link title="{parent.data.translation.msgGlobalAddUser}" uk-tooltip onclick="{addUser}">
+                <button .uk-background-primary .uk-light .uk-padding-small .uk-background-primary .uk-light .uk-padding-small .modal-form-link .uk-button .uk-button-link title="{parent.data.translation.msgGlobalAddUser}" uk-tooltip onclick="{addUser}">
                   <span uk-icon="icon: plus">
           <tbody>
             <tr each="{parent.data.pages.admin.users}">

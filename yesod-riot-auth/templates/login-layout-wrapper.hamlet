@@ -4,5 +4,11 @@
     <meta charset="UTF-8">
     <title>#{pageTitle pc}
 
+    <link href="@{StaticR css_uikit_3_0_0_rc19_min_css}" rel="stylesheet" type="text/css">
+    <script src="@{StaticR js_uikit_3_0_0_rc19_min_js}" type="text/javascript">
+    <script src="@{StaticR js_uikit_icons_3_0_0_rc19_min_js}" type="text/javascript">
+
+    ^{pageHead pc}
+
   <body>
     ^{pageBody pc}

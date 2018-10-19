@@ -334,59 +334,6 @@ humanReadableBytes size
 getCurrentDay :: IO Day
 getCurrentDay = getCurrentTime >>= return . utctDay
 
---------------------------------------------------------------------------------
--- config helpers
---------------------------------------------------------------------------------
-
-maybeConfigText :: Text -> YesodDB App (Maybe Text)
-maybeConfigText code = do
-  maybeConfigEnt <- selectFirst [ConfigCode ==. code] []
-  case maybeConfigEnt of
-    Just (Entity _ (Config {configStringValue = result})) -> return result
-    Nothing -> return Nothing
-
-maybeConfigInt :: Text -> YesodDB App (Maybe Int)
-maybeConfigInt code = do
-  maybeConfigEnt <- selectFirst [ConfigCode ==. code] []
-  case maybeConfigEnt of
-    Just (Entity _ (Config {configIntValue = result})) -> return result
-    Nothing -> return Nothing
-
-maybeConfigDouble :: Text -> YesodDB App (Maybe Double)
-maybeConfigDouble code = do
-  maybeConfigEnt <- selectFirst [ConfigCode ==. code] []
-  case maybeConfigEnt of
-    Just (Entity _ (Config {configDoubleValue = result})) -> return result
-    Nothing -> return Nothing
-
-configBool :: Text -> YesodDB App Bool
-configBool code = do
-  maybeConfigEnt <- selectFirst [ConfigCode ==. code] []
-  case maybeConfigEnt of
-    Just (Entity _ (Config {configBoolValue = result})) -> return result
-    Nothing -> return False
-
-configAppName :: YesodDB App Text
-configAppName = do
-  maybeResult <- maybeConfigText "app_name"
-  case maybeResult  of
-    Just result -> return result
-    Nothing -> return ""
-
-configEmailFrom :: YesodDB App Text
-configEmailFrom = do
-  maybeResult <- maybeConfigText "email_from"
-  case maybeResult  of
-    Just result -> return result
-    Nothing -> return ""
-
-configMehrwertSteuer :: YesodDB App Double
-configMehrwertSteuer = do
-  maybeResult <- maybeConfigDouble "mehrwert_steuer"
-  case maybeResult  of
-    Just result -> return result
-    Nothing -> return 0
-
 maybeTextToText :: Maybe Text -> Text
 maybeTextToText Nothing = ""
 maybeTextToText (Just t) = t

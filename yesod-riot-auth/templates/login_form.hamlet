@@ -1,6 +1,20 @@
-<form method=post action=@{loginRoute}>
-  $maybe token <- maybeToken
-    <input type=hidden name=#{defaultCsrfParamName} value=#{token}>
-    <input type="text" name="username" placeholder="Anmeldename" required autofocus>
-    <input type="password" name="password" placeholder="Passwort" required>
-    <button href="@{AuthR LoginR}">Login
+<div .uk-margin-xlarge-top .uk-flex .uk-flex-center>
+  <h1>
+    My-Project
+<div .uk-margin-top .uk-flex .uk-flex-center>
+  <form #login-form .uk-form-horizontal method=post action=@{loginRoute}>
+    $maybe token <- maybeToken
+      <input type=hidden name=#{defaultCsrfParamName} value=#{token}>
+      <div .uk-margin>
+        <label .uk-form-label for="form-horizontal-text">
+          Login
+        <div .uk-form-controls>
+          <input .uk-input type="text" name="username" placeholder="Anmeldename" required autofocus>
+      <div .uk-margin>
+        <label .uk-form-label for="form-horizontal-text">
+          Passwort
+        <div .uk-form-controls>
+          <input .uk-input type="password" name="password" placeholder="Passwort" required>
+      <div .uk-margin>
+        <div .uk-form-controls>
+          <button href="@{AuthR LoginR}">Login

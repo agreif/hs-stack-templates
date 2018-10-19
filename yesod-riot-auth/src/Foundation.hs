@@ -18,16 +18,12 @@ import Text.Jasmine         (minifym)
 import Control.Monad.Logger (LogSource)
 import Yesod.Auth.Message   (AuthMessage(InvalidLogin))
 import Control.Monad.Trans.Maybe
-
--- Used only when in "auth-dummy-login" setting is enabled.
--- import Yesod.Auth.Dummy
-
--- import Yesod.Auth.OpenId    (authOpenId, IdentifierType (Claimed))
 import Yesod.Auth.HashDB
 import Yesod.Default.Util   (addStaticContentExternal)
 import Yesod.Core.Types     (Logger)
 import qualified Yesod.Core.Unsafe as Unsafe
 import Yesod.Form.I18n.German
+import qualified Data.Maybe as M (fromJust)
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -151,7 +147,7 @@ instance Yesod App where
     makeLogger :: App -> IO Logger
     makeLogger = return . appLogger
 
-formLayout :: WidgetT App IO () -> Handler Html
+formLayout :: Widget -> Handler Html
 formLayout widget = do
     pc <- widgetToPageContent widget
     withUrlRenderer [hamlet|^{pageBody pc}|]
@@ -172,8 +168,19 @@ instance YesodAuth App where
     type AuthId App = UserId
 
     authLayout widget = do
-        pc <- widgetToPageContent widget
+        pc <- widgetToPageContent $ do
+            addStylesheet $ StaticR css_local_css
+            addScript $ StaticR js_local_js
+            widget
         withUrlRenderer $(hamletFile "templates/login-layout-wrapper.hamlet")
+
+    loginHandler = do
+      maybeAppName <- lift $ runDB $ maybeConfigText "app_name"
+      tp <- getRouteToParent
+      lift $ authLayout $ do
+        when (isJust maybeAppName) $ setTitle $ toHtml $ M.fromJust maybeAppName
+        master <- getYesod
+        mapM_ (flip apLogin tp) (authPlugins master)
 
     -- Where to send a user after successful login
     loginDest :: App -> Route App
@@ -263,3 +270,56 @@ unsafeHandler = Unsafe.fakeHandlerGetLogger appLogger
 -- https://github.com/yesodweb/yesod/wiki/Sending-email
 -- https://github.com/yesodweb/yesod/wiki/Serve-static-files-from-a-separate-domain
 -- https://github.com/yesodweb/yesod/wiki/i18n-messages-in-the-scaffolding
+
+--------------------------------------------------------------------------------
+-- config helpers
+--------------------------------------------------------------------------------
+
+maybeConfigText :: Text -> YesodDB App (Maybe Text)
+maybeConfigText code = do
+  maybeConfigEnt <- selectFirst [ConfigCode ==. code] []
+  case maybeConfigEnt of
+    Just (Entity _ (Config {configStringValue = result})) -> return result
+    Nothing -> return Nothing
+
+maybeConfigInt :: Text -> YesodDB App (Maybe Int)
+maybeConfigInt code = do
+  maybeConfigEnt <- selectFirst [ConfigCode ==. code] []
+  case maybeConfigEnt of
+    Just (Entity _ (Config {configIntValue = result})) -> return result
+    Nothing -> return Nothing
+
+maybeConfigDouble :: Text -> YesodDB App (Maybe Double)
+maybeConfigDouble code = do
+  maybeConfigEnt <- selectFirst [ConfigCode ==. code] []
+  case maybeConfigEnt of
+    Just (Entity _ (Config {configDoubleValue = result})) -> return result
+    Nothing -> return Nothing
+
+configBool :: Text -> YesodDB App Bool
+configBool code = do
+  maybeConfigEnt <- selectFirst [ConfigCode ==. code] []
+  case maybeConfigEnt of
+    Just (Entity _ (Config {configBoolValue = result})) -> return result
+    Nothing -> return False
+
+configAppName :: YesodDB App Text
+configAppName = do
+  maybeResult <- maybeConfigText "app_name"
+  case maybeResult  of
+    Just result -> return result
+    Nothing -> return ""
+
+configEmailFrom :: YesodDB App Text
+configEmailFrom = do
+  maybeResult <- maybeConfigText "email_from"
+  case maybeResult  of
+    Just result -> return result
+    Nothing -> return ""
+
+configMehrwertSteuer :: YesodDB App Double
+configMehrwertSteuer = do
+  maybeResult <- maybeConfigDouble "mehrwert_steuer"
+  case maybeResult  of
+    Just result -> return result
+    Nothing -> return 0

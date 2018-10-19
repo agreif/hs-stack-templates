@@ -1,58 +1,20 @@
-name:                hs-generator
-version: "0.0.0"
+name: hs-generator
+version: '0.0.0'
 
-dependencies:
+extra-source-files:
+- package.yaml
 
-# Due to a bug in GHC 8.0.1, we block its usage
-# See: https://ghc.haskell.org/trac/ghc/ticket/12130
-- base >=4.8.2.0 && <4.9 || >=4.9.1.0 && <5
+ghc-options: -Wall
 
-- text
-- ginger
-- aeson
-- strict
-- optparse-applicative
-- casing
-
-# The library contains all of our application code. The executable
-# defined below is just a thin wrapper.
-library:
-  source-dirs: src
-  when:
-  - condition: (flag(dev)) || (flag(library-only))
-    then:
-      ghc-options:
-      - -Wall
-      - -fwarn-tabs
-      - -O0
-      cpp-options: -DDEVELOPMENT
-    else:
-      ghc-options:
-      - -Wall
-      - -fwarn-tabs
-      - -O2
-
-# Runnable executable for our application
 executables:
   hs-generator:
-    main: Main.hs
     source-dirs: src
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
+    main: Main.hs
     dependencies:
-    - hs-generator
-    when:
-    - condition: flag(library-only)
-      buildable: false
-
-flags:
-  library-only:
-    description: Build for use with "yesod devel"
-    manual: false
-    default: false
-  dev:
-    description: Turn on development settings, like auto-reload templates.
-    manual: false
-    default: false
+    - base
+    - aeson
+    - hs-yesod-model-generator
+    ghc-options:
+    - -rtsopts
+    - -threaded
+    - -with-rtsopts=-N
