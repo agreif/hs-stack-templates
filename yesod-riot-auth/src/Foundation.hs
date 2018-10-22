@@ -24,6 +24,7 @@ import Yesod.Core.Types     (Logger)
 import qualified Yesod.Core.Unsafe as Unsafe
 import Yesod.Form.I18n.German
 import qualified Data.Maybe as M (fromJust)
+import I18n
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -252,6 +253,13 @@ instance RenderMessage App FormMessage where
     renderMessage _ ("en-US":_) = defaultFormMessage
     renderMessage _ ("en":_) = defaultFormMessage
     renderMessage master (_   :langs) = renderMessage master langs
+
+instance RenderMessage App AppMessage where
+    renderMessage _ []        = renderMessageGerman
+    renderMessage _ ("de":_) = renderMessageGerman
+    renderMessage _ ("en":_) = renderMessageEnglish
+    renderMessage _ ("en-US":_) = renderMessageEnglish
+    renderMessage m (_:ls) = renderMessage m ls
 
 -- Useful when writing code that is re-usable outside of the Handler context.
 -- An example is background jobs that send email.

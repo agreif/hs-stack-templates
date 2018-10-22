@@ -86,7 +86,7 @@ fi
 exec_ginger debug_json.gtmpl context.json
 exec_ginger models.gtmpl config/models_migrate '-- gen models'
 exec_ginger postgresql_triggers.gtmpl postgresql_setup.sql '-- gen triggers'
-exec_ginger handler_common_i18n.gtmpl src/Handler/Common.hs '-- gen i18n global'
+exec_ginger i18n.gtmpl src/I18n.hs '-- gen i18n'
 
 f=src/Handler/User.hs
 m=user
