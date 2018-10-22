@@ -13,467 +13,474 @@ context :: Value
 context =
   toJSON $
   BContext
-  { bContextModels =
-      [ BModel
-        { bModelName = "user"
-        , bModelLabel = "User"
-        , bModelIsJson = False
-        , bModelDbUniquenesses = ["UniqueUser ident"]
-        , bModelDbHasHistoryTable = True
-        , bModelHsDerivings = []
-        , bModelAddFormArgs = Nothing
-        , bModelEditFormArgs = Nothing
-        , bModelAddFormEntityLoader = Nothing
-        , bModelEditFormEntityLoader = Nothing
-        , bModelDeleteFormEntityLoader = Nothing
-        , bModelAddFormDataJsonUrl = Nothing
-        , bModelEditFormDataJsonUrl = Nothing
-        , bModelDeleteFormDataJsonUrl = Just "AdminR AdminPageDataJsonR"
-        , bModelAddFormHasDefaultModel = False
-        , bModelEditPostLoadsModel = False
-        , bModelDeletePostLoadsModel = False
-        , bModelAddPostExtraStoreFunc = Nothing
-        , bModelEditPostExtraStoreFunc = Nothing
-        , bModelAddFormTitleMsg = Just "MsgGlobalAddUser"
-        , bModelEditFormTitleMsg = Just "MsgGlobalEditUser"
-        , bModelDeleteFormTitleMsg = Just "MsgGlobalDeleteUser"
-        , bModelParentHsType = Nothing
-        , bModelFormRouteHsType = "AdminR"
-        , bModelFields =
-            [ BField
-              { bFieldName = "ident"
-              , bFieldLabelDe = Just "Login"
-              , bFieldLabelEn = Just "Login"
-              , bFieldHsType = "Text"
-              , bFieldDb =
+  { bContextCrudModels =
+      [ BCrudModel
+        { bCrudModelName = "user"
+        , bCrudModelLabel = "User"
+        , bCrudModelIsJson = False
+        , bCrudModelDbUniquenesses = ["UniqueUser ident"]
+        , bCrudModelDbHasHistoryTable = True
+        , bCrudModelHsDerivings = []
+        , bCrudModelAddFormArgs = Nothing
+        , bCrudModelEditFormArgs = Nothing
+        , bCrudModelAddFormEntityLoader = Nothing
+        , bCrudModelEditFormEntityLoader = Nothing
+        , bCrudModelDeleteFormEntityLoader = Nothing
+        , bCrudModelAddFormDataJsonUrl = Nothing
+        , bCrudModelEditFormDataJsonUrl = Nothing
+        , bCrudModelDeleteFormDataJsonUrl = Just "AdminR AdminPageDataJsonR"
+        , bCrudModelAddFormHasDefaultModel = False
+        , bCrudModelEditPostLoadsModel = False
+        , bCrudModelDeletePostLoadsModel = False
+        , bCrudModelAddPostExtraStoreFunc = Nothing
+        , bCrudModelEditPostExtraStoreFunc = Nothing
+        , bCrudModelAddFormTitleMsg = Just "MsgGlobalAddUser"
+        , bCrudModelEditFormTitleMsg = Just "MsgGlobalEditUser"
+        , bCrudModelDeleteFormTitleMsg = Just "MsgGlobalDeleteUser"
+        , bCrudModelParentHsType = Nothing
+        , bCrudModelFormRouteHsType = "AdminR"
+        , bCrudModelFields =
+            [ BCrudField
+              { bCrudFieldName = "ident"
+              , bCrudFieldLabelDe = Just "Login"
+              , bCrudFieldLabelEn = Just "Login"
+              , bCrudFieldHsType = "Text"
+              , bCrudFieldDb =
                   Just $
-                  BFieldDb
-                  { bFieldDbIsNullable = False
-                  , bFieldDbDefault = Nothing
-                  , bFieldDbCanUpdate = True
+                  BCrudFieldDb
+                  { bCrudFieldDbIsNullable = False
+                  , bCrudFieldDbDefault = Nothing
+                  , bCrudFieldDbCanUpdate = True
                   }
-              , bFieldFormFieldType = Just "textField"
-              , bFieldAddView =
+              , bCrudFieldFormFieldType = Just "textField"
+              , bCrudFieldAddView =
                   Just $
-                  BFieldAddView
-                  { bFieldAddViewIsRequired = True
-                  , bFieldAddViewIsDisabled = False
-                  , bFieldAddViewAttrs =
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
                       [ BFieldAttr
                         { bFieldAttrKey = "class"
                         , bFieldAttrValue =
                             "uk-form-width-large uk-input uk-form-small"
                         }
                       ]
-                  , bFieldAddViewDefault = Nothing
+                  , bFieldViewDefault = Nothing
                   }
-              , bFieldEditView =
+              , bCrudFieldEditView =
                   Just $
-                  BFieldEditView
-                  { bFieldEditViewIsRequired = True
-                  , bFieldEditViewIsDisabled = False
-                  , bFieldEditViewAttrs =
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
                       [ BFieldAttr
                         { bFieldAttrKey = "class"
                         , bFieldAttrValue =
                             "uk-form-width-large uk-input uk-form-small"
                         }
                       ]
-                  , bFieldEditViewDefault = Nothing
+                  , bFieldViewDefault = Nothing
                   }
               }
-            , BField
-              { bFieldName = "password"
-              , bFieldLabelDe = Just "Passwort"
-              , bFieldLabelEn = Just "Password"
-              , bFieldHsType = "Text"
-              , bFieldDb =
+            , BCrudField
+              { bCrudFieldName = "password"
+              , bCrudFieldLabelDe = Just "Passwort"
+              , bCrudFieldLabelEn = Just "Password"
+              , bCrudFieldHsType = "Text"
+              , bCrudFieldDb =
                   Just $
-                  BFieldDb
-                  { bFieldDbIsNullable = True
-                  , bFieldDbDefault = Nothing
-                  , bFieldDbCanUpdate = False
+                  BCrudFieldDb
+                  { bCrudFieldDbIsNullable = True
+                  , bCrudFieldDbDefault = Nothing
+                  , bCrudFieldDbCanUpdate = False
                   }
-              , bFieldFormFieldType = Nothing
-              , bFieldAddView = Nothing
-              , bFieldEditView = Nothing
+              , bCrudFieldFormFieldType = Nothing
+              , bCrudFieldAddView = Nothing
+              , bCrudFieldEditView = Nothing
               }
-            , BField
-              { bFieldName = "email"
-              , bFieldLabelDe = Just "Email"
-              , bFieldLabelEn = Just "Email"
-              , bFieldHsType = "Text"
-              , bFieldDb =
+            , BCrudField
+              { bCrudFieldName = "email"
+              , bCrudFieldLabelDe = Just "Email"
+              , bCrudFieldLabelEn = Just "Email"
+              , bCrudFieldHsType = "Text"
+              , bCrudFieldDb =
                   Just $
-                  BFieldDb
-                  { bFieldDbIsNullable = False
-                  , bFieldDbDefault = Nothing
-                  , bFieldDbCanUpdate = True
+                  BCrudFieldDb
+                  { bCrudFieldDbIsNullable = False
+                  , bCrudFieldDbDefault = Nothing
+                  , bCrudFieldDbCanUpdate = True
                   }
-              , bFieldFormFieldType = Just "textField"
-              , bFieldAddView =
+              , bCrudFieldFormFieldType = Just "textField"
+              , bCrudFieldAddView =
                   Just $
-                  BFieldAddView
-                  { bFieldAddViewIsRequired = True
-                  , bFieldAddViewIsDisabled = False
-                  , bFieldAddViewAttrs =
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
                       [ BFieldAttr
                         { bFieldAttrKey = "class"
                         , bFieldAttrValue =
                             "uk-form-width-large uk-input uk-form-small"
                         }
                       ]
-                  , bFieldAddViewDefault = Nothing
+                  , bFieldViewDefault = Nothing
                   }
-              , bFieldEditView =
+              , bCrudFieldEditView =
                   Just $
-                  BFieldEditView
-                  { bFieldEditViewIsRequired = True
-                  , bFieldEditViewIsDisabled = False
-                  , bFieldEditViewAttrs =
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
                       [ BFieldAttr
                         { bFieldAttrKey = "class"
                         , bFieldAttrValue =
                             "uk-form-width-large uk-input uk-form-small"
                         }
                       ]
-                  , bFieldEditViewDefault = Nothing
+                  , bFieldViewDefault = Nothing
                   }
               }
-            , BField
-              { bFieldName = "isAdmin"
-              , bFieldLabelDe = Just "Ist Admin?"
-              , bFieldLabelEn = Just "Is admin?"
-              , bFieldHsType = "Bool"
-              , bFieldDb =
+            , BCrudField
+              { bCrudFieldName = "isAdmin"
+              , bCrudFieldLabelDe = Just "Ist Admin?"
+              , bCrudFieldLabelEn = Just "Is admin?"
+              , bCrudFieldHsType = "Bool"
+              , bCrudFieldDb =
                   Just $
-                  BFieldDb
-                  { bFieldDbIsNullable = False
-                  , bFieldDbDefault = Nothing
-                  , bFieldDbCanUpdate = True
+                  BCrudFieldDb
+                  { bCrudFieldDbIsNullable = False
+                  , bCrudFieldDbDefault = Nothing
+                  , bCrudFieldDbCanUpdate = True
                   }
-              , bFieldFormFieldType = Just "checkBoxField"
-              , bFieldAddView =
+              , bCrudFieldFormFieldType = Just "checkBoxField"
+              , bCrudFieldAddView =
                   Just $
-                  BFieldAddView
-                  { bFieldAddViewIsRequired = True
-                  , bFieldAddViewIsDisabled = False
-                  , bFieldAddViewAttrs =
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
                       [ BFieldAttr
                         { bFieldAttrKey = "class"
                         , bFieldAttrValue = "uk-checkbox"
                         }
                       ]
-                  , bFieldAddViewDefault = Nothing
+                  , bFieldViewDefault = Nothing
                   }
-              , bFieldEditView =
+              , bCrudFieldEditView =
                   Just $
-                  BFieldEditView
-                  { bFieldEditViewIsRequired = True
-                  , bFieldEditViewIsDisabled = False
-                  , bFieldEditViewAttrs =
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
                       [ BFieldAttr
                         { bFieldAttrKey = "class"
                         , bFieldAttrValue = "uk-checkbox"
                         }
                       ]
-                  , bFieldEditViewDefault = Nothing
+                  , bFieldViewDefault = Nothing
                   }
               }
-            , BField
-              { bFieldName = "isResetPassword"
-              , bFieldLabelDe = Just "Neues Passwort generieren? (Wird per Email zugesendet)"
-              , bFieldLabelEn = Just "Generate new password? (Will be sent by email)"
-              , bFieldHsType = "Bool"
-              , bFieldDb = Nothing
-              , bFieldFormFieldType = Just "checkBoxField"
-              , bFieldAddView = Nothing
-              , bFieldEditView =
+            , BCrudField
+              { bCrudFieldName = "isResetPassword"
+              , bCrudFieldLabelDe = Just "Neues Passwort generieren? (Wird per Email zugesendet)"
+              , bCrudFieldLabelEn = Just "Generate new password? (Will be sent by email)"
+              , bCrudFieldHsType = "Bool"
+              , bCrudFieldDb = Nothing
+              , bCrudFieldFormFieldType = Just "checkBoxField"
+              , bCrudFieldAddView = Nothing
+              , bCrudFieldEditView =
                   Just $
-                  BFieldEditView
-                  { bFieldEditViewIsRequired = True
-                  , bFieldEditViewIsDisabled = False
-                  , bFieldEditViewAttrs =
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
                       [ BFieldAttr
                         { bFieldAttrKey = "class"
                         , bFieldAttrValue = "uk-checkbox"
                         }
                       ]
-                  , bFieldEditViewDefault = Just "Nothing"
+                  , bFieldViewDefault = Just "Nothing"
                   }
               }
             ]
         }
-      , BModel
-        { bModelName = "config"
-        , bModelLabel = "Config"
-        , bModelIsJson = True
-        , bModelDbUniquenesses = ["UniqueCode code"]
-        , bModelDbHasHistoryTable = True
-        , bModelHsDerivings = []
-        , bModelAddFormArgs = Nothing
-        , bModelEditFormArgs = Nothing
-        , bModelAddFormEntityLoader = Nothing
-        , bModelEditFormEntityLoader = Nothing
-        , bModelDeleteFormEntityLoader = Nothing
-        , bModelAddFormDataJsonUrl = Nothing
-        , bModelEditFormDataJsonUrl = Just "AdminR AdminPageDataJsonR"
-        , bModelDeleteFormDataJsonUrl = Nothing
-        , bModelAddFormHasDefaultModel = False
-        , bModelEditPostLoadsModel = False
-        , bModelDeletePostLoadsModel = False
-        , bModelAddPostExtraStoreFunc = Nothing
-        , bModelEditPostExtraStoreFunc = Nothing
-        , bModelAddFormTitleMsg = Nothing
-        , bModelEditFormTitleMsg = Just "MsgGlobalEditConfig"
-        , bModelDeleteFormTitleMsg = Nothing
-        , bModelParentHsType = Nothing
-        , bModelFormRouteHsType = "AdminR"
-        , bModelFields =
-            [ BField
-              { bFieldName = "code"
-              , bFieldLabelDe = Just "Code"
-              , bFieldLabelEn = Just "Code"
-              , bFieldHsType = "Text"
-              , bFieldDb =
+      , BCrudModel
+        { bCrudModelName = "config"
+        , bCrudModelLabel = "Config"
+        , bCrudModelIsJson = True
+        , bCrudModelDbUniquenesses = ["UniqueCode code"]
+        , bCrudModelDbHasHistoryTable = True
+        , bCrudModelHsDerivings = []
+        , bCrudModelAddFormArgs = Nothing
+        , bCrudModelEditFormArgs = Nothing
+        , bCrudModelAddFormEntityLoader = Nothing
+        , bCrudModelEditFormEntityLoader = Nothing
+        , bCrudModelDeleteFormEntityLoader = Nothing
+        , bCrudModelAddFormDataJsonUrl = Nothing
+        , bCrudModelEditFormDataJsonUrl = Just "AdminR AdminPageDataJsonR"
+        , bCrudModelDeleteFormDataJsonUrl = Nothing
+        , bCrudModelAddFormHasDefaultModel = False
+        , bCrudModelEditPostLoadsModel = False
+        , bCrudModelDeletePostLoadsModel = False
+        , bCrudModelAddPostExtraStoreFunc = Nothing
+        , bCrudModelEditPostExtraStoreFunc = Nothing
+        , bCrudModelAddFormTitleMsg = Nothing
+        , bCrudModelEditFormTitleMsg = Just "MsgGlobalEditConfig"
+        , bCrudModelDeleteFormTitleMsg = Nothing
+        , bCrudModelParentHsType = Nothing
+        , bCrudModelFormRouteHsType = "AdminR"
+        , bCrudModelFields =
+            [ BCrudField
+              { bCrudFieldName = "code"
+              , bCrudFieldLabelDe = Just "Code"
+              , bCrudFieldLabelEn = Just "Code"
+              , bCrudFieldHsType = "Text"
+              , bCrudFieldDb =
                   Just $
-                  BFieldDb
-                  { bFieldDbIsNullable = False
-                  , bFieldDbDefault = Nothing
-                  , bFieldDbCanUpdate = False
+                  BCrudFieldDb
+                  { bCrudFieldDbIsNullable = False
+                  , bCrudFieldDbDefault = Nothing
+                  , bCrudFieldDbCanUpdate = False
                   }
-              , bFieldFormFieldType = Just "textField"
-              , bFieldAddView = Nothing
-              , bFieldEditView =
+              , bCrudFieldFormFieldType = Just "textField"
+              , bCrudFieldAddView = Nothing
+              , bCrudFieldEditView =
                   Just $
-                  BFieldEditView
-                  { bFieldEditViewIsRequired = False
-                  , bFieldEditViewIsDisabled = True
-                  , bFieldEditViewAttrs =
+                  BFieldView
+                  { bFieldViewIsRequired = False
+                  , bFieldViewIsDisabled = True
+                  , bFieldViewAttrs =
                       [ BFieldAttr
                         { bFieldAttrKey = "class"
                         , bFieldAttrValue =
                             "uk-form-width-large uk-input uk-form-small"
                         }
                       ]
-                  , bFieldEditViewDefault = Nothing
+                  , bFieldViewDefault = Nothing
                   }
               }
-            , BField
-              { bFieldName = "stringValue"
-              , bFieldLabelDe = Just "String-Wert"
-              , bFieldLabelEn = Just "String-Value"
-              , bFieldHsType = "Text"
-              , bFieldDb =
+            , BCrudField
+              { bCrudFieldName = "stringValue"
+              , bCrudFieldLabelDe = Just "String-Wert"
+              , bCrudFieldLabelEn = Just "String-Value"
+              , bCrudFieldHsType = "Text"
+              , bCrudFieldDb =
                   Just $
-                  BFieldDb
-                  { bFieldDbIsNullable = True
-                  , bFieldDbDefault = Nothing
-                  , bFieldDbCanUpdate = True
+                  BCrudFieldDb
+                  { bCrudFieldDbIsNullable = True
+                  , bCrudFieldDbDefault = Nothing
+                  , bCrudFieldDbCanUpdate = True
                   }
-              , bFieldFormFieldType = Just "textField"
-              , bFieldAddView =
+              , bCrudFieldFormFieldType = Just "textField"
+              , bCrudFieldAddView =
                   Just $
-                  BFieldAddView
-                  { bFieldAddViewIsRequired = False
-                  , bFieldAddViewIsDisabled = False
-                  , bFieldAddViewAttrs =
+                  BFieldView
+                  { bFieldViewIsRequired = False
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
                       [ BFieldAttr
                         { bFieldAttrKey = "class"
                         , bFieldAttrValue =
                             "uk-form-width-large uk-input uk-form-small"
                         }
                       ]
-                  , bFieldAddViewDefault = Nothing
+                  , bFieldViewDefault = Nothing
                   }
-              , bFieldEditView =
+              , bCrudFieldEditView =
                   Just $
-                  BFieldEditView
-                  { bFieldEditViewIsRequired = False
-                  , bFieldEditViewIsDisabled = False
-                  , bFieldEditViewAttrs =
+                  BFieldView
+                  { bFieldViewIsRequired = False
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
                       [ BFieldAttr
                         { bFieldAttrKey = "class"
                         , bFieldAttrValue =
                             "uk-form-width-large uk-input uk-form-small"
                         }
                       ]
-                  , bFieldEditViewDefault = Nothing
+                  , bFieldViewDefault = Nothing
                   }
               }
-            , BField
-              { bFieldName = "intValue"
-              , bFieldLabelDe = Just "Integer-Wert"
-              , bFieldLabelEn = Just "Integer-Value"
-              , bFieldHsType = "Int"
-              , bFieldDb =
+            , BCrudField
+              { bCrudFieldName = "intValue"
+              , bCrudFieldLabelDe = Just "Integer-Wert"
+              , bCrudFieldLabelEn = Just "Integer-Value"
+              , bCrudFieldHsType = "Int"
+              , bCrudFieldDb =
                   Just $
-                  BFieldDb
-                  { bFieldDbIsNullable = True
-                  , bFieldDbDefault = Nothing
-                  , bFieldDbCanUpdate = True
+                  BCrudFieldDb
+                  { bCrudFieldDbIsNullable = True
+                  , bCrudFieldDbDefault = Nothing
+                  , bCrudFieldDbCanUpdate = True
                   }
-              , bFieldFormFieldType = Just "intField"
-              , bFieldAddView =
+              , bCrudFieldFormFieldType = Just "intField"
+              , bCrudFieldAddView =
                   Just $
-                  BFieldAddView
-                  { bFieldAddViewIsRequired = False
-                  , bFieldAddViewIsDisabled = False
-                  , bFieldAddViewAttrs =
+                  BFieldView
+                  { bFieldViewIsRequired = False
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
                       [ BFieldAttr
                         { bFieldAttrKey = "class"
                         , bFieldAttrValue =
                             "uk-form-width-medium uk-input uk-form-small"
                         }
                       ]
-                  , bFieldAddViewDefault = Nothing
+                  , bFieldViewDefault = Nothing
                   }
-              , bFieldEditView =
+              , bCrudFieldEditView =
                   Just $
-                  BFieldEditView
-                  { bFieldEditViewIsRequired = False
-                  , bFieldEditViewIsDisabled = False
-                  , bFieldEditViewAttrs =
+                  BFieldView
+                  { bFieldViewIsRequired = False
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
                       [ BFieldAttr
                         { bFieldAttrKey = "class"
                         , bFieldAttrValue =
                             "uk-form-width-medium uk-input uk-form-small"
                         }
                       ]
-                  , bFieldEditViewDefault = Nothing
+                  , bFieldViewDefault = Nothing
                   }
               }
-            , BField
-              { bFieldName = "doubleValue"
-              , bFieldLabelDe = Just "Double-Wert"
-              , bFieldLabelEn = Just "Double-Value"
-              , bFieldHsType = "Double"
-              , bFieldDb =
+            , BCrudField
+              { bCrudFieldName = "doubleValue"
+              , bCrudFieldLabelDe = Just "Double-Wert"
+              , bCrudFieldLabelEn = Just "Double-Value"
+              , bCrudFieldHsType = "Double"
+              , bCrudFieldDb =
                   Just $
-                  BFieldDb
-                  { bFieldDbIsNullable = True
-                  , bFieldDbDefault = Nothing
-                  , bFieldDbCanUpdate = True
+                  BCrudFieldDb
+                  { bCrudFieldDbIsNullable = True
+                  , bCrudFieldDbDefault = Nothing
+                  , bCrudFieldDbCanUpdate = True
                   }
-              , bFieldFormFieldType = Just "doubleField"
-              , bFieldAddView =
+              , bCrudFieldFormFieldType = Just "doubleField"
+              , bCrudFieldAddView =
                   Just $
-                  BFieldAddView
-                  { bFieldAddViewIsRequired = False
-                  , bFieldAddViewIsDisabled = False
-                  , bFieldAddViewAttrs =
+                  BFieldView
+                  { bFieldViewIsRequired = False
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
                       [ BFieldAttr
                         { bFieldAttrKey = "class"
                         , bFieldAttrValue =
                             "uk-form-width-medium uk-input uk-form-small"
                         }
                       ]
-                  , bFieldAddViewDefault = Nothing
+                  , bFieldViewDefault = Nothing
                   }
-              , bFieldEditView =
+              , bCrudFieldEditView =
                   Just $
-                  BFieldEditView
-                  { bFieldEditViewIsRequired = False
-                  , bFieldEditViewIsDisabled = False
-                  , bFieldEditViewAttrs =
+                  BFieldView
+                  { bFieldViewIsRequired = False
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
                       [ BFieldAttr
                         { bFieldAttrKey = "class"
                         , bFieldAttrValue =
                             "uk-form-width-medium uk-input uk-form-small"
                         }
                       ]
-                  , bFieldEditViewDefault = Nothing
+                  , bFieldViewDefault = Nothing
                   }
               }
-            , BField
-              { bFieldName = "boolValue"
-              , bFieldLabelDe = Just "Boolean-Wert"
-              , bFieldLabelEn = Just "Boolean-Value"
-              , bFieldHsType = "Bool"
-              , bFieldDb =
+            , BCrudField
+              { bCrudFieldName = "boolValue"
+              , bCrudFieldLabelDe = Just "Boolean-Wert"
+              , bCrudFieldLabelEn = Just "Boolean-Value"
+              , bCrudFieldHsType = "Bool"
+              , bCrudFieldDb =
                   Just $
-                  BFieldDb
-                  { bFieldDbIsNullable = False
-                  , bFieldDbDefault = Nothing
-                  , bFieldDbCanUpdate = True
+                  BCrudFieldDb
+                  { bCrudFieldDbIsNullable = False
+                  , bCrudFieldDbDefault = Nothing
+                  , bCrudFieldDbCanUpdate = True
                   }
-              , bFieldFormFieldType = Just "checkBoxField"
-              , bFieldAddView =
+              , bCrudFieldFormFieldType = Just "checkBoxField"
+              , bCrudFieldAddView =
                   Just $
-                  BFieldAddView
-                  { bFieldAddViewIsRequired = True
-                  , bFieldAddViewIsDisabled = False
-                  , bFieldAddViewAttrs = []
-                  , bFieldAddViewDefault = Nothing
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs = []
+                  , bFieldViewDefault = Nothing
                   }
-              , bFieldEditView =
+              , bCrudFieldEditView =
                   Just $
-                  BFieldEditView
-                  { bFieldEditViewIsRequired = True
-                  , bFieldEditViewIsDisabled = False
-                  , bFieldEditViewAttrs =
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
                       [ BFieldAttr
                         { bFieldAttrKey = "class"
                         , bFieldAttrValue = "uk-checkbox"
                         }
                       ]
-                  , bFieldEditViewDefault = Nothing
+                  , bFieldViewDefault = Nothing
                   }
               }
             ]
         }
-      , BModel
-        { bModelName = "testmail"
-        , bModelLabel = "Test Mail"
-        , bModelIsJson = False
-        , bModelDbUniquenesses = []
-        , bModelDbHasHistoryTable = False
-        , bModelHsDerivings = []
-        , bModelAddFormArgs = Nothing
-        , bModelEditFormArgs = Nothing
-        , bModelAddFormEntityLoader = Nothing
-        , bModelEditFormEntityLoader = Nothing
-        , bModelDeleteFormEntityLoader = Nothing
-        , bModelAddFormDataJsonUrl = Nothing
-        , bModelEditFormDataJsonUrl = Just "MyprojectR TestMailDataJsonR"
-        , bModelDeleteFormDataJsonUrl = Nothing
-        , bModelAddFormHasDefaultModel = False
-        , bModelEditPostLoadsModel = False
-        , bModelDeletePostLoadsModel = False
-        , bModelAddPostExtraStoreFunc = Nothing
-        , bModelEditPostExtraStoreFunc = Nothing
-        , bModelAddFormTitleMsg = Just "MsgGlobalSendTestMail"
-        , bModelEditFormTitleMsg = Nothing
-        , bModelDeleteFormTitleMsg = Nothing
-        , bModelParentHsType = Nothing
-        , bModelFormRouteHsType = "AdminR"
-        , bModelFields =
-            [ BField
-              { bFieldName = "email"
-              , bFieldLabelDe = Just "Email"
-              , bFieldLabelEn = Just "Email"
-              , bFieldHsType = "Text"
-              , bFieldDb = Nothing
-              , bFieldFormFieldType = Just "textField"
-              , bFieldAddView =
+      , BCrudModel
+        { bCrudModelName = "testmail"
+        , bCrudModelLabel = "Test Mail"
+        , bCrudModelIsJson = False
+        , bCrudModelDbUniquenesses = []
+        , bCrudModelDbHasHistoryTable = False
+        , bCrudModelHsDerivings = []
+        , bCrudModelAddFormArgs = Nothing
+        , bCrudModelEditFormArgs = Nothing
+        , bCrudModelAddFormEntityLoader = Nothing
+        , bCrudModelEditFormEntityLoader = Nothing
+        , bCrudModelDeleteFormEntityLoader = Nothing
+        , bCrudModelAddFormDataJsonUrl = Nothing
+        , bCrudModelEditFormDataJsonUrl = Just "MyprojectR TestMailDataJsonR"
+        , bCrudModelDeleteFormDataJsonUrl = Nothing
+        , bCrudModelAddFormHasDefaultModel = False
+        , bCrudModelEditPostLoadsModel = False
+        , bCrudModelDeletePostLoadsModel = False
+        , bCrudModelAddPostExtraStoreFunc = Nothing
+        , bCrudModelEditPostExtraStoreFunc = Nothing
+        , bCrudModelAddFormTitleMsg = Just "MsgGlobalSendTestMail"
+        , bCrudModelEditFormTitleMsg = Nothing
+        , bCrudModelDeleteFormTitleMsg = Nothing
+        , bCrudModelParentHsType = Nothing
+        , bCrudModelFormRouteHsType = "AdminR"
+        , bCrudModelFields =
+            [ BCrudField
+              { bCrudFieldName = "email"
+              , bCrudFieldLabelDe = Just "Email"
+              , bCrudFieldLabelEn = Just "Email"
+              , bCrudFieldHsType = "Text"
+              , bCrudFieldDb = Nothing
+              , bCrudFieldFormFieldType = Just "textField"
+              , bCrudFieldAddView =
                   Just $
-                  BFieldAddView
-                  { bFieldAddViewIsRequired = True
-                  , bFieldAddViewIsDisabled = False
-                  , bFieldAddViewAttrs =
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
                       [ BFieldAttr
                         { bFieldAttrKey = "class"
                         , bFieldAttrValue =
                             "uk-form-width-large uk-input uk-form-small"
                         }
                       ]
-                  , bFieldAddViewDefault = Nothing
+                  , bFieldViewDefault = Nothing
                   }
-              , bFieldEditView = Nothing
+              , bCrudFieldEditView = Nothing
               }
             ]
         }
       ]
+
+
+  , bContextActionModels =
+      [
+      ]
+
+
   , bContextTranslations =
     [ BTranslation { bTranslationKey = "home", bTranslationDe = "Home", bTranslationEn = "Home" }
     , BTranslation { bTranslationKey = "admin", bTranslationDe = "Admin", bTranslationEn = "Admin" }
