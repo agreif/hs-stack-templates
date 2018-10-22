@@ -45,7 +45,7 @@ packages:
 
 extra-deps:
 - git: https://github.com/Greif-IT/hs-yesod-model-generator.git
-  commit: 989251353f78966413c4c15b8ba489badae81dad
+  commit: 809c21c092a825e5d38281ec35fcb63d59b38974
 
 # Override default flag values for local packages and extra-deps
 # flags: {}
