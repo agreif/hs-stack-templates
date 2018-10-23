@@ -4793,22 +4793,6 @@ dCk6ZS5yaW90PXQoKTsK
     \     modal.destroy();
     \   });
     \ }
-    \ tag.showModalInfo = function(modalInfoUrl) {
-    \   var modal = new tingle.modal({
-    \     footer: true,
-    \     stickyFooter: true,
-    \     cssClass: [],
-    \     closeMethods: ['escape'],
-    \   });
-    \   $.get(modalInfoUrl, function(data) {
-    \     modal.setContent(data);
-    \     modal.open();
-    \   })
-    \   modal.addFooterBtn('OK', 'tingle-btn tingle-btn--primary tingle-btn--pull-right', function() {
-    \     modal.close();
-    \     modal.destroy();
-    \   });
-    \ }
     \ tag.showModalInfo = function(modalContentUrl) {
     \   var modal = new tingle.modal({
     \     footer: true,
@@ -4841,6 +4825,11 @@ dCk6ZS5yaW90PXQoKTsK
     \     else
     \       alert("error" + jqXHR.status + " ------ " + textStatus)
     \   })
+    \ }
+    \ tag.scrollToTop = function(event) {
+    \   event.preventDefault()
+    \   $('html, body').animate({scrollTop : 0},800);
+    \   event.currentTarget.blur()
     \ }
 
 <raw>
