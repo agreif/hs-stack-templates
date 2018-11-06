@@ -34,7 +34,7 @@ getEditConfigFormR configId = do
   (formWidget, _) <- generateFormPost $ vEditConfigForm $ Just config
   formLayout $ do
     toWidget [whamlet|
-      <h1>_{MsgGlobalEditConfig}
+      <h1>_{MsgConfigEditConfig}
       <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ EditConfigR configId}>
         <div #modal-form-widget>
           ^{formWidget}
@@ -132,7 +132,7 @@ vEditConfigForm maybeConfig extra = do
   where
     codeFs :: FieldSettings App
     codeFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditConfigCode
+      { fsLabel = SomeMessage MsgConfigCode
       , fsTooltip = Nothing
       , fsId = Just "code"
       , fsName = Just "code"
@@ -140,7 +140,7 @@ vEditConfigForm maybeConfig extra = do
       }
     stringValueFs :: FieldSettings App
     stringValueFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditConfigStringValue
+      { fsLabel = SomeMessage MsgConfigStringValue
       , fsTooltip = Nothing
       , fsId = Just "stringValue"
       , fsName = Just "stringValue"
@@ -148,7 +148,7 @@ vEditConfigForm maybeConfig extra = do
       }
     intValueFs :: FieldSettings App
     intValueFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditConfigIntValue
+      { fsLabel = SomeMessage MsgConfigIntValue
       , fsTooltip = Nothing
       , fsId = Just "intValue"
       , fsName = Just "intValue"
@@ -156,7 +156,7 @@ vEditConfigForm maybeConfig extra = do
       }
     doubleValueFs :: FieldSettings App
     doubleValueFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditConfigDoubleValue
+      { fsLabel = SomeMessage MsgConfigDoubleValue
       , fsTooltip = Nothing
       , fsId = Just "doubleValue"
       , fsName = Just "doubleValue"
@@ -164,7 +164,7 @@ vEditConfigForm maybeConfig extra = do
       }
     boolValueFs :: FieldSettings App
     boolValueFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditConfigBoolValue
+      { fsLabel = SomeMessage MsgConfigBoolValue
       , fsTooltip = Nothing
       , fsId = Just "boolValue"
       , fsName = Just "boolValue"
@@ -178,34 +178,4 @@ vEditConfigForm maybeConfig extra = do
       , fsName = Just "version"
       , fsAttrs = []
       }
-
-data MsgEditConfig =
-  MsgEditConfigCode
-  | MsgEditConfigStringValue
-  | MsgEditConfigIntValue
-  | MsgEditConfigDoubleValue
-  | MsgEditConfigBoolValue
-
-instance RenderMessage App MsgEditConfig where
-  renderMessage _ []        = renderEditConfigGerman
-  renderMessage _ ("de":_) = renderEditConfigGerman
-  renderMessage _ ("en":_) = renderEditConfigEnglish
-  renderMessage _ ("en-US":_) = renderEditConfigEnglish
-  renderMessage m (_   :ls) = renderMessage m ls
-
-renderEditConfigGerman :: MsgEditConfig -> Text
-renderEditConfigGerman MsgEditConfigCode = "Code"
-renderEditConfigGerman MsgEditConfigStringValue = "String-Wert"
-renderEditConfigGerman MsgEditConfigIntValue = "Integer-Wert"
-renderEditConfigGerman MsgEditConfigDoubleValue = "Double-Wert"
-renderEditConfigGerman MsgEditConfigBoolValue = "Boolean-Wert"
-
-
-renderEditConfigEnglish :: MsgEditConfig -> Text
-renderEditConfigEnglish MsgEditConfigCode = "Code"
-renderEditConfigEnglish MsgEditConfigStringValue = "String-Value"
-renderEditConfigEnglish MsgEditConfigIntValue = "Integer-Value"
-renderEditConfigEnglish MsgEditConfigDoubleValue = "Double-Value"
-renderEditConfigEnglish MsgEditConfigBoolValue = "Boolean-Value"
-
 -- gen edit form - end
