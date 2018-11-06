@@ -32,7 +32,7 @@ getAddUserFormR = do
   (formWidget, _) <- generateFormPost $ vAddUserForm Nothing
   formLayout $ do
     toWidget [whamlet|
-      <h1>_{MsgGlobalAddUser}
+      <h1>_{MsgUserAddUser}
       <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ AddUserR}>
         <div #modal-form-widget>
           ^{formWidget}
@@ -105,7 +105,7 @@ vAddUserForm maybeUser extra = do
   where
     identFs :: FieldSettings App
     identFs = FieldSettings
-      { fsLabel = SomeMessage MsgAddUserIdent
+      { fsLabel = SomeMessage MsgUserIdent
       , fsTooltip = Nothing
       , fsId = Just "ident"
       , fsName = Just "ident"
@@ -113,7 +113,7 @@ vAddUserForm maybeUser extra = do
       }
     emailFs :: FieldSettings App
     emailFs = FieldSettings
-      { fsLabel = SomeMessage MsgAddUserEmail
+      { fsLabel = SomeMessage MsgUserEmail
       , fsTooltip = Nothing
       , fsId = Just "email"
       , fsName = Just "email"
@@ -121,7 +121,7 @@ vAddUserForm maybeUser extra = do
       }
     isAdminFs :: FieldSettings App
     isAdminFs = FieldSettings
-      { fsLabel = SomeMessage MsgAddUserIsAdmin
+      { fsLabel = SomeMessage MsgUserIsAdmin
       , fsTooltip = Nothing
       , fsId = Just "isAdmin"
       , fsName = Just "isAdmin"
@@ -174,7 +174,7 @@ getEditUserFormR userId = do
   (formWidget, _) <- generateFormPost $ vEditUserForm $ Just user
   formLayout $ do
     toWidget [whamlet|
-      <h1>_{MsgGlobalEditUser}
+      <h1>_{MsgUserEditUser}
       <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ EditUserR userId}>
         <div #modal-form-widget>
           ^{formWidget}
@@ -268,7 +268,7 @@ vEditUserForm maybeUser extra = do
   where
     identFs :: FieldSettings App
     identFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditUserIdent
+      { fsLabel = SomeMessage MsgUserIdent
       , fsTooltip = Nothing
       , fsId = Just "ident"
       , fsName = Just "ident"
@@ -276,7 +276,7 @@ vEditUserForm maybeUser extra = do
       }
     emailFs :: FieldSettings App
     emailFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditUserEmail
+      { fsLabel = SomeMessage MsgUserEmail
       , fsTooltip = Nothing
       , fsId = Just "email"
       , fsName = Just "email"
@@ -284,7 +284,7 @@ vEditUserForm maybeUser extra = do
       }
     isAdminFs :: FieldSettings App
     isAdminFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditUserIsAdmin
+      { fsLabel = SomeMessage MsgUserIsAdmin
       , fsTooltip = Nothing
       , fsId = Just "isAdmin"
       , fsName = Just "isAdmin"
@@ -292,7 +292,7 @@ vEditUserForm maybeUser extra = do
       }
     isResetPasswordFs :: FieldSettings App
     isResetPasswordFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditUserIsResetPassword
+      { fsLabel = SomeMessage MsgUserIsResetPassword
       , fsTooltip = Nothing
       , fsId = Just "isResetPassword"
       , fsName = Just "isResetPassword"
@@ -306,33 +306,6 @@ vEditUserForm maybeUser extra = do
       , fsName = Just "version"
       , fsAttrs = []
       }
-
-data MsgEditUser =
-  MsgEditUserIdent
-  | MsgEditUserEmail
-  | MsgEditUserIsAdmin
-  | MsgEditUserIsResetPassword
-
-instance RenderMessage App MsgEditUser where
-  renderMessage _ []        = renderEditUserGerman
-  renderMessage _ ("de":_) = renderEditUserGerman
-  renderMessage _ ("en":_) = renderEditUserEnglish
-  renderMessage _ ("en-US":_) = renderEditUserEnglish
-  renderMessage m (_   :ls) = renderMessage m ls
-
-renderEditUserGerman :: MsgEditUser -> Text
-renderEditUserGerman MsgEditUserIdent = "Login"
-renderEditUserGerman MsgEditUserEmail = "Email"
-renderEditUserGerman MsgEditUserIsAdmin = "Ist Admin?"
-renderEditUserGerman MsgEditUserIsResetPassword = "Neues Passwort generieren? (Wird per Email zugesendet)"
-
-
-renderEditUserEnglish :: MsgEditUser -> Text
-renderEditUserEnglish MsgEditUserIdent = "Login"
-renderEditUserEnglish MsgEditUserEmail = "Email"
-renderEditUserEnglish MsgEditUserIsAdmin = "Is admin?"
-renderEditUserEnglish MsgEditUserIsResetPassword = "Generate new password? (Will be sent by email)"
-
 -- gen edit form - end
 
 -------------------------------------------------------
@@ -353,7 +326,7 @@ getDeleteUserFormR userId = do
   (formWidget, _) <- generateFormPost $ vDeleteUserForm
   formLayout $ do
     toWidget [whamlet|
-      <h1>_{MsgGlobalDeleteUser}
+      <h1>_{MsgUserDeleteUser}
       <form #modal-form .uk-form-horizontal method=post action=@{AdminR $ DeleteUserR userId}>
         <div #modal-form-widget>
           ^{formWidget}

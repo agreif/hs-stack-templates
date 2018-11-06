@@ -631,9 +631,9 @@ context =
         , bCrudModelDeletePostLoadsModel = False
         , bCrudModelAddPostExtraStoreFunc = Nothing
         , bCrudModelEditPostExtraStoreFunc = Nothing
-        , bCrudModelAddFormTitleMsg = Just "MsgGlobalAddUser"
-        , bCrudModelEditFormTitleMsg = Just "MsgGlobalEditUser"
-        , bCrudModelDeleteFormTitleMsg = Just "MsgGlobalDeleteUser"
+        , bCrudModelAddFormTitleMsg = Just "MsgUserAddUser"
+        , bCrudModelEditFormTitleMsg = Just "MsgUserEditUser"
+        , bCrudModelDeleteFormTitleMsg = Just "MsgUserDeleteUser"
         , bCrudModelParentHsType = Nothing
         , bCrudModelFormRouteHsType = "AdminR"
         , bCrudModelFields =
@@ -800,6 +800,12 @@ context =
                   }
               }
             ]
+        , bCrudModelTranslations = Just
+          [ BTranslation { bTranslationKey = "users", bTranslationDe = "Nutzer", bTranslationEn = "Users" }
+          , BTranslation { bTranslationKey = "addUser", bTranslationDe = "Nutzer hinzufügen", bTranslationEn = "Add user" }
+          , BTranslation { bTranslationKey = "editUser", bTranslationDe = "Nutzer bearbeiten", bTranslationEn = "Edit user" }
+          , BTranslation { bTranslationKey = "deleteUser", bTranslationDe = "Nutzer löschen", bTranslationEn = "Delete user" }
+          ]
         }
       , BCrudModel
         { bCrudModelName = "config"
@@ -822,7 +828,7 @@ context =
         , bCrudModelAddPostExtraStoreFunc = Nothing
         , bCrudModelEditPostExtraStoreFunc = Nothing
         , bCrudModelAddFormTitleMsg = Nothing
-        , bCrudModelEditFormTitleMsg = Just "MsgGlobalEditConfig"
+        , bCrudModelEditFormTitleMsg = Just "MsgConfigEditConfig"
         , bCrudModelDeleteFormTitleMsg = Nothing
         , bCrudModelParentHsType = Nothing
         , bCrudModelFormRouteHsType = "AdminR"
@@ -1018,6 +1024,10 @@ context =
                   }
               }
             ]
+        , bCrudModelTranslations = Just
+          [ BTranslation { bTranslationKey = "configurations", bTranslationDe = "Konfigurationen", bTranslationEn = "Configurations" }
+          , BTranslation { bTranslationKey = "editConfig", bTranslationDe = "Konfiguration bearbeiten", bTranslationEn = "Edit config" }
+          ]
         }
       , BCrudModel
         { bCrudModelName = "testmail"
@@ -1039,7 +1049,7 @@ context =
         , bCrudModelDeletePostLoadsModel = False
         , bCrudModelAddPostExtraStoreFunc = Nothing
         , bCrudModelEditPostExtraStoreFunc = Nothing
-        , bCrudModelAddFormTitleMsg = Just "MsgGlobalSendTestMail"
+        , bCrudModelAddFormTitleMsg = Just "MsgTestmailSendTestMail"
         , bCrudModelEditFormTitleMsg = Nothing
         , bCrudModelDeleteFormTitleMsg = Nothing
         , bCrudModelParentHsType = Nothing
@@ -1069,6 +1079,10 @@ context =
               , bCrudFieldEditView = Nothing
               }
             ]
+        , bCrudModelTranslations = Just
+          [ BTranslation { bTranslationKey = "testMail", bTranslationDe = "Test-Mail", bTranslationEn = "Test-Mail" }
+          , BTranslation { bTranslationKey = "sendTestMail", bTranslationDe = "Test-Mail senden...", bTranslationEn = "Send Test-Mail..." }
+          ]
         }
       ]
 
@@ -1086,14 +1100,6 @@ context =
     , BTranslation { bTranslationKey = "myProfile", bTranslationDe = "Mein Profil", bTranslationEn = "My Profile" }
     , BTranslation { bTranslationKey = "editMyProfile", bTranslationDe = "Mein Profil bearbeiten", bTranslationEn = "Edit my profile" }
     , BTranslation { bTranslationKey = "reallyDelete", bTranslationDe = "Möchten sie wirklich löschen?", bTranslationEn = "Are you sure to delete?" }
-    , BTranslation { bTranslationKey = "users", bTranslationDe = "Nutzer", bTranslationEn = "Users" }
-    , BTranslation { bTranslationKey = "addUser", bTranslationDe = "Nutzer hinzufügen", bTranslationEn = "Add user" }
-    , BTranslation { bTranslationKey = "editUser", bTranslationDe = "Nutzer bearbeiten", bTranslationEn = "Edit user" }
-    , BTranslation { bTranslationKey = "deleteUser", bTranslationDe = "Nutzer löschen", bTranslationEn = "Delete user" }
-    , BTranslation { bTranslationKey = "configurations", bTranslationDe = "Konfigurationen", bTranslationEn = "Configurations" }
-    , BTranslation { bTranslationKey = "editConfig", bTranslationDe = "Konfiguration bearbeiten", bTranslationEn = "Edit config" }
-    , BTranslation { bTranslationKey = "testMail", bTranslationDe = "Test-Mail", bTranslationEn = "Test-Mail" }
-    , BTranslation { bTranslationKey = "sendTestMail", bTranslationDe = "Test-Mail senden...", bTranslationEn = "Send Test-Mail..." }
     , BTranslation { bTranslationKey = "cancel", bTranslationDe = "Abbrechen", bTranslationEn = "Cancel" }
     ]
   }
@@ -2577,7 +2583,7 @@ getEditConfigFormR configId = do
   (formWidget, _) <- generateFormPost $ vEditConfigForm $ Just config
   formLayout $ do
     toWidget [whamlet|
-      <h1>_{MsgGlobalEditConfig}
+      <h1>_{MsgConfigEditConfig}
       <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ EditConfigR configId}>
         <div #modal-form-widget>
           ^{formWidget}
@@ -2675,7 +2681,7 @@ vEditConfigForm maybeConfig extra = do
   where
     codeFs :: FieldSettings App
     codeFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditConfigCode
+      { fsLabel = SomeMessage MsgConfigCode
       , fsTooltip = Nothing
       , fsId = Just "code"
       , fsName = Just "code"
@@ -2683,7 +2689,7 @@ vEditConfigForm maybeConfig extra = do
       }
     stringValueFs :: FieldSettings App
     stringValueFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditConfigStringValue
+      { fsLabel = SomeMessage MsgConfigStringValue
       , fsTooltip = Nothing
       , fsId = Just "stringValue"
       , fsName = Just "stringValue"
@@ -2691,7 +2697,7 @@ vEditConfigForm maybeConfig extra = do
       }
     intValueFs :: FieldSettings App
     intValueFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditConfigIntValue
+      { fsLabel = SomeMessage MsgConfigIntValue
       , fsTooltip = Nothing
       , fsId = Just "intValue"
       , fsName = Just "intValue"
@@ -2699,7 +2705,7 @@ vEditConfigForm maybeConfig extra = do
       }
     doubleValueFs :: FieldSettings App
     doubleValueFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditConfigDoubleValue
+      { fsLabel = SomeMessage MsgConfigDoubleValue
       , fsTooltip = Nothing
       , fsId = Just "doubleValue"
       , fsName = Just "doubleValue"
@@ -2707,7 +2713,7 @@ vEditConfigForm maybeConfig extra = do
       }
     boolValueFs :: FieldSettings App
     boolValueFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditConfigBoolValue
+      { fsLabel = SomeMessage MsgConfigBoolValue
       , fsTooltip = Nothing
       , fsId = Just "boolValue"
       , fsName = Just "boolValue"
@@ -2721,36 +2727,6 @@ vEditConfigForm maybeConfig extra = do
       , fsName = Just "version"
       , fsAttrs = []
       }
-
-data MsgEditConfig =
-  MsgEditConfigCode
-  | MsgEditConfigStringValue
-  | MsgEditConfigIntValue
-  | MsgEditConfigDoubleValue
-  | MsgEditConfigBoolValue
-
-instance RenderMessage App MsgEditConfig where
-  renderMessage _ []        = renderEditConfigGerman
-  renderMessage _ ("de":_) = renderEditConfigGerman
-  renderMessage _ ("en":_) = renderEditConfigEnglish
-  renderMessage _ ("en-US":_) = renderEditConfigEnglish
-  renderMessage m (_   :ls) = renderMessage m ls
-
-renderEditConfigGerman :: MsgEditConfig -> Text
-renderEditConfigGerman MsgEditConfigCode = "Code"
-renderEditConfigGerman MsgEditConfigStringValue = "String-Wert"
-renderEditConfigGerman MsgEditConfigIntValue = "Integer-Wert"
-renderEditConfigGerman MsgEditConfigDoubleValue = "Double-Wert"
-renderEditConfigGerman MsgEditConfigBoolValue = "Boolean-Wert"
-
-
-renderEditConfigEnglish :: MsgEditConfig -> Text
-renderEditConfigEnglish MsgEditConfigCode = "Code"
-renderEditConfigEnglish MsgEditConfigStringValue = "String-Value"
-renderEditConfigEnglish MsgEditConfigIntValue = "Integer-Value"
-renderEditConfigEnglish MsgEditConfigDoubleValue = "Double-Value"
-renderEditConfigEnglish MsgEditConfigBoolValue = "Boolean-Value"
-
 -- gen edit form - end
 
 {-# START_FILE src/Handler/Home.hs #-}
@@ -3219,7 +3195,7 @@ getAddTestmailFormR = do
   (formWidget, _) <- generateFormPost $ vAddTestmailForm Nothing
   formLayout $ do
     toWidget [whamlet|
-      <h1>_{MsgGlobalSendTestMail}
+      <h1>_{MsgTestmailSendTestMail}
       <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ AddTestmailR}>
         <div #modal-form-widget>
           ^{formWidget}
@@ -3246,30 +3222,12 @@ vAddTestmailForm maybeTestmail extra = do
   where
     emailFs :: FieldSettings App
     emailFs = FieldSettings
-      { fsLabel = SomeMessage MsgAddTestmailEmail
+      { fsLabel = SomeMessage MsgTestmailEmail
       , fsTooltip = Nothing
       , fsId = Just "email"
       , fsName = Just "email"
       , fsAttrs = [ ("class","uk-form-width-large uk-input uk-form-small") ]
       }
-
-data MsgAddTestmail =
-  MsgAddTestmailEmail
-
-instance RenderMessage App MsgAddTestmail where
-  renderMessage _ []        = renderAddTestmailGerman
-  renderMessage _ ("de":_) = renderAddTestmailGerman
-  renderMessage _ ("en":_) = renderAddTestmailEnglish
-  renderMessage _ ("en-US":_) = renderAddTestmailEnglish
-  renderMessage m (_   :ls) = renderMessage m ls
-
-renderAddTestmailGerman :: MsgAddTestmail -> Text
-renderAddTestmailGerman MsgAddTestmailEmail = "Email"
-
-
-renderAddTestmailEnglish :: MsgAddTestmail -> Text
-renderAddTestmailEnglish MsgAddTestmailEmail = "Email"
-
 -- gen add form - end
 
 {-# START_FILE src/Handler/User.hs #-}
@@ -3307,7 +3265,7 @@ getAddUserFormR = do
   (formWidget, _) <- generateFormPost $ vAddUserForm Nothing
   formLayout $ do
     toWidget [whamlet|
-      <h1>_{MsgGlobalAddUser}
+      <h1>_{MsgUserAddUser}
       <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ AddUserR}>
         <div #modal-form-widget>
           ^{formWidget}
@@ -3380,7 +3338,7 @@ vAddUserForm maybeUser extra = do
   where
     identFs :: FieldSettings App
     identFs = FieldSettings
-      { fsLabel = SomeMessage MsgAddUserIdent
+      { fsLabel = SomeMessage MsgUserIdent
       , fsTooltip = Nothing
       , fsId = Just "ident"
       , fsName = Just "ident"
@@ -3388,7 +3346,7 @@ vAddUserForm maybeUser extra = do
       }
     emailFs :: FieldSettings App
     emailFs = FieldSettings
-      { fsLabel = SomeMessage MsgAddUserEmail
+      { fsLabel = SomeMessage MsgUserEmail
       , fsTooltip = Nothing
       , fsId = Just "email"
       , fsName = Just "email"
@@ -3396,7 +3354,7 @@ vAddUserForm maybeUser extra = do
       }
     isAdminFs :: FieldSettings App
     isAdminFs = FieldSettings
-      { fsLabel = SomeMessage MsgAddUserIsAdmin
+      { fsLabel = SomeMessage MsgUserIsAdmin
       , fsTooltip = Nothing
       , fsId = Just "isAdmin"
       , fsName = Just "isAdmin"
@@ -3449,7 +3407,7 @@ getEditUserFormR userId = do
   (formWidget, _) <- generateFormPost $ vEditUserForm $ Just user
   formLayout $ do
     toWidget [whamlet|
-      <h1>_{MsgGlobalEditUser}
+      <h1>_{MsgUserEditUser}
       <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ EditUserR userId}>
         <div #modal-form-widget>
           ^{formWidget}
@@ -3543,7 +3501,7 @@ vEditUserForm maybeUser extra = do
   where
     identFs :: FieldSettings App
     identFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditUserIdent
+      { fsLabel = SomeMessage MsgUserIdent
       , fsTooltip = Nothing
       , fsId = Just "ident"
       , fsName = Just "ident"
@@ -3551,7 +3509,7 @@ vEditUserForm maybeUser extra = do
       }
     emailFs :: FieldSettings App
     emailFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditUserEmail
+      { fsLabel = SomeMessage MsgUserEmail
       , fsTooltip = Nothing
       , fsId = Just "email"
       , fsName = Just "email"
@@ -3559,7 +3517,7 @@ vEditUserForm maybeUser extra = do
       }
     isAdminFs :: FieldSettings App
     isAdminFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditUserIsAdmin
+      { fsLabel = SomeMessage MsgUserIsAdmin
       , fsTooltip = Nothing
       , fsId = Just "isAdmin"
       , fsName = Just "isAdmin"
@@ -3567,7 +3525,7 @@ vEditUserForm maybeUser extra = do
       }
     isResetPasswordFs :: FieldSettings App
     isResetPasswordFs = FieldSettings
-      { fsLabel = SomeMessage MsgEditUserIsResetPassword
+      { fsLabel = SomeMessage MsgUserIsResetPassword
       , fsTooltip = Nothing
       , fsId = Just "isResetPassword"
       , fsName = Just "isResetPassword"
@@ -3581,33 +3539,6 @@ vEditUserForm maybeUser extra = do
       , fsName = Just "version"
       , fsAttrs = []
       }
-
-data MsgEditUser =
-  MsgEditUserIdent
-  | MsgEditUserEmail
-  | MsgEditUserIsAdmin
-  | MsgEditUserIsResetPassword
-
-instance RenderMessage App MsgEditUser where
-  renderMessage _ []        = renderEditUserGerman
-  renderMessage _ ("de":_) = renderEditUserGerman
-  renderMessage _ ("en":_) = renderEditUserEnglish
-  renderMessage _ ("en-US":_) = renderEditUserEnglish
-  renderMessage m (_   :ls) = renderMessage m ls
-
-renderEditUserGerman :: MsgEditUser -> Text
-renderEditUserGerman MsgEditUserIdent = "Login"
-renderEditUserGerman MsgEditUserEmail = "Email"
-renderEditUserGerman MsgEditUserIsAdmin = "Ist Admin?"
-renderEditUserGerman MsgEditUserIsResetPassword = "Neues Passwort generieren? (Wird per Email zugesendet)"
-
-
-renderEditUserEnglish :: MsgEditUser -> Text
-renderEditUserEnglish MsgEditUserIdent = "Login"
-renderEditUserEnglish MsgEditUserEmail = "Email"
-renderEditUserEnglish MsgEditUserIsAdmin = "Is admin?"
-renderEditUserEnglish MsgEditUserIsResetPassword = "Generate new password? (Will be sent by email)"
-
 -- gen edit form - end
 
 -------------------------------------------------------
@@ -3628,7 +3559,7 @@ getDeleteUserFormR userId = do
   (formWidget, _) <- generateFormPost $ vDeleteUserForm
   formLayout $ do
     toWidget [whamlet|
-      <h1>_{MsgGlobalDeleteUser}
+      <h1>_{MsgUserDeleteUser}
       <form #modal-form .uk-form-horizontal method=post action=@{AdminR $ DeleteUserR userId}>
         <div #modal-form-widget>
           ^{formWidget}
@@ -3651,6 +3582,205 @@ module I18n where
 
 import ClassyPrelude.Yesod
 
+-- gen i18n - start
+data AppMessage =
+  MsgGlobalHome
+  | MsgGlobalAdmin
+  | MsgGlobalLogout
+  | MsgGlobalLanguage
+  | MsgGlobalMyProfile
+  | MsgGlobalEditMyProfile
+  | MsgGlobalReallyDelete
+  | MsgGlobalCancel
+  | MsgUserIdent
+  | MsgUserPassword
+  | MsgUserEmail
+  | MsgUserIsAdmin
+  | MsgUserIsEditor
+  | MsgUserIsReviewer
+  | MsgUserIsAuthor
+  | MsgUserIsResetPassword
+  | MsgConfigCode
+  | MsgConfigStringValue
+  | MsgConfigIntValue
+  | MsgConfigDoubleValue
+  | MsgConfigBoolValue
+  | MsgTestmailEmail
+  | MsgUserUsers
+  | MsgUserAddUser
+  | MsgUserEditUser
+  | MsgUserDeleteUser
+  | MsgConfigConfigurations
+  | MsgConfigEditConfig
+  | MsgTestmailTestMail
+  | MsgTestmailSendTestMail
+
+renderMessageGerman :: AppMessage -> Text
+renderMessageGerman MsgGlobalHome = "Home"
+renderMessageGerman MsgGlobalAdmin = "Admin"
+renderMessageGerman MsgGlobalLogout = "Logout"
+renderMessageGerman MsgGlobalLanguage = "Sprache"
+renderMessageGerman MsgGlobalMyProfile = "Mein Profil"
+renderMessageGerman MsgGlobalEditMyProfile = "Mein Profil bearbeiten"
+renderMessageGerman MsgGlobalReallyDelete = "Möchten sie wirklich löschen?"
+renderMessageGerman MsgGlobalCancel = "Abbrechen"
+renderMessageGerman MsgUserIdent = "Login"
+renderMessageGerman MsgUserPassword = "Passwort"
+renderMessageGerman MsgUserEmail = "Email"
+renderMessageGerman MsgUserIsAdmin = "Ist Admin?"
+renderMessageGerman MsgUserIsEditor = "Ist Redaktuer?"
+renderMessageGerman MsgUserIsReviewer = "Ist Reviewer?"
+renderMessageGerman MsgUserIsAuthor = "Ist Autor?"
+renderMessageGerman MsgUserIsResetPassword = "Neues Passwort generieren? (Wird per Email zugesendet)"
+renderMessageGerman MsgConfigCode = "Code"
+renderMessageGerman MsgConfigStringValue = "String-Wert"
+renderMessageGerman MsgConfigIntValue = "Integer-Wert"
+renderMessageGerman MsgConfigDoubleValue = "Double-Wert"
+renderMessageGerman MsgConfigBoolValue = "Boolean-Wert"
+renderMessageGerman MsgTestmailEmail = "Email"
+renderMessageGerman MsgUserUsers = "Nutzer"
+renderMessageGerman MsgUserAddUser = "Nutzer hinzufügen"
+renderMessageGerman MsgUserEditUser = "Nutzer bearbeiten"
+renderMessageGerman MsgUserDeleteUser = "Nutzer löschen"
+renderMessageGerman MsgConfigConfigurations = "Konfigurationen"
+renderMessageGerman MsgConfigEditConfig = "Konfiguration bearbeiten"
+renderMessageGerman MsgTestmailTestMail = "Test-Mail"
+renderMessageGerman MsgTestmailSendTestMail = "Test-Mail senden..."
+
+renderMessageEnglish :: AppMessage -> Text
+renderMessageEnglish MsgGlobalHome = "Home"
+renderMessageEnglish MsgGlobalAdmin = "Admin"
+renderMessageEnglish MsgGlobalLogout = "Logout"
+renderMessageEnglish MsgGlobalLanguage = "Language"
+renderMessageEnglish MsgGlobalMyProfile = "My Profile"
+renderMessageEnglish MsgGlobalEditMyProfile = "Edit my profile"
+renderMessageEnglish MsgGlobalReallyDelete = "Are you sure to delete?"
+renderMessageEnglish MsgGlobalCancel = "Cancel"
+renderMessageEnglish MsgUserIdent = "Login"
+renderMessageEnglish MsgUserPassword = "Password"
+renderMessageEnglish MsgUserEmail = "Email"
+renderMessageEnglish MsgUserIsAdmin = "Is admin?"
+renderMessageEnglish MsgUserIsEditor = "Is editor?"
+renderMessageEnglish MsgUserIsReviewer = "Is reviewer?"
+renderMessageEnglish MsgUserIsAuthor = "Is author?"
+renderMessageEnglish MsgUserIsResetPassword = "Generate new password? (Will be sent by email)"
+renderMessageEnglish MsgConfigCode = "Code"
+renderMessageEnglish MsgConfigStringValue = "String-Value"
+renderMessageEnglish MsgConfigIntValue = "Integer-Value"
+renderMessageEnglish MsgConfigDoubleValue = "Double-Value"
+renderMessageEnglish MsgConfigBoolValue = "Boolean-Value"
+renderMessageEnglish MsgTestmailEmail = "Email"
+renderMessageEnglish MsgUserUsers = "Users"
+renderMessageEnglish MsgUserAddUser = "Add user"
+renderMessageEnglish MsgUserEditUser = "Edit user"
+renderMessageEnglish MsgUserDeleteUser = "Delete user"
+renderMessageEnglish MsgConfigConfigurations = "Configurations"
+renderMessageEnglish MsgConfigEditConfig = "Edit config"
+renderMessageEnglish MsgTestmailTestMail = "Test-Mail"
+renderMessageEnglish MsgTestmailSendTestMail = "Send Test-Mail..."
+
+data Translation = Translation
+  { msgGlobalHome :: Text
+  , msgGlobalAdmin :: Text
+  , msgGlobalLogout :: Text
+  , msgGlobalLanguage :: Text
+  , msgGlobalMyProfile :: Text
+  , msgGlobalEditMyProfile :: Text
+  , msgGlobalReallyDelete :: Text
+  , msgGlobalCancel :: Text
+  , msgUserIdent :: Text
+  , msgUserPassword :: Text
+  , msgUserEmail :: Text
+  , msgUserIsAdmin :: Text
+  , msgUserIsEditor :: Text
+  , msgUserIsReviewer :: Text
+  , msgUserIsAuthor :: Text
+  , msgUserIsResetPassword :: Text
+  , msgConfigCode :: Text
+  , msgConfigStringValue :: Text
+  , msgConfigIntValue :: Text
+  , msgConfigDoubleValue :: Text
+  , msgConfigBoolValue :: Text
+  , msgTestmailEmail :: Text
+  , msgUserUsers :: Text
+  , msgUserAddUser :: Text
+  , msgUserEditUser :: Text
+  , msgUserDeleteUser :: Text
+  , msgConfigConfigurations :: Text
+  , msgConfigEditConfig :: Text
+  , msgTestmailTestMail :: Text
+  , msgTestmailSendTestMail :: Text
+  } deriving Generic
+
+instance ToJSON Translation
+
+translationDe :: Translation
+translationDe = Translation
+  { msgGlobalHome = "Home"
+  , msgGlobalAdmin = "Admin"
+  , msgGlobalLogout = "Logout"
+  , msgGlobalLanguage = "Sprache"
+  , msgGlobalMyProfile = "Mein Profil"
+  , msgGlobalEditMyProfile = "Mein Profil bearbeiten"
+  , msgGlobalReallyDelete = "Möchten sie wirklich löschen?"
+  , msgGlobalCancel = "Abbrechen"
+  , msgUserIdent = "Login"
+  , msgUserPassword = "Passwort"
+  , msgUserEmail = "Email"
+  , msgUserIsAdmin = "Ist Admin?"
+  , msgUserIsEditor = "Ist Redaktuer?"
+  , msgUserIsReviewer = "Ist Reviewer?"
+  , msgUserIsAuthor = "Ist Autor?"
+  , msgUserIsResetPassword = "Neues Passwort generieren? (Wird per Email zugesendet)"
+  , msgConfigCode = "Code"
+  , msgConfigStringValue = "String-Wert"
+  , msgConfigIntValue = "Integer-Wert"
+  , msgConfigDoubleValue = "Double-Wert"
+  , msgConfigBoolValue = "Boolean-Wert"
+  , msgTestmailEmail = "Email"
+  , msgUserUsers = "Nutzer"
+  , msgUserAddUser = "Nutzer hinzufügen"
+  , msgUserEditUser = "Nutzer bearbeiten"
+  , msgUserDeleteUser = "Nutzer löschen"
+  , msgConfigConfigurations = "Konfigurationen"
+  , msgConfigEditConfig = "Konfiguration bearbeiten"
+  , msgTestmailTestMail = "Test-Mail"
+  , msgTestmailSendTestMail = "Test-Mail senden..."}
+
+translationEn :: Translation
+translationEn = Translation
+  { msgGlobalHome = "Home"
+  , msgGlobalAdmin = "Admin"
+  , msgGlobalLogout = "Logout"
+  , msgGlobalLanguage = "Language"
+  , msgGlobalMyProfile = "My Profile"
+  , msgGlobalEditMyProfile = "Edit my profile"
+  , msgGlobalReallyDelete = "Are you sure to delete?"
+  , msgGlobalCancel = "Cancel"
+  , msgUserIdent = "Login"
+  , msgUserPassword = "Password"
+  , msgUserEmail = "Email"
+  , msgUserIsAdmin = "Is admin?"
+  , msgUserIsEditor = "Is editor?"
+  , msgUserIsReviewer = "Is reviewer?"
+  , msgUserIsAuthor = "Is author?"
+  , msgUserIsResetPassword = "Generate new password? (Will be sent by email)"
+  , msgConfigCode = "Code"
+  , msgConfigStringValue = "String-Value"
+  , msgConfigIntValue = "Integer-Value"
+  , msgConfigDoubleValue = "Double-Value"
+  , msgConfigBoolValue = "Boolean-Value"
+  , msgTestmailEmail = "Email"
+  , msgUserUsers = "Users"
+  , msgUserAddUser = "Add user"
+  , msgUserEditUser = "Edit user"
+  , msgUserDeleteUser = "Delete user"
+  , msgConfigConfigurations = "Configurations"
+  , msgConfigEditConfig = "Edit config"
+  , msgTestmailTestMail = "Test-Mail"
+  , msgTestmailSendTestMail = "Send Test-Mail..."}
+
+-- gen i18n - end
 
 {-# START_FILE src/Import.hs #-}
 module Import
@@ -5068,13 +5198,13 @@ dCk6ZS5yaW90PXQoKTsK
     <ul uk-tab>
       <li>
         <a href="#">
-          {parent.data.translation.msgGlobalUsers}
+          {parent.data.translation.msgUserUsers}
       <li>
         <a href="#">
-          {parent.data.translation.msgGlobalConfigurations}
+          {parent.data.translation.msgConfigConfigurations}
       <li>
         <a href="#">
-          {parent.data.translation.msgGlobalTestMail}
+          {parent.data.translation.msgTestmailTestMail}
     <ul .uk-switcher .uk-margin>
       <li>
         <!-- user list -->
@@ -5088,7 +5218,7 @@ dCk6ZS5yaW90PXQoKTsK
               <th>
                 {parent.data.translation.msgUserIsAdmin}
               <th .uk-align-right>
-                <button .uk-background-primary .uk-light .uk-padding-small .uk-background-primary .uk-light .uk-padding-small .modal-form-link .uk-button .uk-button-link title="{parent.data.translation.msgGlobalAddUser}" uk-tooltip onclick="{addUser}">
+                <button .uk-background-primary .uk-light .uk-padding-small .uk-background-primary .uk-light .uk-padding-small .modal-form-link .uk-button .uk-button-link title="{parent.data.translation.msgUserAddUser}" uk-tooltip onclick="{addUser}">
                   <span uk-icon="icon: plus">
           <tbody>
             <tr each="{parent.data.pages.admin.users}">
@@ -5100,9 +5230,9 @@ dCk6ZS5yaW90PXQoKTsK
                 <a onclick="{editUser}" .uk-link-reset>
                   <span uk-icon="icon: check" if="{entity.isAdmin}">
               <td .uk-width-small>
-                <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgGlobalDeleteUser}" uk-tooltip onclick="{deleteUser}">
+                <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgUserDeleteUser}" uk-tooltip onclick="{deleteUser}">
                   <span uk-icon="icon: trash">
-                <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgGlobalEditUser}" uk-tooltip onclick="{editUser}">
+                <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgUserEditUser}" uk-tooltip onclick="{editUser}">
                   <span uk-icon="icon: pencil">
       <li>
         <!-- config list -->
@@ -5137,12 +5267,12 @@ dCk6ZS5yaW90PXQoKTsK
               <td>
                 <span uk-icon="icon: check" if="{entity.boolValue}">
               <td .uk-width-small>
-                <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgGlobalEditConfig}" uk-tooltip onclick="{editConfig}">
+                <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgConfigEditConfig}" uk-tooltip onclick="{editConfig}">
                   <span uk-icon="icon: pencil">
       <li>
         <!-- test mail -->
         <button .uk-button .uk-button-primary onclick="{sendTestMail}">
-          {parent.data.translation.msgGlobalSendTestMail}
+          {parent.data.translation.msgTestmailSendTestMail}
   <script>
     \ addUser(event) {
     \   event.preventDefault()

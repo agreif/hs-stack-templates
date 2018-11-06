@@ -239,13 +239,13 @@
     <ul uk-tab>
       <li>
         <a href="#">
-          {parent.data.translation.msgGlobalUsers}
+          {parent.data.translation.msgUserUsers}
       <li>
         <a href="#">
-          {parent.data.translation.msgGlobalConfigurations}
+          {parent.data.translation.msgConfigConfigurations}
       <li>
         <a href="#">
-          {parent.data.translation.msgGlobalTestMail}
+          {parent.data.translation.msgTestmailTestMail}
     <ul .uk-switcher .uk-margin>
       <li>
         <!-- user list -->
@@ -259,7 +259,7 @@
               <th>
                 {parent.data.translation.msgUserIsAdmin}
               <th .uk-align-right>
-                <button .uk-background-primary .uk-light .uk-padding-small .uk-background-primary .uk-light .uk-padding-small .modal-form-link .uk-button .uk-button-link title="{parent.data.translation.msgGlobalAddUser}" uk-tooltip onclick="{addUser}">
+                <button .uk-background-primary .uk-light .uk-padding-small .uk-background-primary .uk-light .uk-padding-small .modal-form-link .uk-button .uk-button-link title="{parent.data.translation.msgUserAddUser}" uk-tooltip onclick="{addUser}">
                   <span uk-icon="icon: plus">
           <tbody>
             <tr each="{parent.data.pages.admin.users}">
@@ -271,9 +271,9 @@
                 <a onclick="{editUser}" .uk-link-reset>
                   <span uk-icon="icon: check" if="{entity.isAdmin}">
               <td .uk-width-small>
-                <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgGlobalDeleteUser}" uk-tooltip onclick="{deleteUser}">
+                <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgUserDeleteUser}" uk-tooltip onclick="{deleteUser}">
                   <span uk-icon="icon: trash">
-                <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgGlobalEditUser}" uk-tooltip onclick="{editUser}">
+                <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgUserEditUser}" uk-tooltip onclick="{editUser}">
                   <span uk-icon="icon: pencil">
       <li>
         <!-- config list -->
@@ -308,12 +308,12 @@
               <td>
                 <span uk-icon="icon: check" if="{entity.boolValue}">
               <td .uk-width-small>
-                <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgGlobalEditConfig}" uk-tooltip onclick="{editConfig}">
+                <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgConfigEditConfig}" uk-tooltip onclick="{editConfig}">
                   <span uk-icon="icon: pencil">
       <li>
         <!-- test mail -->
         <button .uk-button .uk-button-primary onclick="{sendTestMail}">
-          {parent.data.translation.msgGlobalSendTestMail}
+          {parent.data.translation.msgTestmailSendTestMail}
   <script>
     \ addUser(event) {
     \   event.preventDefault()
