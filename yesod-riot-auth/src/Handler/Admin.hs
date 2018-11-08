@@ -20,12 +20,12 @@ getAdminHomeR = defaultLayout $ do
                    <script>
                      \ riot.compile(function() {
                      \   bodyTag = riot.mount('body-tag')[0]
-                     \   bodyTag.refreshData("@{AdminR $ AdminPageDataJsonR}")
+                     \   bodyTag.refreshData("@{AdminR $ AdminDataR}")
                      \ })
                    |]
 
-getAdminPageDataJsonR :: Handler Value
-getAdminPageDataJsonR = do
+getAdminDataR :: Handler Value
+getAdminDataR = do
   Entity _ user <- requireAuth
   req <- getRequest
   appName <- runDB $ configAppName
@@ -45,7 +45,7 @@ getAdminPageDataJsonR = do
   msgAdmin <- localizedMsg MsgGlobalAdmin
   currentLanguage <- getLanguage
   translation <- getTranslation
-  let currentPageDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR
+  let currentDataUrl = urlRenderer $ AdminR AdminDataR
   returnJson JData
     { jDataAppName = appName
     , jDataUserIdent = userIdent user
@@ -60,15 +60,15 @@ getAdminPageDataJsonR = do
     , jDataCsrfToken = reqToken req
     , jDataBreadcrumbItems = [ JDataBreadcrumbItem
                                { jDataBreadcrumbItemLabel = msgHome
-                               , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomePageDataJsonR }
+                               , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomeDataR }
                              , JDataBreadcrumbItem
                                { jDataBreadcrumbItemLabel = msgAdmin
-                               , jDataBreadcrumbItemDataUrl = currentPageDataJsonUrl }
+                               , jDataBreadcrumbItemDataUrl = currentDataUrl }
                              ]
     , jDataCurrentLanguage = currentLanguage
     , jDataTranslation = translation
-    , jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentPageDataJsonUrl
-    , jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentPageDataJsonUrl
+    , jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl
+    , jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
     }
 
 userListJDataEnts :: Handler [JDataUser]

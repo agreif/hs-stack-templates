@@ -23,12 +23,12 @@ getMyprojectHomeR = defaultLayout $ do
                    <script>
                      \ riot.compile(function() {
                      \   bodyTag = riot.mount('body-tag')[0]
-                     \   bodyTag.refreshData("@{MyprojectR $ HomePageDataJsonR}")
+                     \   bodyTag.refreshData("@{MyprojectR $ HomeDataR}")
                      \ })
                    |]
 
-getHomePageDataJsonR :: Handler Value
-getHomePageDataJsonR = do
+getHomeDataR :: Handler Value
+getHomeDataR = do
   Entity _ user <- requireAuth
   req <- getRequest
   appName <- runDB $ configAppName
@@ -40,7 +40,7 @@ getHomePageDataJsonR = do
   msgHome <- localizedMsg MsgGlobalHome
   currentLanguage <- getLanguage
   translation <- getTranslation
-  let currentPageDataJsonUrl = urlRenderer $ MyprojectR HomePageDataJsonR
+  let currentDataUrl = urlRenderer $ MyprojectR HomeDataR
   returnJson JData
     { jDataAppName = appName
     , jDataUserIdent = userIdent user
@@ -56,12 +56,12 @@ getHomePageDataJsonR = do
     , jDataBreadcrumbItems =
       [ JDataBreadcrumbItem
         { jDataBreadcrumbItemLabel = msgHome
-        , jDataBreadcrumbItemDataUrl = currentPageDataJsonUrl }
+        , jDataBreadcrumbItemDataUrl = currentDataUrl }
       ]
     , jDataCurrentLanguage = currentLanguage
     , jDataTranslation = translation
-    , jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentPageDataJsonUrl
-    , jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentPageDataJsonUrl
+    , jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl
+    , jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
     }
 
 getRiotTagsR :: Handler Html

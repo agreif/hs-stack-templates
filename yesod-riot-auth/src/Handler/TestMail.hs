@@ -24,7 +24,7 @@ postAddTestmailR = do
     FormSuccess vAddTestmail -> do
       urlRenderer <- getUrlRender
       sendTestMail $ vAddTestmailEmail vAddTestmail
-      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR }
+      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
