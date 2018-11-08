@@ -9,7 +9,7 @@
 
 /myproject/admin AdminR:
   home AdminHomeR GET
-  adminPageDataJson AdminPageDataJsonR GET
+  adminData AdminDataR GET
 
   addUserForm AddUserFormR GET
   addUser AddUserR POST
@@ -28,7 +28,7 @@
   home MyprojectHomeR GET
   riotTags RiotTagsR GET
 
-  homePageDataJson HomePageDataJsonR GET
+  homeData HomeDataR GET
 
   language/de/#Text LanguageDeR POST
   language/en/#Text LanguageEnR POST
