@@ -480,7 +480,7 @@ User-agent: *
 
 /myproject/admin AdminR:
   home AdminHomeR GET
-  adminPageDataJson AdminPageDataJsonR GET
+  adminData AdminDataR GET
 
   addUserForm AddUserFormR GET
   addUser AddUserR POST
@@ -499,7 +499,7 @@ User-agent: *
   home MyprojectHomeR GET
   riotTags RiotTagsR GET
 
-  homePageDataJson HomePageDataJsonR GET
+  homeData HomeDataR GET
 
   language/de/#Text LanguageDeR POST
   language/en/#Text LanguageEnR POST
@@ -625,7 +625,7 @@ context =
         , bCrudModelDeleteFormEntityLoader = Nothing
         , bCrudModelAddFormDataJsonUrl = Nothing
         , bCrudModelEditFormDataJsonUrl = Nothing
-        , bCrudModelDeleteFormDataJsonUrl = Just "AdminR AdminPageDataJsonR"
+        , bCrudModelDeleteFormDataJsonUrl = Just "AdminR AdminDataR"
         , bCrudModelAddFormHasDefaultModel = False
         , bCrudModelEditPostLoadsModel = False
         , bCrudModelDeletePostLoadsModel = False
@@ -820,7 +820,7 @@ context =
         , bCrudModelEditFormEntityLoader = Nothing
         , bCrudModelDeleteFormEntityLoader = Nothing
         , bCrudModelAddFormDataJsonUrl = Nothing
-        , bCrudModelEditFormDataJsonUrl = Just "AdminR AdminPageDataJsonR"
+        , bCrudModelEditFormDataJsonUrl = Just "AdminR AdminDataR"
         , bCrudModelDeleteFormDataJsonUrl = Nothing
         , bCrudModelAddFormHasDefaultModel = False
         , bCrudModelEditPostLoadsModel = False
@@ -1737,12 +1737,12 @@ instance Yesod App where
     -- For details, see the CSRF documentation in the Yesod.Core.Handler module of the yesod-core package.
     yesodMiddleware :: ToTypedContent res => Handler res -> Handler res
     yesodMiddleware app = do
-      maybeRoute <- getCurrentRoute
-      let dontCheckCsrf = case maybeRoute of
-                            Just (AuthR _) -> True  -- Don't check AuthR
-                            Nothing        -> True  -- Don't check for 404s
-                            _              -> False -- Check other routes
-      defaultYesodMiddleware $ defaultCsrfSetCookieMiddleware $ (if dontCheckCsrf then id else defaultCsrfCheckMiddleware) app
+        maybeRoute <- getCurrentRoute
+        let dontCheckCsrf = case maybeRoute of
+                              Just (AuthR _) -> True  -- Don't check AuthR
+                              Nothing        -> True  -- Don't check for 404s
+                              _              -> False -- Check other routes
+        defaultYesodMiddleware $ defaultCsrfSetCookieMiddleware $ (if dontCheckCsrf then id else defaultCsrfCheckMiddleware) app
 
     defaultLayout :: Widget -> Handler Html
     defaultLayout widget = do
@@ -1790,8 +1790,8 @@ instance Yesod App where
             mime
             content
       where
-        -- Generate a unique filename based on the content itself
-        genFileName lbs = "autogen-" ++ base64md5 lbs
+          -- Generate a unique filename based on the content itself
+          genFileName lbs = "autogen-" ++ base64md5 lbs
 
     -- What messages should be logged. The following includes all messages when
     -- in development, and warnings and errors in production.
@@ -1879,9 +1879,9 @@ instance YesodAuth App where
 
 myLoginForm :: Route App -> Widget
 myLoginForm loginRoute = do
-  request <- getRequest
-  let maybeToken = reqToken request
-  $(whamletFile "templates/login_form.hamlet")
+    request <- getRequest
+    let maybeToken = reqToken request
+    $(whamletFile "templates/login_form.hamlet")
 
 -- | Access function to determine if a user is logged in.
 isAuthenticated :: Handler AuthResult
@@ -2012,12 +2012,12 @@ getAdminHomeR = defaultLayout $ do
                    <script>
                      \ riot.compile(function() {
                      \   bodyTag = riot.mount('body-tag')[0]
-                     \   bodyTag.refreshData("@{AdminR $ AdminPageDataJsonR}")
+                     \   bodyTag.refreshData("@{AdminR $ AdminDataR}")
                      \ })
                    |]
 
-getAdminPageDataJsonR :: Handler Value
-getAdminPageDataJsonR = do
+getAdminDataR :: Handler Value
+getAdminDataR = do
   Entity _ user <- requireAuth
   req <- getRequest
   appName <- runDB $ configAppName
@@ -2037,7 +2037,7 @@ getAdminPageDataJsonR = do
   msgAdmin <- localizedMsg MsgGlobalAdmin
   currentLanguage <- getLanguage
   translation <- getTranslation
-  let currentPageDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR
+  let currentDataUrl = urlRenderer $ AdminR AdminDataR
   returnJson JData
     { jDataAppName = appName
     , jDataUserIdent = userIdent user
@@ -2052,15 +2052,15 @@ getAdminPageDataJsonR = do
     , jDataCsrfToken = reqToken req
     , jDataBreadcrumbItems = [ JDataBreadcrumbItem
                                { jDataBreadcrumbItemLabel = msgHome
-                               , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomePageDataJsonR }
+                               , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomeDataR }
                              , JDataBreadcrumbItem
                                { jDataBreadcrumbItemLabel = msgAdmin
-                               , jDataBreadcrumbItemDataUrl = currentPageDataJsonUrl }
+                               , jDataBreadcrumbItemDataUrl = currentDataUrl }
                              ]
     , jDataCurrentLanguage = currentLanguage
     , jDataTranslation = translation
-    , jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentPageDataJsonUrl
-    , jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentPageDataJsonUrl
+    , jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl
+    , jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
     }
 
 userListJDataEnts :: Handler [JDataUser]
@@ -2122,7 +2122,7 @@ import Control.Monad.Random
 import qualified Data.Char as C
 import qualified Data.List as L
 import qualified Data.Text as T
-import Text.Printf
+import qualified Text.Printf as PF
 import qualified Data.Maybe as M
 import qualified Data.Conduit.Binary as CB
 import qualified Data.ByteString as B
@@ -2211,8 +2211,8 @@ instance ToJSON JData where
 data JDataNavItem = JDataNavItem
   { jDataNavItemLabel :: Text
   , jDataNavItemIsActive :: Bool
-  , jDataNavItemUrl :: Text
-  , jDataNavItemPageDataUrl :: Text
+  , jDataNavItemUrl :: Maybe Text
+  , jDataNavItemDataUrl :: Maybe Text
   , jDataNavItemBadge :: Maybe Text
   , jDataNavItemDropdownItems :: Maybe [JDataNavItem]
   }
@@ -2221,7 +2221,7 @@ instance ToJSON JDataNavItem where
     [ "label" .= jDataNavItemLabel o
     , "isActive" .= jDataNavItemIsActive o
     , "url" .= jDataNavItemUrl o
-    , "dataUrl" .= jDataNavItemPageDataUrl o
+    , "dataUrl" .= jDataNavItemDataUrl o
     , "badge" .= jDataNavItemBadge o
     , "dropdownItems" .= jDataNavItemDropdownItems o
     ]
@@ -2246,6 +2246,24 @@ instance ToJSON JDataHistoryState where
   toJSON o = object
     [ "url" .= jDataHistoryStateUrl o
     , "title" .= jDataHistoryStateTitle o
+    ]
+
+data JDataPaginationItem = JDataPaginationItem
+  { jDataPaginationItemLabel :: Maybe Text
+  , jDataPaginationItemDataUrl :: Maybe Text
+  , jDataPaginationItemIsActive :: Bool
+  , jDataPaginationItemIsDisabled :: Bool
+  , jDataPaginationItemIsPrevious :: Bool
+  , jDataPaginationItemIsNext :: Bool
+  }
+instance ToJSON JDataPaginationItem where
+  toJSON o = object
+    [ "label" .= jDataPaginationItemLabel o
+    , "dataUrl" .= jDataPaginationItemDataUrl o
+    , "isActive" .= jDataPaginationItemIsActive o
+    , "isDisabled" .= jDataPaginationItemIsDisabled o
+    , "isPrevious" .= jDataPaginationItemIsPrevious o
+    , "isNext" .= jDataPaginationItemIsNext o
     ]
 
 instance ToJSON User where
@@ -2333,8 +2351,8 @@ mainNavData user mainNav = do
     [ JDataNavItem
       { jDataNavItemLabel = msgHome
       , jDataNavItemIsActive = mainNav == MainNavHome
-      , jDataNavItemUrl = urlRenderer $ MyprojectR MyprojectHomeR
-      , jDataNavItemPageDataUrl = urlRenderer $ MyprojectR HomePageDataJsonR
+      , jDataNavItemUrl = Just $ urlRenderer $ MyprojectR MyprojectHomeR
+      , jDataNavItemDataUrl = Just $ urlRenderer $ MyprojectR HomeDataR
       , jDataNavItemBadge = Nothing
       , jDataNavItemDropdownItems = Nothing
       }
@@ -2344,12 +2362,150 @@ mainNavData user mainNav = do
       True -> [ JDataNavItem
                 { jDataNavItemLabel = msgAdmin
                 , jDataNavItemIsActive = mainNav == MainNavAdmin
-                , jDataNavItemUrl = urlRenderer $ AdminR AdminHomeR
-                , jDataNavItemPageDataUrl = urlRenderer $ AdminR AdminPageDataJsonR
+                , jDataNavItemUrl = Just $ urlRenderer $ AdminR AdminHomeR
+                , jDataNavItemDataUrl = Just $ urlRenderer $ AdminR AdminDataR
                 , jDataNavItemBadge = Nothing
                 , jDataNavItemDropdownItems = Nothing
                 } ]
       False -> []
+
+--------------------------------------------------------------------------------
+-- pagination helpers
+--------------------------------------------------------------------------------
+
+getPaginationJDatas :: Int -> Int -> Int -> Int -> (Int -> Route App) -> Handler (Maybe [JDataPaginationItem])
+getPaginationJDatas allCount pageSize curPageNum visibleNumsCount' routeFunc= do
+  urlRenderer <- getUrlRender
+  let visibleNumsCount = if mod visibleNumsCount' 2 == 0 then visibleNumsCount'+1 else visibleNumsCount'
+  let pageCount' = div allCount pageSize
+  let pageCount = if mod allCount pageSize == 0 then pageCount' else pageCount' + 1
+  (firstPageNum, lastPageNum) <-
+    if visibleNumsCount >= pageCount
+    then return (1,pageCount) -- show all
+    else do
+      let (firstNum,lastNum) = ( curPageNum - div visibleNumsCount 2
+                               , curPageNum + div visibleNumsCount 2)
+      let (firstNum',lastNum') = if firstNum < 1 then (1,visibleNumsCount) else (firstNum,lastNum)
+      let (firstNum'',lastNum'') =
+            if lastNum > pageCount
+            then (pageCount-visibleNumsCount+1, pageCount)
+            else (firstNum',lastNum')
+      return (firstNum'', lastNum'')
+
+  let pageNums = [firstPageNum..lastPageNum]
+  case pageCount of
+    1 -> return Nothing
+    _ -> return $
+      Just $
+        ( if curPageNum == 1
+          then []
+          else [ JDataPaginationItem
+                 { jDataPaginationItemLabel = Nothing
+                 , jDataPaginationItemDataUrl = Just $ urlRenderer $ routeFunc $ curPageNum - 1
+                 , jDataPaginationItemIsActive = False
+                 , jDataPaginationItemIsDisabled = False
+                 , jDataPaginationItemIsPrevious = True
+                 , jDataPaginationItemIsNext = False
+                 }
+               ]
+               ++ ( if firstPageNum == 1
+                    then []
+                    else [ JDataPaginationItem
+                           { jDataPaginationItemLabel = Just "1"
+                           , jDataPaginationItemDataUrl = Just $ urlRenderer $ routeFunc 1
+                           , jDataPaginationItemIsActive = False
+                           , jDataPaginationItemIsDisabled = False
+                           , jDataPaginationItemIsPrevious = False
+                           , jDataPaginationItemIsNext = False
+                           }
+                         ]
+                  )
+               ++ ( if firstPageNum <= 2
+                    then []
+                    else [ JDataPaginationItem
+                           { jDataPaginationItemLabel = Just "..."
+                           , jDataPaginationItemDataUrl = Nothing
+                           , jDataPaginationItemIsActive = False
+                           , jDataPaginationItemIsDisabled = True
+                           , jDataPaginationItemIsPrevious = False
+                           , jDataPaginationItemIsNext = False
+                           }
+                         ]
+                  )
+        )
+        ++ map (\i ->
+                  JDataPaginationItem
+                  { jDataPaginationItemLabel = Just $ formatInt i
+                  , jDataPaginationItemDataUrl = Just $ urlRenderer $ routeFunc $ fromIntegral i
+                  , jDataPaginationItemIsActive = i == curPageNum
+                  , jDataPaginationItemIsDisabled = False
+                  , jDataPaginationItemIsPrevious = False
+                  , jDataPaginationItemIsNext = False
+                  }
+               )
+           pageNums
+        ++ ( if lastPageNum >= pageCount-1
+             then []
+             else [ JDataPaginationItem
+                    { jDataPaginationItemLabel = Just "..."
+                    , jDataPaginationItemDataUrl = Nothing
+                    , jDataPaginationItemIsActive = False
+                    , jDataPaginationItemIsDisabled = True
+                    , jDataPaginationItemIsPrevious = False
+                    , jDataPaginationItemIsNext = False
+                    }
+                  ]
+           )
+        ++ ( if lastPageNum == pageCount
+             then []
+             else [ JDataPaginationItem
+                    { jDataPaginationItemLabel = Just $ formatInt pageCount
+                    , jDataPaginationItemDataUrl = Just $ urlRenderer $ routeFunc pageCount
+                    , jDataPaginationItemIsActive = False
+                    , jDataPaginationItemIsDisabled = False
+                    , jDataPaginationItemIsPrevious = False
+                    , jDataPaginationItemIsNext = False
+                    }
+                  ]
+           )
+        ++ if curPageNum == pageCount
+           then []
+           else [ JDataPaginationItem
+                  { jDataPaginationItemLabel = Nothing
+                  , jDataPaginationItemDataUrl = Just $ urlRenderer $ routeFunc $ curPageNum + 1
+                  , jDataPaginationItemIsActive = False
+                  , jDataPaginationItemIsDisabled = False
+                  , jDataPaginationItemIsPrevious = False
+                  , jDataPaginationItemIsNext = True
+                  }]
+
+--------------------------------------------------------------------------------
+-- form helpers
+--------------------------------------------------------------------------------
+
+verticalCheckboxesField :: (YesodPersist site, RenderMessage site FormMessage, YesodPersistBackend site ~ SqlBackend, Eq a)
+                 => HandlerT site IO (OptionList a)
+                 -> Field (HandlerT site IO) [a]
+verticalCheckboxesField ioptlist = (multiSelectField ioptlist)
+    { fieldView =
+        \theId name attrs val _isReq -> do
+            opts <- fmap olOptions $ handlerToWidget ioptlist
+            let optselected (Left _) _ = False
+                optselected (Right vals) opt = (optionInternalValue opt) `elem` vals
+            [whamlet|
+                <span ##{theId}>
+                    $forall opt <- opts
+                        <label style="display: block;">
+                            <input type=checkbox name=#{name} value=#{optionExternalValue opt} *{attrs} :optselected val opt:checked>
+                            #{optionDisplay opt}
+                |]
+    }
+
+
+--------------------------------------------------------------------------------
+-- app specific helpers
+--------------------------------------------------------------------------------
+
 
 --------------------------------------------------------------------------------
 -- generic helpers
@@ -2427,9 +2583,9 @@ fileBytes fileInfo = do
 
 humanReadableBytes :: Integer -> String
 humanReadableBytes size
-  | null pairs = printf "%.0fZiB" (size'/1024^(7::Integer))
-  | otherwise  = if unit == "" then printf "%dB" size
-                 else printf "%.1f%sB" n unit
+  | null pairs = PF.printf "%.0fZiB" (size'/1024^(7::Integer))
+  | otherwise  = if unit == "" then PF.printf "%dB" size
+                 else PF.printf "%.1f%sB" n unit
   where
     (n, unit):_ = pairs
     pairs = zip (L.iterate (/1024) size') units
@@ -2473,7 +2629,7 @@ formatLocalTimeDayPart :: TimeZone -> UTCTime -> String
 formatLocalTimeDayPart timeZone utcTime = formatTime defaultTimeLocale "%d.%m.%Y" $ utcToLocalTime timeZone utcTime
 
 formatDouble :: Double -> Text
-formatDouble x = T.replace "." "," (pack $ printf "%.2f" x)
+formatDouble x = T.replace "." "," (pack $ PF.printf "%.2f" x)
 
 formatMaybeDouble :: Maybe Double -> Text
 formatMaybeDouble (Just x) = formatDouble x
@@ -2497,7 +2653,7 @@ formatInt :: Int -> Text
 formatInt = pack . show
 
 formatInt4Digits :: Int -> String
-formatInt4Digits = printf "%04d"
+formatInt4Digits = PF.printf "%04d"
 
 formatMinuteValue :: Int -> Text
 formatMinuteValue minVal = pack $ h1:h2:':':m1:m2
@@ -2618,8 +2774,8 @@ postEditConfigR configId = do
                                               , ConfigVersion ==. vEditConfigVersion vEditConfig
                                               ] persistFields
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR }
-        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR }
+        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR }
+        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ AdminR AdminDataR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
@@ -2761,12 +2917,12 @@ getMyprojectHomeR = defaultLayout $ do
                    <script>
                      \ riot.compile(function() {
                      \   bodyTag = riot.mount('body-tag')[0]
-                     \   bodyTag.refreshData("@{MyprojectR $ HomePageDataJsonR}")
+                     \   bodyTag.refreshData("@{MyprojectR $ HomeDataR}")
                      \ })
                    |]
 
-getHomePageDataJsonR :: Handler Value
-getHomePageDataJsonR = do
+getHomeDataR :: Handler Value
+getHomeDataR = do
   Entity _ user <- requireAuth
   req <- getRequest
   appName <- runDB $ configAppName
@@ -2778,7 +2934,7 @@ getHomePageDataJsonR = do
   msgHome <- localizedMsg MsgGlobalHome
   currentLanguage <- getLanguage
   translation <- getTranslation
-  let currentPageDataJsonUrl = urlRenderer $ MyprojectR HomePageDataJsonR
+  let currentDataUrl = urlRenderer $ MyprojectR HomeDataR
   returnJson JData
     { jDataAppName = appName
     , jDataUserIdent = userIdent user
@@ -2794,12 +2950,12 @@ getHomePageDataJsonR = do
     , jDataBreadcrumbItems =
       [ JDataBreadcrumbItem
         { jDataBreadcrumbItemLabel = msgHome
-        , jDataBreadcrumbItemDataUrl = currentPageDataJsonUrl }
+        , jDataBreadcrumbItemDataUrl = currentDataUrl }
       ]
     , jDataCurrentLanguage = currentLanguage
     , jDataTranslation = translation
-    , jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentPageDataJsonUrl
-    , jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentPageDataJsonUrl
+    , jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl
+    , jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
     }
 
 getRiotTagsR :: Handler Html
@@ -3075,8 +3231,8 @@ postEditMyprofileR = do
         user' <- runDB $ get404 userId
         sendPasswordResetMail user' passwd
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR HomePageDataJsonR }
-        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ MyprojectR HomePageDataJsonR }
+        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR HomeDataR }
+        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ MyprojectR HomeDataR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
@@ -3183,7 +3339,7 @@ postAddTestmailR = do
     FormSuccess vAddTestmail -> do
       urlRenderer <- getUrlRender
       sendTestMail $ vAddTestmailEmail vAddTestmail
-      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR }
+      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
@@ -3300,7 +3456,7 @@ postAddUserR = do
             }
       _ <- runDB $ insert user
       sendPasswordNewAccountMail user passwd
-      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR }
+      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
@@ -3449,8 +3605,8 @@ postEditUserR userId = do
         user' <- runDB $ get404 userId
         sendPasswordResetMail user' passwd
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR }
-        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR }
+        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR }
+        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ AdminR AdminDataR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
@@ -3577,7 +3733,7 @@ postDeleteUserR :: UserId -> Handler Value
 postDeleteUserR userId = do
   runDB $ delete userId
   urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminPageDataJsonR }
+  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR }
 -- gen post delete form - end
 
 {-# START_FILE src/I18n.hs #-}
@@ -5160,7 +5316,7 @@ dCk6ZS5yaW90PXQoKTsK
     \ }
     \ editMyProfile(event) {
     \   event.preventDefault()
-    \   dataJsonUrl = window.history.state ? window.history.state.dataJsonUrl : "@{MyprojectR HomePageDataJsonR}"
+    \   dataJsonUrl = window.history.state ? window.history.state.dataJsonUrl : "@{MyprojectR HomeDataR}"
     \   parent.tag.showModalForm("@{MyprojectR EditMyprofileFormR}", dataJsonUrl)
     \ }
     \ changeLanguageDe(event) {

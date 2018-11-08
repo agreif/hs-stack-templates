@@ -86,12 +86,12 @@ instance Yesod App where
     -- For details, see the CSRF documentation in the Yesod.Core.Handler module of the yesod-core package.
     yesodMiddleware :: ToTypedContent res => Handler res -> Handler res
     yesodMiddleware app = do
-      maybeRoute <- getCurrentRoute
-      let dontCheckCsrf = case maybeRoute of
-                            Just (AuthR _) -> True  -- Don't check AuthR
-                            Nothing        -> True  -- Don't check for 404s
-                            _              -> False -- Check other routes
-      defaultYesodMiddleware $ defaultCsrfSetCookieMiddleware $ (if dontCheckCsrf then id else defaultCsrfCheckMiddleware) app
+        maybeRoute <- getCurrentRoute
+        let dontCheckCsrf = case maybeRoute of
+                              Just (AuthR _) -> True  -- Don't check AuthR
+                              Nothing        -> True  -- Don't check for 404s
+                              _              -> False -- Check other routes
+        defaultYesodMiddleware $ defaultCsrfSetCookieMiddleware $ (if dontCheckCsrf then id else defaultCsrfCheckMiddleware) app
 
     defaultLayout :: Widget -> Handler Html
     defaultLayout widget = do
@@ -139,8 +139,8 @@ instance Yesod App where
             mime
             content
       where
-        -- Generate a unique filename based on the content itself
-        genFileName lbs = "autogen-" ++ base64md5 lbs
+          -- Generate a unique filename based on the content itself
+          genFileName lbs = "autogen-" ++ base64md5 lbs
 
     -- What messages should be logged. The following includes all messages when
     -- in development, and warnings and errors in production.
@@ -228,9 +228,9 @@ instance YesodAuth App where
 
 myLoginForm :: Route App -> Widget
 myLoginForm loginRoute = do
-  request <- getRequest
-  let maybeToken = reqToken request
-  $(whamletFile "templates/login_form.hamlet")
+    request <- getRequest
+    let maybeToken = reqToken request
+    $(whamletFile "templates/login_form.hamlet")
 
 -- | Access function to determine if a user is logged in.
 isAuthenticated :: Handler AuthResult
