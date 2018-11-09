@@ -119,6 +119,37 @@ if test -z "$1" -o "$1" = $m; then
     exec_ginger2 $m handler_add_form.gtmpl $f '-- gen add form'
 fi
 
+f=src/Handler/Demoa.hs
+m=demoa
+if test -z "$1" -o "$1" = $m; then
+    exec_ginger2 $m handler_data_add.gtmpl $f '-- gen data add'
+    exec_ginger2 $m handler_get_add_form.gtmpl $f '-- gen get add form'
+    exec_ginger2 $m handler_post_add_form.gtmpl $f '-- gen post add'
+    exec_ginger2 $m handler_add_form.gtmpl $f '-- gen add form'
+    exec_ginger2 $m handler_data_edit.gtmpl $f '-- gen data edit'
+    exec_ginger2 $m handler_get_edit_form.gtmpl $f '-- gen get edit form'
+    exec_ginger2 $m handler_post_edit_form.gtmpl $f '-- gen post edit'
+    exec_ginger2 $m handler_edit_form.gtmpl $f '-- gen edit form'
+    exec_ginger2 $m handler_get_delete_form.gtmpl $f '-- gen get delete form'
+    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete form'
+    exec_ginger2 $m handler_delete_form.gtmpl $f '-- gen delete form'
+fi
+
+f=src/Handler/Demob.hs
+m=demob
+if test -z "$1" -o "$1" = $m; then
+    exec_ginger2 $m handler_data_add.gtmpl $f '-- gen data add'
+    exec_ginger2 $m handler_get_add_form.gtmpl $f '-- gen get add form'
+    exec_ginger2 $m handler_post_add_form.gtmpl $f '-- gen post add'
+    exec_ginger2 $m handler_add_form.gtmpl $f '-- gen add form'
+    exec_ginger2 $m handler_data_edit.gtmpl $f '-- gen data edit'
+    exec_ginger2 $m handler_get_edit_form.gtmpl $f '-- gen get edit form'
+    exec_ginger2 $m handler_post_edit_form.gtmpl $f '-- gen post edit'
+    exec_ginger2 $m handler_edit_form.gtmpl $f '-- gen edit form'
+    exec_ginger2 $m handler_get_delete_form.gtmpl $f '-- gen get delete form'
+    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete form'
+    exec_ginger2 $m handler_delete_form.gtmpl $f '-- gen delete form'
+fi
 
 
 if test -n "$yesod_devel_pid"; then

@@ -56,4 +56,42 @@ ConfigHistory
     updatedBy Text
 
 
+Demoa json
+    myattr Text
+    version Int
+    createdAt UTCTime
+    createdBy Text
+    updatedAt UTCTime
+    updatedBy Text
+
+
+DemoaHistory
+    Id sql=vid
+    id Int MigrationOnly
+    myattr Text
+    version Int
+    createdAt UTCTime
+    createdBy Text
+    updatedAt UTCTime
+    updatedBy Text
+
+Demob json
+    myattr Text
+    version Int
+    createdAt UTCTime
+    createdBy Text
+    updatedAt UTCTime
+    updatedBy Text
+
+
+DemobHistory
+    Id sql=vid
+    id Int MigrationOnly
+    myattr Text
+    version Int
+    createdAt UTCTime
+    createdBy Text
+    updatedAt UTCTime
+    updatedBy Text
+
 -- gen models - end

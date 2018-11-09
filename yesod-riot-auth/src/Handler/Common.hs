@@ -171,17 +171,26 @@ instance ToJSON User where
 data JDataPages = JDataPages
   { jDataPageHome :: Maybe JDataPageHome
   , jDataPageAdmin :: Maybe JDataPageAdmin
+  , jDataPageDemoaList :: Maybe JDataPageDemoaList
+  , jDataPageDemobList :: Maybe JDataPageDemobList
+  , jDataPageDemobDetail :: Maybe JDataPageDemobDetail
   }
 instance ToJSON JDataPages where
   toJSON o = object
     [ "home" .= jDataPageHome o
     , "admin" .= jDataPageAdmin o
+    , "demoaList" .= jDataPageDemoaList o
+    , "demobList" .= jDataPageDemobList o
+    , "demobDetail" .= jDataPageDemobDetail o
     ]
 
 defaultDataPages :: JDataPages
 defaultDataPages = JDataPages
   { jDataPageHome = Nothing
   , jDataPageAdmin = Nothing
+  , jDataPageDemoaList = Nothing
+  , jDataPageDemobList = Nothing
+  , jDataPageDemobDetail = Nothing
   }
 
 
@@ -228,6 +237,67 @@ instance ToJSON JDataConfig where
     , "editFormUrl" .= jDataConfigEditFormUrl o
     ]
 
+
+data JDataPageDemoaList = JDataPageDemoaList
+  { jDataPageDemoaListDemoas :: [JDataDemoa]
+  , jDataPageDemoaListAddFormUrl :: Text
+  , jDataPageDemoaListPaginationItems :: Maybe [JDataPaginationItem]
+  }
+instance ToJSON JDataPageDemoaList where
+  toJSON o = object
+    [ "demoas" .= jDataPageDemoaListDemoas o
+    , "addFormUrl" .= jDataPageDemoaListAddFormUrl o
+    , "paginationItems" .= jDataPageDemoaListPaginationItems o
+    ]
+
+data JDataDemoa = JDataDemoa
+  { jDataDemoaEnt :: Entity Demoa
+  , jDataDemoaEditFormUrl :: Text
+  , jDataDemoaDeleteFormUrl :: Text
+  }
+instance ToJSON JDataDemoa where
+  toJSON o = object
+    [ "entity" .= entityIdToJSON (jDataDemoaEnt o)
+    , "editFormUrl" .= jDataDemoaEditFormUrl o
+    , "deleteFormUrl" .= jDataDemoaDeleteFormUrl o
+    ]
+
+
+data JDataPageDemobList = JDataPageDemobList
+  { jDataPageDemobListDemobs :: [JDataDemob]
+  , jDataPageDemobListAddFormUrl :: Text
+  , jDataPageDemobListPaginationItems :: Maybe [JDataPaginationItem]
+  }
+instance ToJSON JDataPageDemobList where
+  toJSON o = object
+    [ "demobs" .= jDataPageDemobListDemobs o
+    ]
+
+data JDataDemob = JDataDemob
+  { jDataDemobEnt :: Entity Demob
+  , jDataDemobDetailUrl :: Text
+  , jDataDemobDetailDataUrl :: Text
+  , jDataDemobDeleteFormUrl :: Text
+  }
+instance ToJSON JDataDemob where
+  toJSON o = object
+    [ "entity" .= entityIdToJSON (jDataDemobEnt o)
+    , "detailUrl" .= jDataDemobDetailUrl o
+    , "detailDataUrl" .= jDataDemobDetailDataUrl o
+    , "deleteFormUrl" .= jDataDemobDeleteFormUrl o
+    ]
+
+data JDataPageDemobDetail = JDataPageDemobDetail
+  { jDataPageDemobDetailDemobEnt :: Entity Demob
+  , jDataPageDemobDetailDemobEditFormUrl :: Text
+  }
+instance ToJSON JDataPageDemobDetail where
+  toJSON o = object
+    [ "demobEnt" .= jDataPageDemobDetailDemobEnt o
+    , "demobEditFormUrl" .= jDataPageDemobDetailDemobEditFormUrl o
+    ]
+
+
 --------------------------------------------------------------------------------
 -- navigation helpers
 --------------------------------------------------------------------------------
@@ -235,6 +305,8 @@ instance ToJSON JDataConfig where
 data MainNav
   = MainNavHome
   | MainNavAdmin
+  | MainNavDemoa
+  | MainNavDemob
   deriving (Eq)
 
 mainNavData :: User -> MainNav -> Handler [JDataNavItem]
@@ -242,6 +314,8 @@ mainNavData user mainNav = do
   urlRenderer <- getUrlRender
   msgHome <- localizedMsg MsgGlobalHome
   msgAdmin <- localizedMsg MsgGlobalAdmin
+  msgDemoas <- localizedMsg MsgDemoaDemoas
+  msgDemobs <- localizedMsg MsgDemobDemobs
   return $
     [ JDataNavItem
       { jDataNavItemLabel = msgHome
@@ -253,16 +327,37 @@ mainNavData user mainNav = do
       }
     ]
     ++
-    case userIsAdmin user of
-      True -> [ JDataNavItem
-                { jDataNavItemLabel = msgAdmin
-                , jDataNavItemIsActive = mainNav == MainNavAdmin
-                , jDataNavItemUrl = Just $ urlRenderer $ AdminR AdminHomeR
-                , jDataNavItemDataUrl = Just $ urlRenderer $ AdminR AdminDataR
-                , jDataNavItemBadge = Nothing
-                , jDataNavItemDropdownItems = Nothing
-                } ]
-      False -> []
+    ( if userIsAdmin user
+      then [ JDataNavItem
+             { jDataNavItemLabel = msgAdmin
+             , jDataNavItemIsActive = mainNav == MainNavAdmin
+             , jDataNavItemUrl = Just $ urlRenderer $ AdminR AdminHomeR
+             , jDataNavItemDataUrl = Just $ urlRenderer $ AdminR AdminDataR
+             , jDataNavItemBadge = Nothing
+             , jDataNavItemDropdownItems = Nothing
+             } ]
+      else []
+    )
+    ++
+    [ JDataNavItem
+      { jDataNavItemLabel = msgDemoas
+      , jDataNavItemIsActive = mainNav == MainNavDemoa
+      , jDataNavItemUrl = Just $ urlRenderer $ MyprojectR DemoaListR
+      , jDataNavItemDataUrl = Just $ urlRenderer $ MyprojectR DemoaListDataR
+      , jDataNavItemBadge = Nothing
+      , jDataNavItemDropdownItems = Nothing
+      }
+    ]
+    ++
+    [ JDataNavItem
+      { jDataNavItemLabel = msgDemobs
+      , jDataNavItemIsActive = mainNav == MainNavDemob
+      , jDataNavItemUrl = Just $ urlRenderer $ MyprojectR DemobListR
+      , jDataNavItemDataUrl = Just $ urlRenderer $ MyprojectR DemobListDataR
+      , jDataNavItemBadge = Nothing
+      , jDataNavItemDropdownItems = Nothing
+      }
+    ]
 
 --------------------------------------------------------------------------------
 -- pagination helpers

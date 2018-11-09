@@ -48,4 +48,50 @@ $function$;
 create trigger audit_config after insert or update on public.config for each row execute procedure public.process_audit_config();
 
 
+
+
+drop function public.process_audit_demoa() cascade;
+create or replace function public.process_audit_demoa()
+ returns trigger
+ language plpgsql
+as $function$
+   begin
+       if to_regclass('demoa_history') is not null then
+           if (TG_OP = 'UPDATE' or TG_OP = 'INSERT') then
+                insert into demoa_history
+                       (id, myattr, version, created_at, created_by, updated_at, updated_by)
+                       values
+                       (new.id, new.myattr, new.version, new.created_at, new.created_by, new.updated_at, new.updated_by);
+                return new;
+            end if;
+       end if;
+       return null; -- result is ignored since this is an after trigger
+    end;
+$function$;
+
+create trigger audit_demoa after insert or update on public.demoa for each row execute procedure public.process_audit_demoa();
+
+
+
+drop function public.process_audit_demob() cascade;
+create or replace function public.process_audit_demob()
+ returns trigger
+ language plpgsql
+as $function$
+   begin
+       if to_regclass('demob_history') is not null then
+           if (TG_OP = 'UPDATE' or TG_OP = 'INSERT') then
+                insert into demob_history
+                       (id, myattr, version, created_at, created_by, updated_at, updated_by)
+                       values
+                       (new.id, new.myattr, new.version, new.created_at, new.created_by, new.updated_at, new.updated_by);
+                return new;
+            end if;
+       end if;
+       return null; -- result is ignored since this is an after trigger
+    end;
+$function$;
+
+create trigger audit_demob after insert or update on public.demob for each row execute procedure public.process_audit_demob();
+
 -- gen triggers - end
