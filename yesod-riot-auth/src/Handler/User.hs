@@ -127,30 +127,6 @@ vAddUserForm maybeUser extra = do
       , fsName = Just "isAdmin"
       , fsAttrs = [ ("class","uk-checkbox") ]
       }
-
-data MsgAddUser =
-  MsgAddUserIdent
-  | MsgAddUserEmail
-  | MsgAddUserIsAdmin
-
-instance RenderMessage App MsgAddUser where
-  renderMessage _ []        = renderAddUserGerman
-  renderMessage _ ("de":_) = renderAddUserGerman
-  renderMessage _ ("en":_) = renderAddUserEnglish
-  renderMessage _ ("en-US":_) = renderAddUserEnglish
-  renderMessage m (_   :ls) = renderMessage m ls
-
-renderAddUserGerman :: MsgAddUser -> Text
-renderAddUserGerman MsgAddUserIdent = "Login"
-renderAddUserGerman MsgAddUserEmail = "Email"
-renderAddUserGerman MsgAddUserIsAdmin = "Ist Admin?"
-
-
-renderAddUserEnglish :: MsgAddUser -> Text
-renderAddUserEnglish MsgAddUserIdent = "Login"
-renderAddUserEnglish MsgAddUserEmail = "Email"
-renderAddUserEnglish MsgAddUserIsAdmin = "Is admin?"
-
 -- gen add form - end
 
 -------------------------------------------------------
@@ -171,7 +147,7 @@ data VEditUser = VEditUser
 getEditUserFormR :: UserId -> Handler Html
 getEditUserFormR userId = do
   user <- runDB $ get404 userId
-  (formWidget, _) <- generateFormPost $ vEditUserForm $ Just user
+  (formWidget, _) <- generateFormPost $ vEditUserForm (Just user)
   formLayout $ do
     toWidget [whamlet|
       <h1>_{MsgUserEditUser}

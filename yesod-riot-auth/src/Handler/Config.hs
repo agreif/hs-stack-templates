@@ -31,7 +31,7 @@ data VEditConfig = VEditConfig
 getEditConfigFormR :: ConfigId -> Handler Html
 getEditConfigFormR configId = do
   config <- runDB $ get404 configId
-  (formWidget, _) <- generateFormPost $ vEditConfigForm $ Just config
+  (formWidget, _) <- generateFormPost $ vEditConfigForm (Just config)
   formLayout $ do
     toWidget [whamlet|
       <h1>_{MsgConfigEditConfig}
@@ -59,9 +59,11 @@ postEditConfigR configId = do
             , ConfigUpdatedAt =. curTime
             , ConfigUpdatedBy =. userIdent authUser
             ]
-      updateCount <- runDB $ updateWhereCount [ ConfigId ==. configId
-                                              , ConfigVersion ==. vEditConfigVersion vEditConfig
-                                              ] persistFields
+      updateCount <- runDB $ do
+        uc <- updateWhereCount [ ConfigId ==. configId
+                               , ConfigVersion ==. vEditConfigVersion vEditConfig
+                               ] persistFields
+        return uc
       if updateCount == 1
         then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR }
         else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ AdminR AdminDataR }
