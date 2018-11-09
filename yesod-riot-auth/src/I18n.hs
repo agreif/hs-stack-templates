@@ -19,9 +19,6 @@ data AppMessage =
   | MsgUserPassword
   | MsgUserEmail
   | MsgUserIsAdmin
-  | MsgUserIsEditor
-  | MsgUserIsReviewer
-  | MsgUserIsAuthor
   | MsgUserIsResetPassword
   | MsgConfigCode
   | MsgConfigStringValue
@@ -29,6 +26,8 @@ data AppMessage =
   | MsgConfigDoubleValue
   | MsgConfigBoolValue
   | MsgTestmailEmail
+  | MsgDemoaMyattr
+  | MsgDemobMyattr
   | MsgUserUsers
   | MsgUserAddUser
   | MsgUserEditUser
@@ -37,6 +36,16 @@ data AppMessage =
   | MsgConfigEditConfig
   | MsgTestmailTestMail
   | MsgTestmailSendTestMail
+  | MsgDemoaDemoa
+  | MsgDemoaDemoas
+  | MsgDemoaAddDemoa
+  | MsgDemoaEditDemoa
+  | MsgDemoaDeleteDemoa
+  | MsgDemobDemob
+  | MsgDemobDemobs
+  | MsgDemobAddDemob
+  | MsgDemobEditDemob
+  | MsgDemobDeleteDemob
 
 renderMessageGerman :: AppMessage -> Text
 renderMessageGerman MsgGlobalHome = "Home"
@@ -51,9 +60,6 @@ renderMessageGerman MsgUserIdent = "Login"
 renderMessageGerman MsgUserPassword = "Passwort"
 renderMessageGerman MsgUserEmail = "Email"
 renderMessageGerman MsgUserIsAdmin = "Ist Admin?"
-renderMessageGerman MsgUserIsEditor = "Ist Redaktuer?"
-renderMessageGerman MsgUserIsReviewer = "Ist Reviewer?"
-renderMessageGerman MsgUserIsAuthor = "Ist Autor?"
 renderMessageGerman MsgUserIsResetPassword = "Neues Passwort generieren? (Wird per Email zugesendet)"
 renderMessageGerman MsgConfigCode = "Code"
 renderMessageGerman MsgConfigStringValue = "String-Wert"
@@ -61,6 +67,8 @@ renderMessageGerman MsgConfigIntValue = "Integer-Wert"
 renderMessageGerman MsgConfigDoubleValue = "Double-Wert"
 renderMessageGerman MsgConfigBoolValue = "Boolean-Wert"
 renderMessageGerman MsgTestmailEmail = "Email"
+renderMessageGerman MsgDemoaMyattr = "My attribute"
+renderMessageGerman MsgDemobMyattr = "My attribute"
 renderMessageGerman MsgUserUsers = "Nutzer"
 renderMessageGerman MsgUserAddUser = "Nutzer hinzufügen"
 renderMessageGerman MsgUserEditUser = "Nutzer bearbeiten"
@@ -69,6 +77,16 @@ renderMessageGerman MsgConfigConfigurations = "Konfigurationen"
 renderMessageGerman MsgConfigEditConfig = "Konfiguration bearbeiten"
 renderMessageGerman MsgTestmailTestMail = "Test-Mail"
 renderMessageGerman MsgTestmailSendTestMail = "Test-Mail senden..."
+renderMessageGerman MsgDemoaDemoa = "Demoa"
+renderMessageGerman MsgDemoaDemoas = "Demoas"
+renderMessageGerman MsgDemoaAddDemoa = "Demoa hinzufügen"
+renderMessageGerman MsgDemoaEditDemoa = "Demoa bearbeiten"
+renderMessageGerman MsgDemoaDeleteDemoa = "Demoa löschen"
+renderMessageGerman MsgDemobDemob = "Demob"
+renderMessageGerman MsgDemobDemobs = "Demobs"
+renderMessageGerman MsgDemobAddDemob = "Demob hinzufügen"
+renderMessageGerman MsgDemobEditDemob = "Demob bearbeiten"
+renderMessageGerman MsgDemobDeleteDemob = "Demob löschen"
 
 renderMessageEnglish :: AppMessage -> Text
 renderMessageEnglish MsgGlobalHome = "Home"
@@ -83,9 +101,6 @@ renderMessageEnglish MsgUserIdent = "Login"
 renderMessageEnglish MsgUserPassword = "Password"
 renderMessageEnglish MsgUserEmail = "Email"
 renderMessageEnglish MsgUserIsAdmin = "Is admin?"
-renderMessageEnglish MsgUserIsEditor = "Is editor?"
-renderMessageEnglish MsgUserIsReviewer = "Is reviewer?"
-renderMessageEnglish MsgUserIsAuthor = "Is author?"
 renderMessageEnglish MsgUserIsResetPassword = "Generate new password? (Will be sent by email)"
 renderMessageEnglish MsgConfigCode = "Code"
 renderMessageEnglish MsgConfigStringValue = "String-Value"
@@ -93,6 +108,8 @@ renderMessageEnglish MsgConfigIntValue = "Integer-Value"
 renderMessageEnglish MsgConfigDoubleValue = "Double-Value"
 renderMessageEnglish MsgConfigBoolValue = "Boolean-Value"
 renderMessageEnglish MsgTestmailEmail = "Email"
+renderMessageEnglish MsgDemoaMyattr = "Mein Attribut"
+renderMessageEnglish MsgDemobMyattr = "Mein Attribut"
 renderMessageEnglish MsgUserUsers = "Users"
 renderMessageEnglish MsgUserAddUser = "Add user"
 renderMessageEnglish MsgUserEditUser = "Edit user"
@@ -101,6 +118,16 @@ renderMessageEnglish MsgConfigConfigurations = "Configurations"
 renderMessageEnglish MsgConfigEditConfig = "Edit config"
 renderMessageEnglish MsgTestmailTestMail = "Test-Mail"
 renderMessageEnglish MsgTestmailSendTestMail = "Send Test-Mail..."
+renderMessageEnglish MsgDemoaDemoa = "Demoa"
+renderMessageEnglish MsgDemoaDemoas = "Demoas"
+renderMessageEnglish MsgDemoaAddDemoa = "Add demoa"
+renderMessageEnglish MsgDemoaEditDemoa = "Edit demoa"
+renderMessageEnglish MsgDemoaDeleteDemoa = "Delete demoa"
+renderMessageEnglish MsgDemobDemob = "Demob"
+renderMessageEnglish MsgDemobDemobs = "Demobs"
+renderMessageEnglish MsgDemobAddDemob = "Add demob"
+renderMessageEnglish MsgDemobEditDemob = "Edit demob"
+renderMessageEnglish MsgDemobDeleteDemob = "Delete demob"
 
 data Translation = Translation
   { msgGlobalHome :: Text
@@ -115,9 +142,6 @@ data Translation = Translation
   , msgUserPassword :: Text
   , msgUserEmail :: Text
   , msgUserIsAdmin :: Text
-  , msgUserIsEditor :: Text
-  , msgUserIsReviewer :: Text
-  , msgUserIsAuthor :: Text
   , msgUserIsResetPassword :: Text
   , msgConfigCode :: Text
   , msgConfigStringValue :: Text
@@ -125,6 +149,8 @@ data Translation = Translation
   , msgConfigDoubleValue :: Text
   , msgConfigBoolValue :: Text
   , msgTestmailEmail :: Text
+  , msgDemoaMyattr :: Text
+  , msgDemobMyattr :: Text
   , msgUserUsers :: Text
   , msgUserAddUser :: Text
   , msgUserEditUser :: Text
@@ -133,6 +159,16 @@ data Translation = Translation
   , msgConfigEditConfig :: Text
   , msgTestmailTestMail :: Text
   , msgTestmailSendTestMail :: Text
+  , msgDemoaDemoa :: Text
+  , msgDemoaDemoas :: Text
+  , msgDemoaAddDemoa :: Text
+  , msgDemoaEditDemoa :: Text
+  , msgDemoaDeleteDemoa :: Text
+  , msgDemobDemob :: Text
+  , msgDemobDemobs :: Text
+  , msgDemobAddDemob :: Text
+  , msgDemobEditDemob :: Text
+  , msgDemobDeleteDemob :: Text
   } deriving Generic
 
 instance ToJSON Translation
@@ -151,9 +187,6 @@ translationDe = Translation
   , msgUserPassword = "Passwort"
   , msgUserEmail = "Email"
   , msgUserIsAdmin = "Ist Admin?"
-  , msgUserIsEditor = "Ist Redaktuer?"
-  , msgUserIsReviewer = "Ist Reviewer?"
-  , msgUserIsAuthor = "Ist Autor?"
   , msgUserIsResetPassword = "Neues Passwort generieren? (Wird per Email zugesendet)"
   , msgConfigCode = "Code"
   , msgConfigStringValue = "String-Wert"
@@ -161,6 +194,8 @@ translationDe = Translation
   , msgConfigDoubleValue = "Double-Wert"
   , msgConfigBoolValue = "Boolean-Wert"
   , msgTestmailEmail = "Email"
+  , msgDemoaMyattr = "My attribute"
+  , msgDemobMyattr = "My attribute"
   , msgUserUsers = "Nutzer"
   , msgUserAddUser = "Nutzer hinzufügen"
   , msgUserEditUser = "Nutzer bearbeiten"
@@ -168,7 +203,17 @@ translationDe = Translation
   , msgConfigConfigurations = "Konfigurationen"
   , msgConfigEditConfig = "Konfiguration bearbeiten"
   , msgTestmailTestMail = "Test-Mail"
-  , msgTestmailSendTestMail = "Test-Mail senden..."}
+  , msgTestmailSendTestMail = "Test-Mail senden..."
+  , msgDemoaDemoa = "Demoa"
+  , msgDemoaDemoas = "Demoas"
+  , msgDemoaAddDemoa = "Demoa hinzufügen"
+  , msgDemoaEditDemoa = "Demoa bearbeiten"
+  , msgDemoaDeleteDemoa = "Demoa löschen"
+  , msgDemobDemob = "Demob"
+  , msgDemobDemobs = "Demobs"
+  , msgDemobAddDemob = "Demob hinzufügen"
+  , msgDemobEditDemob = "Demob bearbeiten"
+  , msgDemobDeleteDemob = "Demob löschen"}
 
 translationEn :: Translation
 translationEn = Translation
@@ -184,9 +229,6 @@ translationEn = Translation
   , msgUserPassword = "Password"
   , msgUserEmail = "Email"
   , msgUserIsAdmin = "Is admin?"
-  , msgUserIsEditor = "Is editor?"
-  , msgUserIsReviewer = "Is reviewer?"
-  , msgUserIsAuthor = "Is author?"
   , msgUserIsResetPassword = "Generate new password? (Will be sent by email)"
   , msgConfigCode = "Code"
   , msgConfigStringValue = "String-Value"
@@ -194,6 +236,8 @@ translationEn = Translation
   , msgConfigDoubleValue = "Double-Value"
   , msgConfigBoolValue = "Boolean-Value"
   , msgTestmailEmail = "Email"
+  , msgDemoaMyattr = "Mein Attribut"
+  , msgDemobMyattr = "Mein Attribut"
   , msgUserUsers = "Users"
   , msgUserAddUser = "Add user"
   , msgUserEditUser = "Edit user"
@@ -201,6 +245,16 @@ translationEn = Translation
   , msgConfigConfigurations = "Configurations"
   , msgConfigEditConfig = "Edit config"
   , msgTestmailTestMail = "Test-Mail"
-  , msgTestmailSendTestMail = "Send Test-Mail..."}
+  , msgTestmailSendTestMail = "Send Test-Mail..."
+  , msgDemoaDemoa = "Demoa"
+  , msgDemoaDemoas = "Demoas"
+  , msgDemoaAddDemoa = "Add demoa"
+  , msgDemoaEditDemoa = "Edit demoa"
+  , msgDemoaDeleteDemoa = "Delete demoa"
+  , msgDemobDemob = "Demob"
+  , msgDemobDemobs = "Demobs"
+  , msgDemobAddDemob = "Add demob"
+  , msgDemobEditDemob = "Edit demob"
+  , msgDemobDeleteDemob = "Delete demob"}
 
 -- gen i18n - end

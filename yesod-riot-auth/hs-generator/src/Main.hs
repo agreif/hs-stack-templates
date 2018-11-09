@@ -487,13 +487,170 @@ context =
           , BTranslation { bTranslationKey = "sendTestMail", bTranslationDe = "Test-Mail senden...", bTranslationEn = "Send Test-Mail..." }
           ]
         }
-      ]
 
+      , BCrudModel
+        { bCrudModelName = "demoa"
+        , bCrudModelLabel = "Demoa"
+        , bCrudModelIsJson = True
+        , bCrudModelDbUniquenesses = []
+        , bCrudModelDbHasHistoryTable = True
+        , bCrudModelHsDerivings = []
+        , bCrudModelAddFormArgs = Nothing
+        , bCrudModelEditFormArgs = Nothing
+        , bCrudModelAddFormEntityLoader = Nothing
+        , bCrudModelEditFormEntityLoader = Nothing
+        , bCrudModelDeleteFormEntityLoader = Nothing
+        , bCrudModelAddFormDataJsonUrl = Just "MyprojectR DemoaListDataR"
+        , bCrudModelEditFormDataJsonUrl = Just "MyprojectR $ DemoaListDataR"
+        , bCrudModelDeleteFormDataJsonUrl = Just "MyprojectR $ DemoaListDataR"
+        , bCrudModelAddFormHasDefaultModel = False
+        , bCrudModelEditPostLoadsModel = False
+        , bCrudModelDeletePostLoadsModel = False
+        , bCrudModelAddPostExtraStoreFunc = Nothing
+        , bCrudModelEditPostExtraStoreFunc = Nothing
+        , bCrudModelAddFormTitleMsg = Just "MsgDemoaAddDemoa"
+        , bCrudModelEditFormTitleMsg = Just "MsgDemoaEditDemoa"
+        , bCrudModelDeleteFormTitleMsg = Just "MsgDemoaDeleteDemoa"
+        , bCrudModelParentHsType = Nothing
+        , bCrudModelFormRouteHsType = "MyprojectR"
+        , bCrudModelFields =
+            [ BCrudField
+              { bCrudFieldName = "myattr"
+              , bCrudFieldLabelDe = Just "My attribute"
+              , bCrudFieldLabelEn = Just "Mein Attribut"
+              , bCrudFieldHsType = "Text"
+              , bCrudFieldDb =
+                  Just $
+                  BCrudFieldDb
+                  { bCrudFieldDbIsNullable = False
+                  , bCrudFieldDbDefault = Nothing
+                  , bCrudFieldDbCanUpdate = True
+                  }
+              , bCrudFieldFormFieldType = Just "textField"
+              , bCrudFieldAddView =
+                  Just $
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
+                      [ BFieldAttr
+                        { bFieldAttrKey = "class"
+                        , bFieldAttrValue =
+                            "uk-form-width-large uk-input uk-form-small"
+                        }
+                      ]
+                  , bFieldViewDefault = Nothing
+                  }
+              , bCrudFieldEditView =
+                  Just $
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
+                      [ BFieldAttr
+                        { bFieldAttrKey = "class"
+                        , bFieldAttrValue =
+                            "uk-form-width-large uk-input uk-form-small"
+                        }
+                      ]
+                  , bFieldViewDefault = Nothing
+                  }
+              }
+
+            ]
+        , bCrudModelTranslations = Just
+          [ BTranslation { bTranslationKey = "demoa", bTranslationDe = "Demoa", bTranslationEn = "Demoa" }
+          , BTranslation { bTranslationKey = "demoas", bTranslationDe = "Demoas", bTranslationEn = "Demoas" }
+          , BTranslation { bTranslationKey = "addDemoa", bTranslationDe = "Demoa hinzufügen", bTranslationEn = "Add demoa" }
+          , BTranslation { bTranslationKey = "editDemoa", bTranslationDe = "Demoa bearbeiten", bTranslationEn = "Edit demoa" }
+          , BTranslation { bTranslationKey = "deleteDemoa", bTranslationDe = "Demoa löschen", bTranslationEn = "Delete demoa" }
+          ]
+        }
+
+      , BCrudModel
+        { bCrudModelName = "demob"
+        , bCrudModelLabel = "Demob"
+        , bCrudModelIsJson = True
+        , bCrudModelDbUniquenesses = []
+        , bCrudModelDbHasHistoryTable = True
+        , bCrudModelHsDerivings = []
+        , bCrudModelAddFormArgs = Nothing
+        , bCrudModelEditFormArgs = Nothing
+        , bCrudModelAddFormEntityLoader = Nothing
+        , bCrudModelEditFormEntityLoader = Nothing
+        , bCrudModelDeleteFormEntityLoader = Nothing
+        , bCrudModelAddFormDataJsonUrl = Just "MyprojectR DemobListDataR"
+        , bCrudModelEditFormDataJsonUrl = Just "MyprojectR $ DemobDetailDataR demobId"
+        , bCrudModelDeleteFormDataJsonUrl = Just "MyprojectR $ DemobListDataR"
+        , bCrudModelAddFormHasDefaultModel = False
+        , bCrudModelEditPostLoadsModel = False
+        , bCrudModelDeletePostLoadsModel = False
+        , bCrudModelAddPostExtraStoreFunc = Nothing
+        , bCrudModelEditPostExtraStoreFunc = Nothing
+        , bCrudModelAddFormTitleMsg = Just "MsgDemobAddDemob"
+        , bCrudModelEditFormTitleMsg = Just "MsgDemobEditDemob"
+        , bCrudModelDeleteFormTitleMsg = Just "MsgDemobDeleteDemob"
+        , bCrudModelParentHsType = Nothing
+        , bCrudModelFormRouteHsType = "MyprojectR"
+        , bCrudModelFields =
+            [ BCrudField
+              { bCrudFieldName = "myattr"
+              , bCrudFieldLabelDe = Just "My attribute"
+              , bCrudFieldLabelEn = Just "Mein Attribut"
+              , bCrudFieldHsType = "Text"
+              , bCrudFieldDb =
+                  Just $
+                  BCrudFieldDb
+                  { bCrudFieldDbIsNullable = False
+                  , bCrudFieldDbDefault = Nothing
+                  , bCrudFieldDbCanUpdate = True
+                  }
+              , bCrudFieldFormFieldType = Just "textField"
+              , bCrudFieldAddView =
+                  Just $
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
+                      [ BFieldAttr
+                        { bFieldAttrKey = "class"
+                        , bFieldAttrValue =
+                            "uk-form-width-large uk-input uk-form-small"
+                        }
+                      ]
+                  , bFieldViewDefault = Nothing
+                  }
+              , bCrudFieldEditView =
+                  Just $
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
+                      [ BFieldAttr
+                        { bFieldAttrKey = "class"
+                        , bFieldAttrValue =
+                            "uk-form-width-large uk-input uk-form-small"
+                        }
+                      ]
+                  , bFieldViewDefault = Nothing
+                  }
+              }
+
+            ]
+        , bCrudModelTranslations = Just
+          [ BTranslation { bTranslationKey = "demob", bTranslationDe = "Demob", bTranslationEn = "Demob" }
+          , BTranslation { bTranslationKey = "demobs", bTranslationDe = "Demobs", bTranslationEn = "Demobs" }
+          , BTranslation { bTranslationKey = "addDemob", bTranslationDe = "Demob hinzufügen", bTranslationEn = "Add demob" }
+          , BTranslation { bTranslationKey = "editDemob", bTranslationDe = "Demob bearbeiten", bTranslationEn = "Edit demob" }
+          , BTranslation { bTranslationKey = "deleteDemob", bTranslationDe = "Demob löschen", bTranslationEn = "Delete demob" }
+          ]
+        }
+
+      ]
 
   , bContextActionModels =
       [
       ]
-
 
   , bContextGlobalTranslations =
     [ BTranslation { bTranslationKey = "home", bTranslationDe = "Home", bTranslationEn = "Home" }

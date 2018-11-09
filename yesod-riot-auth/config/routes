@@ -35,3 +35,25 @@
 
   editMyProfileForm EditMyprofileFormR GET
   editMyProfile EditMyprofileR POST
+
+  demoaList DemoaListR GET
+  demoaListDataR DemoaListDataR GET
+  demoaListDataR/#Int DemoaListPageNumDataR GET POST
+  addDemoaForm AddDemoaFormR GET
+  addDemoa AddDemoaR POST
+  editDemoaForm/#DemoaId EditDemoaFormR GET
+  editDemoa/#DemoaId EditDemoaR POST
+  deleteDemoaForm/#DemoaId DeleteDemoaFormR GET
+  deleteDemoa/#DemoaId DeleteDemoaR POST
+
+  demobList DemobListR GET
+  demobListDataR DemobListDataR GET
+  demobListDataR/#Int DemobListPageNumDataR GET POST
+  addDemobForm AddDemobFormR GET
+  addDemob AddDemobR POST
+  demobDetail/#DemobId DemobDetailR GET
+  demobDetailDataR/#DemobId DemobDetailDataR GET
+  editDemobForm/#DemobId EditDemobFormR GET
+  editDemob/#DemobId EditDemobR POST
+  deleteDemobForm/#DemobId DeleteDemobFormR GET
+  deleteDemob/#DemobId DeleteDemobR POST
