@@ -57,3 +57,10 @@
   editDemob/#DemobId EditDemobR POST
   deleteDemobForm/#DemobId DeleteDemobFormR GET
   deleteDemob/#DemobId DeleteDemobR POST
+
+  addDemocForm/#DemobId AddDemocFormR GET
+  addDemoc/#DemobId AddDemocR POST
+  editDemocForm/#DemocId EditDemocFormR GET
+  editDemoc/#DemocId EditDemocR POST
+  deleteDemocForm/#DemocId DeleteDemocFormR GET
+  deleteDemoc/#DemocId DeleteDemocR POST

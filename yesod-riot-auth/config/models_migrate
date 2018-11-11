@@ -94,4 +94,25 @@ DemobHistory
     updatedAt UTCTime
     updatedBy Text
 
+Democ json
+    demobId DemobId
+    myattr Text
+    version Int
+    createdAt UTCTime
+    createdBy Text
+    updatedAt UTCTime
+    updatedBy Text
+
+
+DemocHistory
+    Id sql=vid
+    id Int MigrationOnly
+    demobId Int
+    myattr Text
+    version Int
+    createdAt UTCTime
+    createdBy Text
+    updatedAt UTCTime
+    updatedBy Text
+
 -- gen models - end

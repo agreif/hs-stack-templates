@@ -143,13 +143,16 @@ getDemobDetailDataR demobId = do
   appName <- runDB $ configAppName
   mainNavItems <- mainNavData user MainNavDemob
   demob <- runDB $ get404 demobId
+  jDataDemocs <- democJDatas demobId
   urlRenderer <- getUrlRender
   let pages =
         defaultDataPages
         { jDataPageDemobDetail =
             Just $ JDataPageDemobDetail
             { jDataPageDemobDetailDemobEnt = Entity demobId demob
+            , jDataPageDemobDetailDemocs = jDataDemocs
             , jDataPageDemobDetailDemobEditFormUrl = urlRenderer $ MyprojectR $ EditDemobFormR demobId
+            , jDataPageDemobDetailDemocAddFormUrl = urlRenderer $ MyprojectR $ AddDemocFormR demobId
             }
         }
   msgHome <- localizedMsg MsgGlobalHome
@@ -185,6 +188,31 @@ getDemobDetailDataR demobId = do
     , jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl
     , jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
     }
+
+democJDatas :: DemobId -> Handler [JDataDemoc]
+democJDatas demobId = do
+  urlRenderer <- getUrlRender
+  democTuples <- runDB $ loadDemocTuples demobId
+  return $ map
+    (\(democEnt@(Entity democId _)) ->
+       JDataDemoc
+       { jDataDemocEnt = democEnt
+       , jDataDemocEditFormUrl = urlRenderer $ MyprojectR $ EditDemocFormR democId
+       , jDataDemocDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteDemocFormR democId
+       })
+    democTuples
+
+loadDemocTuples :: DemobId -> YesodDB App [(Entity Democ)]
+loadDemocTuples demobId = do
+  E.select $ E.from $ \(dc) -> do
+    E.orderBy [ E.desc (dc E.^. DemocId) ]
+    E.where_ (dc E.^. DemocDemobId E.==. E.val demobId)
+    return (dc)
+
+
+
+
+
 
 -------------------------------------------------------
 -- add

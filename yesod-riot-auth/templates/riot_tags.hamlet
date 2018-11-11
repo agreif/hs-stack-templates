@@ -447,9 +447,44 @@
           <td .uk-width-small>
             <button .uk-float-right .uk-button .uk-button-link title="{parent.data.translation.msgDemobEditDemob}" uk-tooltip onclick="{editDemob}">
               <span uk-icon="icon: pencil">
+    <h2>
+      {parent.data.translation.msgDemocDemocs}
+    <!-- democ list -->
+    <table .uk-table .uk-table-small .uk-table-divider .uk-table-hover .uk-background-muted>
+      <thead>
+        <tr>
+          <th>
+            {parent.data.translation.msgDemocMyattr}
+          <th .uk-align-right>
+            <button .uk-background-primary .uk-light .uk-padding-small .modal-form-link .uk-button .uk-button-link title="{parent.data.translation.msgDemocAddDemoc}" uk-tooltip onclick="{addDemoc}">
+              <span uk-icon="icon: plus">
+      <tbody>
+        <tr each="{parent.data.pages.demobDetail.democs}">
+          <td .uk-table-link>
+            <a onclick="{editDemoc}" .uk-link-reset>{entity.myattr}
+          <td .uk-width-small>
+            <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgDemocDeleteDemoc}" uk-tooltip onclick="{deleteDemoc}">
+              <span uk-icon="icon: trash">
+            <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgDemocEditDemoc}" uk-tooltip onclick="{editDemoc}">
+              <span uk-icon="icon: pencil">
   <script>
     \ editDemob(event) {
     \   event.preventDefault()
     \   parent.tag.showModalForm(parent.tag.data.pages.demobDetail.demobEditFormUrl)
+    \   event.currentTarget.blur()
+    \ }
+    \ addDemoc(event) {
+    \   event.preventDefault()
+    \   parent.tag.showModalForm(parent.tag.data.pages.demobDetail.democAddFormUrl)
+    \   event.currentTarget.blur()
+    \ }
+    \ editDemoc(event) {
+    \   event.preventDefault()
+    \   parent.tag.showModalForm(event.item.editFormUrl)
+    \   event.currentTarget.blur()
+    \ }
+    \ deleteDemoc(event) {
+    \   event.preventDefault()
+    \   parent.tag.showModalForm(event.item.deleteFormUrl)
     \   event.currentTarget.blur()
     \ }

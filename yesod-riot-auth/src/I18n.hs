@@ -28,6 +28,8 @@ data AppMessage =
   | MsgTestmailEmail
   | MsgDemoaMyattr
   | MsgDemobMyattr
+  | MsgDemocDemobId
+  | MsgDemocMyattr
   | MsgUserUsers
   | MsgUserAddUser
   | MsgUserEditUser
@@ -46,6 +48,11 @@ data AppMessage =
   | MsgDemobAddDemob
   | MsgDemobEditDemob
   | MsgDemobDeleteDemob
+  | MsgDemocDemoc
+  | MsgDemocDemocs
+  | MsgDemocAddDemoc
+  | MsgDemocEditDemoc
+  | MsgDemocDeleteDemoc
 
 renderMessageGerman :: AppMessage -> Text
 renderMessageGerman MsgGlobalHome = "Home"
@@ -69,6 +76,8 @@ renderMessageGerman MsgConfigBoolValue = "Boolean-Wert"
 renderMessageGerman MsgTestmailEmail = "Email"
 renderMessageGerman MsgDemoaMyattr = "My attribute"
 renderMessageGerman MsgDemobMyattr = "My attribute"
+renderMessageGerman MsgDemocDemobId = ""
+renderMessageGerman MsgDemocMyattr = "My attribute"
 renderMessageGerman MsgUserUsers = "Nutzer"
 renderMessageGerman MsgUserAddUser = "Nutzer hinzufügen"
 renderMessageGerman MsgUserEditUser = "Nutzer bearbeiten"
@@ -87,6 +96,11 @@ renderMessageGerman MsgDemobDemobs = "Demobs"
 renderMessageGerman MsgDemobAddDemob = "Demob hinzufügen"
 renderMessageGerman MsgDemobEditDemob = "Demob bearbeiten"
 renderMessageGerman MsgDemobDeleteDemob = "Demob löschen"
+renderMessageGerman MsgDemocDemoc = "Democ"
+renderMessageGerman MsgDemocDemocs = "Democs"
+renderMessageGerman MsgDemocAddDemoc = "Democ hinzufügen"
+renderMessageGerman MsgDemocEditDemoc = "Democ bearbeiten"
+renderMessageGerman MsgDemocDeleteDemoc = "Democ löschen"
 
 renderMessageEnglish :: AppMessage -> Text
 renderMessageEnglish MsgGlobalHome = "Home"
@@ -110,6 +124,8 @@ renderMessageEnglish MsgConfigBoolValue = "Boolean-Value"
 renderMessageEnglish MsgTestmailEmail = "Email"
 renderMessageEnglish MsgDemoaMyattr = "Mein Attribut"
 renderMessageEnglish MsgDemobMyattr = "Mein Attribut"
+renderMessageEnglish MsgDemocDemobId = ""
+renderMessageEnglish MsgDemocMyattr = "Mein Attribut"
 renderMessageEnglish MsgUserUsers = "Users"
 renderMessageEnglish MsgUserAddUser = "Add user"
 renderMessageEnglish MsgUserEditUser = "Edit user"
@@ -128,6 +144,11 @@ renderMessageEnglish MsgDemobDemobs = "Demobs"
 renderMessageEnglish MsgDemobAddDemob = "Add demob"
 renderMessageEnglish MsgDemobEditDemob = "Edit demob"
 renderMessageEnglish MsgDemobDeleteDemob = "Delete demob"
+renderMessageEnglish MsgDemocDemoc = "Democ"
+renderMessageEnglish MsgDemocDemocs = "Democs"
+renderMessageEnglish MsgDemocAddDemoc = "Add democ"
+renderMessageEnglish MsgDemocEditDemoc = "Edit democ"
+renderMessageEnglish MsgDemocDeleteDemoc = "Delete democ"
 
 data Translation = Translation
   { msgGlobalHome :: Text
@@ -151,6 +172,8 @@ data Translation = Translation
   , msgTestmailEmail :: Text
   , msgDemoaMyattr :: Text
   , msgDemobMyattr :: Text
+  , msgDemocDemobId :: Text
+  , msgDemocMyattr :: Text
   , msgUserUsers :: Text
   , msgUserAddUser :: Text
   , msgUserEditUser :: Text
@@ -169,6 +192,11 @@ data Translation = Translation
   , msgDemobAddDemob :: Text
   , msgDemobEditDemob :: Text
   , msgDemobDeleteDemob :: Text
+  , msgDemocDemoc :: Text
+  , msgDemocDemocs :: Text
+  , msgDemocAddDemoc :: Text
+  , msgDemocEditDemoc :: Text
+  , msgDemocDeleteDemoc :: Text
   } deriving Generic
 
 instance ToJSON Translation
@@ -196,6 +224,8 @@ translationDe = Translation
   , msgTestmailEmail = "Email"
   , msgDemoaMyattr = "My attribute"
   , msgDemobMyattr = "My attribute"
+  , msgDemocDemobId = ""
+  , msgDemocMyattr = "My attribute"
   , msgUserUsers = "Nutzer"
   , msgUserAddUser = "Nutzer hinzufügen"
   , msgUserEditUser = "Nutzer bearbeiten"
@@ -213,7 +243,12 @@ translationDe = Translation
   , msgDemobDemobs = "Demobs"
   , msgDemobAddDemob = "Demob hinzufügen"
   , msgDemobEditDemob = "Demob bearbeiten"
-  , msgDemobDeleteDemob = "Demob löschen"}
+  , msgDemobDeleteDemob = "Demob löschen"
+  , msgDemocDemoc = "Democ"
+  , msgDemocDemocs = "Democs"
+  , msgDemocAddDemoc = "Democ hinzufügen"
+  , msgDemocEditDemoc = "Democ bearbeiten"
+  , msgDemocDeleteDemoc = "Democ löschen"}
 
 translationEn :: Translation
 translationEn = Translation
@@ -238,6 +273,8 @@ translationEn = Translation
   , msgTestmailEmail = "Email"
   , msgDemoaMyattr = "Mein Attribut"
   , msgDemobMyattr = "Mein Attribut"
+  , msgDemocDemobId = ""
+  , msgDemocMyattr = "Mein Attribut"
   , msgUserUsers = "Users"
   , msgUserAddUser = "Add user"
   , msgUserEditUser = "Edit user"
@@ -255,6 +292,11 @@ translationEn = Translation
   , msgDemobDemobs = "Demobs"
   , msgDemobAddDemob = "Add demob"
   , msgDemobEditDemob = "Edit demob"
-  , msgDemobDeleteDemob = "Delete demob"}
+  , msgDemobDeleteDemob = "Delete demob"
+  , msgDemocDemoc = "Democ"
+  , msgDemocDemocs = "Democs"
+  , msgDemocAddDemoc = "Add democ"
+  , msgDemocEditDemoc = "Edit democ"
+  , msgDemocDeleteDemoc = "Delete democ"}
 
 -- gen i18n - end

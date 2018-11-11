@@ -94,4 +94,27 @@ $function$;
 
 create trigger audit_demob after insert or update on public.demob for each row execute procedure public.process_audit_demob();
 
+
+
+drop function public.process_audit_democ() cascade;
+create or replace function public.process_audit_democ()
+ returns trigger
+ language plpgsql
+as $function$
+   begin
+       if to_regclass('democ_history') is not null then
+           if (TG_OP = 'UPDATE' or TG_OP = 'INSERT') then
+                insert into democ_history
+                       (id, demob_id, myattr, version, created_at, created_by, updated_at, updated_by)
+                       values
+                       (new.id, new.demob_id, new.myattr, new.version, new.created_at, new.created_by, new.updated_at, new.updated_by);
+                return new;
+            end if;
+       end if;
+       return null; -- result is ignored since this is an after trigger
+    end;
+$function$;
+
+create trigger audit_democ after insert or update on public.democ for each row execute procedure public.process_audit_democ();
+
 -- gen triggers - end
