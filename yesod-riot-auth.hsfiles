@@ -499,6 +499,27 @@ DemobHistory
     updatedAt UTCTime
     updatedBy Text
 
+Democ json
+    demobId DemobId
+    myattr Text
+    version Int
+    createdAt UTCTime
+    createdBy Text
+    updatedAt UTCTime
+    updatedBy Text
+
+
+DemocHistory
+    Id sql=vid
+    id Int MigrationOnly
+    demobId Int
+    myattr Text
+    version Int
+    createdAt UTCTime
+    createdBy Text
+    updatedAt UTCTime
+    updatedBy Text
+
 -- gen models - end
 
 {-# START_FILE config/models_nomigrate #-}
@@ -566,6 +587,13 @@ User-agent: *
   editDemob/#DemobId EditDemobR POST
   deleteDemobForm/#DemobId DeleteDemobFormR GET
   deleteDemob/#DemobId DeleteDemobR POST
+
+  addDemocForm/#DemobId AddDemocFormR GET
+  addDemoc/#DemobId AddDemocR POST
+  editDemocForm/#DemocId EditDemocFormR GET
+  editDemoc/#DemocId EditDemocR POST
+  deleteDemocForm/#DemocId DeleteDemocFormR GET
+  deleteDemoc/#DemocId DeleteDemocR POST
 
 {-# START_FILE config/settings.yml #-}
 # Values formatted like "_env:ENV_VAR_NAME:default_value" can be overridden by the specified environment variable.
@@ -1303,6 +1331,109 @@ context =
           ]
         }
 
+
+
+
+
+
+      , BCrudModel
+        { bCrudModelName = "democ"
+        , bCrudModelLabel = "Democ"
+        , bCrudModelIsJson = True
+        , bCrudModelDbUniquenesses = []
+        , bCrudModelDbHasHistoryTable = True
+        , bCrudModelHsDerivings = []
+        , bCrudModelAddFormArgs = Nothing
+        , bCrudModelEditFormArgs = Nothing
+        , bCrudModelAddFormEntityLoader = Nothing
+        , bCrudModelEditFormEntityLoader = Nothing
+        , bCrudModelDeleteFormEntityLoader = Nothing
+        , bCrudModelAddFormDataJsonUrl = Just "MyprojectR $ DemobDetailDataR demobId"
+        , bCrudModelEditFormDataJsonUrl = Just "MyprojectR $ DemobDetailDataR $ democDemobId democ"
+        , bCrudModelDeleteFormDataJsonUrl = Just "MyprojectR $ DemobDetailDataR $ democDemobId democ"
+        , bCrudModelAddFormHasDefaultModel = False
+        , bCrudModelEditPostLoadsModel = True
+        , bCrudModelDeletePostLoadsModel = True
+        , bCrudModelAddPostExtraStoreFunc = Nothing
+        , bCrudModelEditPostExtraStoreFunc = Nothing
+        , bCrudModelAddFormTitleMsg = Just "MsgDemocAddDemoc"
+        , bCrudModelEditFormTitleMsg = Just "MsgDemocEditDemoc"
+        , bCrudModelDeleteFormTitleMsg = Just "MsgDemocDeleteDemoc"
+        , bCrudModelParentHsType = Just "Demob"
+        , bCrudModelFormRouteHsType = "MyprojectR"
+        , bCrudModelFields =
+            [ BCrudField
+              { bCrudFieldName = "demobId"
+              , bCrudFieldLabelDe = Nothing
+              , bCrudFieldLabelEn = Nothing
+              , bCrudFieldHsType = "DemobId"
+              , bCrudFieldDb =
+                  Just $
+                  BCrudFieldDb
+                  { bCrudFieldDbIsNullable = False
+                  , bCrudFieldDbDefault = Nothing
+                  , bCrudFieldDbCanUpdate = False
+                  }
+              , bCrudFieldFormFieldType = Just "textField"
+              , bCrudFieldAddView = Nothing
+              , bCrudFieldEditView = Nothing
+              }
+            , BCrudField
+              { bCrudFieldName = "myattr"
+              , bCrudFieldLabelDe = Just "My attribute"
+              , bCrudFieldLabelEn = Just "Mein Attribut"
+              , bCrudFieldHsType = "Text"
+              , bCrudFieldDb =
+                  Just $
+                  BCrudFieldDb
+                  { bCrudFieldDbIsNullable = False
+                  , bCrudFieldDbDefault = Nothing
+                  , bCrudFieldDbCanUpdate = True
+                  }
+              , bCrudFieldFormFieldType = Just "textField"
+              , bCrudFieldAddView =
+                  Just $
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
+                      [ BFieldAttr
+                        { bFieldAttrKey = "class"
+                        , bFieldAttrValue =
+                            "uk-form-width-large uk-input uk-form-small"
+                        }
+                      ]
+                  , bFieldViewDefault = Nothing
+                  }
+              , bCrudFieldEditView =
+                  Just $
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
+                      [ BFieldAttr
+                        { bFieldAttrKey = "class"
+                        , bFieldAttrValue =
+                            "uk-form-width-large uk-input uk-form-small"
+                        }
+                      ]
+                  , bFieldViewDefault = Nothing
+                  }
+              }
+
+            ]
+        , bCrudModelTranslations = Just
+          [ BTranslation { bTranslationKey = "democ", bTranslationDe = "Democ", bTranslationEn = "Democ" }
+          , BTranslation { bTranslationKey = "democs", bTranslationDe = "Democs", bTranslationEn = "Democs" }
+          , BTranslation { bTranslationKey = "addDemoc", bTranslationDe = "Democ hinzufügen", bTranslationEn = "Add democ" }
+          , BTranslation { bTranslationKey = "editDemoc", bTranslationDe = "Democ bearbeiten", bTranslationEn = "Edit democ" }
+          , BTranslation { bTranslationKey = "deleteDemoc", bTranslationDe = "Democ löschen", bTranslationEn = "Delete democ" }
+          ]
+        }
+
+
+
+
       ]
 
   , bContextActionModels =
@@ -1531,6 +1662,29 @@ $function$;
 
 create trigger audit_demob after insert or update on public.demob for each row execute procedure public.process_audit_demob();
 
+
+
+drop function public.process_audit_democ() cascade;
+create or replace function public.process_audit_democ()
+ returns trigger
+ language plpgsql
+as $function$
+   begin
+       if to_regclass('democ_history') is not null then
+           if (TG_OP = 'UPDATE' or TG_OP = 'INSERT') then
+                insert into democ_history
+                       (id, demob_id, myattr, version, created_at, created_by, updated_at, updated_by)
+                       values
+                       (new.id, new.demob_id, new.myattr, new.version, new.created_at, new.created_by, new.updated_at, new.updated_by);
+                return new;
+            end if;
+       end if;
+       return null; -- result is ignored since this is an after trigger
+    end;
+$function$;
+
+create trigger audit_democ after insert or update on public.democ for each row execute procedure public.process_audit_democ();
+
 -- gen triggers - end
 
 {-# START_FILE run_dev.sh #-}
@@ -1702,6 +1856,22 @@ if test -z "$1" -o "$1" = $m; then
     exec_ginger2 $m handler_delete_form.gtmpl $f '-- gen delete form'
 fi
 
+f=src/Handler/Democ.hs
+m=democ
+if test -z "$1" -o "$1" = $m; then
+    exec_ginger2 $m handler_data_add.gtmpl $f '-- gen data add'
+    exec_ginger2 $m handler_get_add_form.gtmpl $f '-- gen get add form'
+    exec_ginger2 $m handler_post_add_form.gtmpl $f '-- gen post add'
+    exec_ginger2 $m handler_add_form.gtmpl $f '-- gen add form'
+    exec_ginger2 $m handler_data_edit.gtmpl $f '-- gen data edit'
+    exec_ginger2 $m handler_get_edit_form.gtmpl $f '-- gen get edit form'
+    exec_ginger2 $m handler_post_edit_form.gtmpl $f '-- gen post edit'
+    exec_ginger2 $m handler_edit_form.gtmpl $f '-- gen edit form'
+    exec_ginger2 $m handler_get_delete_form.gtmpl $f '-- gen get delete form'
+    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete form'
+    exec_ginger2 $m handler_delete_form.gtmpl $f '-- gen delete form'
+fi
+
 
 if test -n "$yesod_devel_pid"; then
     sleep 1
@@ -1799,6 +1969,7 @@ import Handler.MyProfile
 import Handler.TestMail
 import Handler.Demoa
 import Handler.Demob
+import Handler.Democ
 
 -- This line actually creates our YesodDispatch instance. It is the second half
 -- of the call to mkYesodData which occurs in Foundation.hs. Please see the
@@ -2682,14 +2853,29 @@ instance ToJSON JDataDemob where
 
 data JDataPageDemobDetail = JDataPageDemobDetail
   { jDataPageDemobDetailDemobEnt :: Entity Demob
+  , jDataPageDemobDetailDemocs :: [JDataDemoc]
   , jDataPageDemobDetailDemobEditFormUrl :: Text
+  , jDataPageDemobDetailDemocAddFormUrl :: Text
   }
 instance ToJSON JDataPageDemobDetail where
   toJSON o = object
     [ "demobEnt" .= jDataPageDemobDetailDemobEnt o
+    , "democs" .= jDataPageDemobDetailDemocs o
     , "demobEditFormUrl" .= jDataPageDemobDetailDemobEditFormUrl o
+    , "democAddFormUrl" .= jDataPageDemobDetailDemocAddFormUrl o
     ]
 
+data JDataDemoc = JDataDemoc
+  { jDataDemocEnt :: Entity Democ
+  , jDataDemocEditFormUrl :: Text
+  , jDataDemocDeleteFormUrl :: Text
+  }
+instance ToJSON JDataDemoc where
+  toJSON o = object
+    [ "entity" .= entityIdToJSON (jDataDemocEnt o)
+    , "editFormUrl" .= jDataDemocEditFormUrl o
+    , "deleteFormUrl" .= jDataDemocDeleteFormUrl o
+    ]
 
 --------------------------------------------------------------------------------
 -- navigation helpers
@@ -3752,13 +3938,16 @@ getDemobDetailDataR demobId = do
   appName <- runDB $ configAppName
   mainNavItems <- mainNavData user MainNavDemob
   demob <- runDB $ get404 demobId
+  jDataDemocs <- democJDatas demobId
   urlRenderer <- getUrlRender
   let pages =
         defaultDataPages
         { jDataPageDemobDetail =
             Just $ JDataPageDemobDetail
             { jDataPageDemobDetailDemobEnt = Entity demobId demob
+            , jDataPageDemobDetailDemocs = jDataDemocs
             , jDataPageDemobDetailDemobEditFormUrl = urlRenderer $ MyprojectR $ EditDemobFormR demobId
+            , jDataPageDemobDetailDemocAddFormUrl = urlRenderer $ MyprojectR $ AddDemocFormR demobId
             }
         }
   msgHome <- localizedMsg MsgGlobalHome
@@ -3794,6 +3983,31 @@ getDemobDetailDataR demobId = do
     , jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl
     , jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
     }
+
+democJDatas :: DemobId -> Handler [JDataDemoc]
+democJDatas demobId = do
+  urlRenderer <- getUrlRender
+  democTuples <- runDB $ loadDemocTuples demobId
+  return $ map
+    (\(democEnt@(Entity democId _)) ->
+       JDataDemoc
+       { jDataDemocEnt = democEnt
+       , jDataDemocEditFormUrl = urlRenderer $ MyprojectR $ EditDemocFormR democId
+       , jDataDemocDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteDemocFormR democId
+       })
+    democTuples
+
+loadDemocTuples :: DemobId -> YesodDB App [(Entity Democ)]
+loadDemocTuples demobId = do
+  E.select $ E.from $ \(dc) -> do
+    E.orderBy [ E.desc (dc E.^. DemocId) ]
+    E.where_ (dc E.^. DemocDemobId E.==. E.val demobId)
+    return (dc)
+
+
+
+
+
 
 -------------------------------------------------------
 -- add
@@ -3997,6 +4211,236 @@ postDeleteDemobR demobId = do
 -- gen delete form - start
 vDeleteDemobForm :: Html -> MForm Handler (FormResult (), Widget)
 vDeleteDemobForm extra = do
+  let formResult = mempty
+  let formWidget = [whamlet|#{extra} _{MsgGlobalReallyDelete}|]
+  return (formResult, formWidget)
+-- gen delete form - end
+
+{-# START_FILE src/Handler/Democ.hs #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE NoImplicitPrelude     #-}
+{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE QuasiQuotes           #-}
+{-# LANGUAGE TemplateHaskell       #-}
+{-# LANGUAGE TypeFamilies          #-}
+{-# LANGUAGE FlexibleContexts      #-}
+
+module Handler.Democ where
+
+import Handler.Common
+import Import
+
+import qualified Text.Blaze.Html.Renderer.Text as Blaze
+import Database.Persist.Sql (updateWhereCount)
+import qualified Data.Text.Encoding as TE
+import qualified Data.CaseInsensitive as CI
+import qualified Database.Esqueleto as E
+
+-------------------------------------------------------
+-- add
+-------------------------------------------------------
+
+-- gen data add - start
+data VAddDemoc = VAddDemoc
+  { vAddDemocMyattr :: Text
+  }
+-- gen data add - end
+
+-- gen get add form - start
+getAddDemocFormR :: DemobId -> Handler Html
+getAddDemocFormR demobId = do
+  (formWidget, _) <- generateFormPost $ vAddDemocForm Nothing
+  formLayout $ do
+    toWidget [whamlet|
+      <h1>_{MsgDemocAddDemoc}
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ AddDemocR demobId}>
+        <div #modal-form-widget>
+          ^{formWidget}
+      |]
+-- gen get add form - end
+
+-- gen post add - start
+postAddDemocR :: DemobId -> Handler Value
+postAddDemocR demobId = do
+  ((result, formWidget), _) <- runFormPost $ vAddDemocForm Nothing
+  case result of
+    FormSuccess vAddDemoc -> do
+      curTime <- liftIO getCurrentTime
+      Entity _ authUser <- requireAuth
+      urlRenderer <- getUrlRender
+      let democ = Democ
+            {
+            democDemobId = demobId
+            , democMyattr = vAddDemocMyattr vAddDemoc
+            , democVersion = 1
+            , democCreatedAt = curTime
+            , democCreatedBy = userIdent authUser
+            , democUpdatedAt = curTime
+            , democUpdatedBy = userIdent authUser
+            }
+      runDB $ do
+        _ <- insert democ
+        return ()
+      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId }
+    _ -> do
+      resultHtml <- formLayout [whamlet|^{formWidget}|]
+      returnJson $ VFormSubmitInvalid
+        { fsInvalidModalWidgetHtml = toStrict $ Blaze.renderHtml resultHtml }
+-- gen post add - end
+
+-- gen add form - start
+vAddDemocForm :: Maybe Democ -> Html -> MForm Handler (FormResult VAddDemoc, Widget)
+vAddDemocForm maybeDemoc extra = do
+  (myattrResult, myattrView) <- mreq textField
+    myattrFs
+    (democMyattr <$> maybeDemoc)
+  let vAddDemocResult = VAddDemoc <$> myattrResult
+  let formWidget = toWidget [whamlet|
+    #{extra}
+    <div .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
+      <label .uk-form-label :not $ null $ fvErrors myattrView:.uk-text-danger for=#{fvId myattrView}>#{fvLabel myattrView}
+      <div .uk-form-controls>
+        ^{fvInput myattrView}
+        $maybe err <- fvErrors myattrView
+          &nbsp;#{err}
+    |]
+  return (vAddDemocResult, formWidget)
+  where
+    myattrFs :: FieldSettings App
+    myattrFs = FieldSettings
+      { fsLabel = SomeMessage MsgDemocMyattr
+      , fsTooltip = Nothing
+      , fsId = Just "myattr"
+      , fsName = Just "myattr"
+      , fsAttrs = [ ("class","uk-form-width-large uk-input uk-form-small") ]
+      }
+-- gen add form - end
+
+-------------------------------------------------------
+-- edit
+-------------------------------------------------------
+
+-- gen data edit - start
+data VEditDemoc = VEditDemoc
+  { vEditDemocMyattr :: Text
+  , vEditDemocVersion :: Int
+  }
+-- gen data edit - end
+
+-- gen get edit form - start
+getEditDemocFormR :: DemocId -> Handler Html
+getEditDemocFormR democId = do
+  democ <- runDB $ get404 democId
+  (formWidget, _) <- generateFormPost $ vEditDemocForm (Just democ)
+  formLayout $ do
+    toWidget [whamlet|
+      <h1>_{MsgDemocEditDemoc}
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ EditDemocR democId}>
+        <div #modal-form-widget>
+          ^{formWidget}
+      |]
+-- gen get edit form - end
+
+-- gen post edit - start
+postEditDemocR :: DemocId -> Handler Value
+postEditDemocR democId = do
+  ((result, formWidget), _) <- runFormPost $ vEditDemocForm Nothing
+  case result of
+    FormSuccess vEditDemoc -> do
+      curTime <- liftIO getCurrentTime
+      Entity _ authUser <- requireAuth
+      urlRenderer <- getUrlRender
+      democ <- runDB $ get404 democId
+      let persistFields = [
+            DemocMyattr =. vEditDemocMyattr vEditDemoc
+            , DemocVersion =. vEditDemocVersion vEditDemoc + 1
+            , DemocUpdatedAt =. curTime
+            , DemocUpdatedBy =. userIdent authUser
+            ]
+      updateCount <- runDB $ do
+        uc <- updateWhereCount [ DemocId ==. democId
+                               , DemocVersion ==. vEditDemocVersion vEditDemoc
+                               ] persistFields
+        return uc
+      if updateCount == 1
+        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ }
+        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ }
+    _ -> do
+      resultHtml <- formLayout [whamlet|^{formWidget}|]
+      returnJson $ VFormSubmitInvalid
+        { fsInvalidModalWidgetHtml = toStrict $ Blaze.renderHtml resultHtml }
+
+-- gen post edit - end
+
+-- gen edit form - start
+vEditDemocForm :: Maybe Democ -> Html -> MForm Handler (FormResult VEditDemoc, Widget)
+vEditDemocForm maybeDemoc extra = do
+  (myattrResult, myattrView) <- mreq textField
+    myattrFs
+    (democMyattr <$> maybeDemoc)
+  (versionResult, versionView) <- mreq hiddenField
+    versionFs
+    (democVersion <$> maybeDemoc)
+  let vEditDemocResult = VEditDemoc <$> myattrResult <*> versionResult
+  let formWidget = toWidget [whamlet|
+    #{extra}
+    ^{fvInput versionView}
+    <div .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
+      <label .uk-form-label :not $ null $ fvErrors myattrView:.uk-text-danger for=#{fvId myattrView}>#{fvLabel myattrView}
+      <div .uk-form-controls>
+        ^{fvInput myattrView}
+        $maybe err <- fvErrors myattrView
+          &nbsp;#{err}
+    |]
+  return (vEditDemocResult, formWidget)
+  where
+    myattrFs :: FieldSettings App
+    myattrFs = FieldSettings
+      { fsLabel = SomeMessage MsgDemocMyattr
+      , fsTooltip = Nothing
+      , fsId = Just "myattr"
+      , fsName = Just "myattr"
+      , fsAttrs = [ ("class","uk-form-width-large uk-input uk-form-small") ]
+      }
+    versionFs :: FieldSettings App
+    versionFs = FieldSettings
+      { fsLabel = ""
+      , fsTooltip = Nothing
+      , fsId = Just "version"
+      , fsName = Just "version"
+      , fsAttrs = []
+      }
+-- gen edit form - end
+
+-------------------------------------------------------
+-- delete
+-------------------------------------------------------
+
+-- gen get delete form - start
+getDeleteDemocFormR :: DemocId -> Handler Html
+getDeleteDemocFormR democId = do
+  (formWidget, _) <- generateFormPost $ vDeleteDemocForm
+  formLayout $ do
+    toWidget [whamlet|
+      <h1>_{MsgDemocDeleteDemoc}
+      <form #modal-form .uk-form-horizontal method=post action=@{MyprojectR $ DeleteDemocR democId}>
+        <div #modal-form-widget>
+          ^{formWidget}
+      |]
+-- gen get delete form - end
+
+-- gen post delete form - start
+postDeleteDemocR :: DemocId -> Handler Value
+postDeleteDemocR democId = do
+  democ <- runDB $ get404 democId
+  runDB $ delete democId
+  urlRenderer <- getUrlRender
+  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ }
+-- gen post delete form - end
+
+-- gen delete form - start
+vDeleteDemocForm :: Html -> MForm Handler (FormResult (), Widget)
+vDeleteDemocForm extra = do
   let formResult = mempty
   let formWidget = [whamlet|#{extra} _{MsgGlobalReallyDelete}|]
   return (formResult, formWidget)
@@ -4854,6 +5298,8 @@ data AppMessage =
   | MsgTestmailEmail
   | MsgDemoaMyattr
   | MsgDemobMyattr
+  | MsgDemocDemobId
+  | MsgDemocMyattr
   | MsgUserUsers
   | MsgUserAddUser
   | MsgUserEditUser
@@ -4872,6 +5318,11 @@ data AppMessage =
   | MsgDemobAddDemob
   | MsgDemobEditDemob
   | MsgDemobDeleteDemob
+  | MsgDemocDemoc
+  | MsgDemocDemocs
+  | MsgDemocAddDemoc
+  | MsgDemocEditDemoc
+  | MsgDemocDeleteDemoc
 
 renderMessageGerman :: AppMessage -> Text
 renderMessageGerman MsgGlobalHome = "Home"
@@ -4895,6 +5346,8 @@ renderMessageGerman MsgConfigBoolValue = "Boolean-Wert"
 renderMessageGerman MsgTestmailEmail = "Email"
 renderMessageGerman MsgDemoaMyattr = "My attribute"
 renderMessageGerman MsgDemobMyattr = "My attribute"
+renderMessageGerman MsgDemocDemobId = ""
+renderMessageGerman MsgDemocMyattr = "My attribute"
 renderMessageGerman MsgUserUsers = "Nutzer"
 renderMessageGerman MsgUserAddUser = "Nutzer hinzufügen"
 renderMessageGerman MsgUserEditUser = "Nutzer bearbeiten"
@@ -4913,6 +5366,11 @@ renderMessageGerman MsgDemobDemobs = "Demobs"
 renderMessageGerman MsgDemobAddDemob = "Demob hinzufügen"
 renderMessageGerman MsgDemobEditDemob = "Demob bearbeiten"
 renderMessageGerman MsgDemobDeleteDemob = "Demob löschen"
+renderMessageGerman MsgDemocDemoc = "Democ"
+renderMessageGerman MsgDemocDemocs = "Democs"
+renderMessageGerman MsgDemocAddDemoc = "Democ hinzufügen"
+renderMessageGerman MsgDemocEditDemoc = "Democ bearbeiten"
+renderMessageGerman MsgDemocDeleteDemoc = "Democ löschen"
 
 renderMessageEnglish :: AppMessage -> Text
 renderMessageEnglish MsgGlobalHome = "Home"
@@ -4936,6 +5394,8 @@ renderMessageEnglish MsgConfigBoolValue = "Boolean-Value"
 renderMessageEnglish MsgTestmailEmail = "Email"
 renderMessageEnglish MsgDemoaMyattr = "Mein Attribut"
 renderMessageEnglish MsgDemobMyattr = "Mein Attribut"
+renderMessageEnglish MsgDemocDemobId = ""
+renderMessageEnglish MsgDemocMyattr = "Mein Attribut"
 renderMessageEnglish MsgUserUsers = "Users"
 renderMessageEnglish MsgUserAddUser = "Add user"
 renderMessageEnglish MsgUserEditUser = "Edit user"
@@ -4954,6 +5414,11 @@ renderMessageEnglish MsgDemobDemobs = "Demobs"
 renderMessageEnglish MsgDemobAddDemob = "Add demob"
 renderMessageEnglish MsgDemobEditDemob = "Edit demob"
 renderMessageEnglish MsgDemobDeleteDemob = "Delete demob"
+renderMessageEnglish MsgDemocDemoc = "Democ"
+renderMessageEnglish MsgDemocDemocs = "Democs"
+renderMessageEnglish MsgDemocAddDemoc = "Add democ"
+renderMessageEnglish MsgDemocEditDemoc = "Edit democ"
+renderMessageEnglish MsgDemocDeleteDemoc = "Delete democ"
 
 data Translation = Translation
   { msgGlobalHome :: Text
@@ -4977,6 +5442,8 @@ data Translation = Translation
   , msgTestmailEmail :: Text
   , msgDemoaMyattr :: Text
   , msgDemobMyattr :: Text
+  , msgDemocDemobId :: Text
+  , msgDemocMyattr :: Text
   , msgUserUsers :: Text
   , msgUserAddUser :: Text
   , msgUserEditUser :: Text
@@ -4995,6 +5462,11 @@ data Translation = Translation
   , msgDemobAddDemob :: Text
   , msgDemobEditDemob :: Text
   , msgDemobDeleteDemob :: Text
+  , msgDemocDemoc :: Text
+  , msgDemocDemocs :: Text
+  , msgDemocAddDemoc :: Text
+  , msgDemocEditDemoc :: Text
+  , msgDemocDeleteDemoc :: Text
   } deriving Generic
 
 instance ToJSON Translation
@@ -5022,6 +5494,8 @@ translationDe = Translation
   , msgTestmailEmail = "Email"
   , msgDemoaMyattr = "My attribute"
   , msgDemobMyattr = "My attribute"
+  , msgDemocDemobId = ""
+  , msgDemocMyattr = "My attribute"
   , msgUserUsers = "Nutzer"
   , msgUserAddUser = "Nutzer hinzufügen"
   , msgUserEditUser = "Nutzer bearbeiten"
@@ -5039,7 +5513,12 @@ translationDe = Translation
   , msgDemobDemobs = "Demobs"
   , msgDemobAddDemob = "Demob hinzufügen"
   , msgDemobEditDemob = "Demob bearbeiten"
-  , msgDemobDeleteDemob = "Demob löschen"}
+  , msgDemobDeleteDemob = "Demob löschen"
+  , msgDemocDemoc = "Democ"
+  , msgDemocDemocs = "Democs"
+  , msgDemocAddDemoc = "Democ hinzufügen"
+  , msgDemocEditDemoc = "Democ bearbeiten"
+  , msgDemocDeleteDemoc = "Democ löschen"}
 
 translationEn :: Translation
 translationEn = Translation
@@ -5064,6 +5543,8 @@ translationEn = Translation
   , msgTestmailEmail = "Email"
   , msgDemoaMyattr = "Mein Attribut"
   , msgDemobMyattr = "Mein Attribut"
+  , msgDemocDemobId = ""
+  , msgDemocMyattr = "Mein Attribut"
   , msgUserUsers = "Users"
   , msgUserAddUser = "Add user"
   , msgUserEditUser = "Edit user"
@@ -5081,7 +5562,12 @@ translationEn = Translation
   , msgDemobDemobs = "Demobs"
   , msgDemobAddDemob = "Add demob"
   , msgDemobEditDemob = "Edit demob"
-  , msgDemobDeleteDemob = "Delete demob"}
+  , msgDemobDeleteDemob = "Delete demob"
+  , msgDemocDemoc = "Democ"
+  , msgDemocDemocs = "Democs"
+  , msgDemocAddDemoc = "Add democ"
+  , msgDemocEditDemoc = "Edit democ"
+  , msgDemocDeleteDemoc = "Delete democ"}
 
 -- gen i18n - end
 
@@ -6709,10 +7195,45 @@ dCk6ZS5yaW90PXQoKTsK
           <td .uk-width-small>
             <button .uk-float-right .uk-button .uk-button-link title="{parent.data.translation.msgDemobEditDemob}" uk-tooltip onclick="{editDemob}">
               <span uk-icon="icon: pencil">
+    <h2>
+      {parent.data.translation.msgDemocDemocs}
+    <!-- democ list -->
+    <table .uk-table .uk-table-small .uk-table-divider .uk-table-hover .uk-background-muted>
+      <thead>
+        <tr>
+          <th>
+            {parent.data.translation.msgDemocMyattr}
+          <th .uk-align-right>
+            <button .uk-background-primary .uk-light .uk-padding-small .modal-form-link .uk-button .uk-button-link title="{parent.data.translation.msgDemocAddDemoc}" uk-tooltip onclick="{addDemoc}">
+              <span uk-icon="icon: plus">
+      <tbody>
+        <tr each="{parent.data.pages.demobDetail.democs}">
+          <td .uk-table-link>
+            <a onclick="{editDemoc}" .uk-link-reset>{entity.myattr}
+          <td .uk-width-small>
+            <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgDemocDeleteDemoc}" uk-tooltip onclick="{deleteDemoc}">
+              <span uk-icon="icon: trash">
+            <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgDemocEditDemoc}" uk-tooltip onclick="{editDemoc}">
+              <span uk-icon="icon: pencil">
   <script>
     \ editDemob(event) {
     \   event.preventDefault()
     \   parent.tag.showModalForm(parent.tag.data.pages.demobDetail.demobEditFormUrl)
+    \   event.currentTarget.blur()
+    \ }
+    \ addDemoc(event) {
+    \   event.preventDefault()
+    \   parent.tag.showModalForm(parent.tag.data.pages.demobDetail.democAddFormUrl)
+    \   event.currentTarget.blur()
+    \ }
+    \ editDemoc(event) {
+    \   event.preventDefault()
+    \   parent.tag.showModalForm(event.item.editFormUrl)
+    \   event.currentTarget.blur()
+    \ }
+    \ deleteDemoc(event) {
+    \   event.preventDefault()
+    \   parent.tag.showModalForm(event.item.deleteFormUrl)
     \   event.currentTarget.blur()
     \ }
 

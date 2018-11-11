@@ -646,6 +646,109 @@ context =
           ]
         }
 
+
+
+
+
+
+      , BCrudModel
+        { bCrudModelName = "democ"
+        , bCrudModelLabel = "Democ"
+        , bCrudModelIsJson = True
+        , bCrudModelDbUniquenesses = []
+        , bCrudModelDbHasHistoryTable = True
+        , bCrudModelHsDerivings = []
+        , bCrudModelAddFormArgs = Nothing
+        , bCrudModelEditFormArgs = Nothing
+        , bCrudModelAddFormEntityLoader = Nothing
+        , bCrudModelEditFormEntityLoader = Nothing
+        , bCrudModelDeleteFormEntityLoader = Nothing
+        , bCrudModelAddFormDataJsonUrl = Just "MyprojectR $ DemobDetailDataR demobId"
+        , bCrudModelEditFormDataJsonUrl = Just "MyprojectR $ DemobDetailDataR $ democDemobId democ"
+        , bCrudModelDeleteFormDataJsonUrl = Just "MyprojectR $ DemobDetailDataR $ democDemobId democ"
+        , bCrudModelAddFormHasDefaultModel = False
+        , bCrudModelEditPostLoadsModel = True
+        , bCrudModelDeletePostLoadsModel = True
+        , bCrudModelAddPostExtraStoreFunc = Nothing
+        , bCrudModelEditPostExtraStoreFunc = Nothing
+        , bCrudModelAddFormTitleMsg = Just "MsgDemocAddDemoc"
+        , bCrudModelEditFormTitleMsg = Just "MsgDemocEditDemoc"
+        , bCrudModelDeleteFormTitleMsg = Just "MsgDemocDeleteDemoc"
+        , bCrudModelParentHsType = Just "Demob"
+        , bCrudModelFormRouteHsType = "MyprojectR"
+        , bCrudModelFields =
+            [ BCrudField
+              { bCrudFieldName = "demobId"
+              , bCrudFieldLabelDe = Nothing
+              , bCrudFieldLabelEn = Nothing
+              , bCrudFieldHsType = "DemobId"
+              , bCrudFieldDb =
+                  Just $
+                  BCrudFieldDb
+                  { bCrudFieldDbIsNullable = False
+                  , bCrudFieldDbDefault = Nothing
+                  , bCrudFieldDbCanUpdate = False
+                  }
+              , bCrudFieldFormFieldType = Just "textField"
+              , bCrudFieldAddView = Nothing
+              , bCrudFieldEditView = Nothing
+              }
+            , BCrudField
+              { bCrudFieldName = "myattr"
+              , bCrudFieldLabelDe = Just "My attribute"
+              , bCrudFieldLabelEn = Just "Mein Attribut"
+              , bCrudFieldHsType = "Text"
+              , bCrudFieldDb =
+                  Just $
+                  BCrudFieldDb
+                  { bCrudFieldDbIsNullable = False
+                  , bCrudFieldDbDefault = Nothing
+                  , bCrudFieldDbCanUpdate = True
+                  }
+              , bCrudFieldFormFieldType = Just "textField"
+              , bCrudFieldAddView =
+                  Just $
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
+                      [ BFieldAttr
+                        { bFieldAttrKey = "class"
+                        , bFieldAttrValue =
+                            "uk-form-width-large uk-input uk-form-small"
+                        }
+                      ]
+                  , bFieldViewDefault = Nothing
+                  }
+              , bCrudFieldEditView =
+                  Just $
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
+                      [ BFieldAttr
+                        { bFieldAttrKey = "class"
+                        , bFieldAttrValue =
+                            "uk-form-width-large uk-input uk-form-small"
+                        }
+                      ]
+                  , bFieldViewDefault = Nothing
+                  }
+              }
+
+            ]
+        , bCrudModelTranslations = Just
+          [ BTranslation { bTranslationKey = "democ", bTranslationDe = "Democ", bTranslationEn = "Democ" }
+          , BTranslation { bTranslationKey = "democs", bTranslationDe = "Democs", bTranslationEn = "Democs" }
+          , BTranslation { bTranslationKey = "addDemoc", bTranslationDe = "Democ hinzufügen", bTranslationEn = "Add democ" }
+          , BTranslation { bTranslationKey = "editDemoc", bTranslationDe = "Democ bearbeiten", bTranslationEn = "Edit democ" }
+          , BTranslation { bTranslationKey = "deleteDemoc", bTranslationDe = "Democ löschen", bTranslationEn = "Delete democ" }
+          ]
+        }
+
+
+
+
       ]
 
   , bContextActionModels =

@@ -289,14 +289,29 @@ instance ToJSON JDataDemob where
 
 data JDataPageDemobDetail = JDataPageDemobDetail
   { jDataPageDemobDetailDemobEnt :: Entity Demob
+  , jDataPageDemobDetailDemocs :: [JDataDemoc]
   , jDataPageDemobDetailDemobEditFormUrl :: Text
+  , jDataPageDemobDetailDemocAddFormUrl :: Text
   }
 instance ToJSON JDataPageDemobDetail where
   toJSON o = object
     [ "demobEnt" .= jDataPageDemobDetailDemobEnt o
+    , "democs" .= jDataPageDemobDetailDemocs o
     , "demobEditFormUrl" .= jDataPageDemobDetailDemobEditFormUrl o
+    , "democAddFormUrl" .= jDataPageDemobDetailDemocAddFormUrl o
     ]
 
+data JDataDemoc = JDataDemoc
+  { jDataDemocEnt :: Entity Democ
+  , jDataDemocEditFormUrl :: Text
+  , jDataDemocDeleteFormUrl :: Text
+  }
+instance ToJSON JDataDemoc where
+  toJSON o = object
+    [ "entity" .= entityIdToJSON (jDataDemocEnt o)
+    , "editFormUrl" .= jDataDemocEditFormUrl o
+    , "deleteFormUrl" .= jDataDemocDeleteFormUrl o
+    ]
 
 --------------------------------------------------------------------------------
 -- navigation helpers
