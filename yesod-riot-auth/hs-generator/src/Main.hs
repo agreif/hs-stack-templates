@@ -16,7 +16,6 @@ context =
   { bContextCrudModels =
       [ BCrudModel
         { bCrudModelName = "user"
-        , bCrudModelLabel = "User"
         , bCrudModelIsJson = False
         , bCrudModelDbUniquenesses = ["UniqueUser ident"]
         , bCrudModelDbHasHistoryTable = True
@@ -212,7 +211,6 @@ context =
         }
       , BCrudModel
         { bCrudModelName = "config"
-        , bCrudModelLabel = "Config"
         , bCrudModelIsJson = True
         , bCrudModelDbUniquenesses = ["UniqueCode code"]
         , bCrudModelDbHasHistoryTable = True
@@ -434,7 +432,6 @@ context =
         }
       , BCrudModel
         { bCrudModelName = "testmail"
-        , bCrudModelLabel = "Test Mail"
         , bCrudModelIsJson = False
         , bCrudModelDbUniquenesses = []
         , bCrudModelDbHasHistoryTable = False
@@ -490,7 +487,6 @@ context =
 
       , BCrudModel
         { bCrudModelName = "demoa"
-        , bCrudModelLabel = "Demoa"
         , bCrudModelIsJson = True
         , bCrudModelDbUniquenesses = []
         , bCrudModelDbHasHistoryTable = True
@@ -569,7 +565,6 @@ context =
 
       , BCrudModel
         { bCrudModelName = "demob"
-        , bCrudModelLabel = "Demob"
         , bCrudModelIsJson = True
         , bCrudModelDbUniquenesses = []
         , bCrudModelDbHasHistoryTable = True
@@ -653,7 +648,6 @@ context =
 
       , BCrudModel
         { bCrudModelName = "democ"
-        , bCrudModelLabel = "Democ"
         , bCrudModelIsJson = True
         , bCrudModelDbUniquenesses = []
         , bCrudModelDbHasHistoryTable = True
