@@ -142,7 +142,8 @@
 <nav-tag>
   <nav .uk-navbar-container .uk-margin-small-top uk-navbar="offset: -10">
     <div .uk-navbar-left>
-      <div .uk-navbar-item .uk-logo>{parent.data.appName}
+      <div .uk-navbar-item .uk-logo>
+        {parent.data.appName}
       <ul .uk-navbar-nav>
         <li each="{parent.data.mainNavItems}" class="{uk-active: isActive}">
           <a href="{url}" onclick="{switchNav}" if="{!Array.isArray(dropdownItems) || !dropdownItems.length}">
@@ -180,13 +181,15 @@
     <div .uk-width-1-1>
       <ul .uk-subnav .uk-subnav-divider>
         <li each="{parent.data.subNavItems}" class="{uk-active: isActive}">
-          <a onclick="{switchNav}">{label}
+          <a onclick="{switchNav}">
+            {label}
   <div .uk-child-width-expand .uk-margin-small-top .uk-margin-small-right uk-grid>
     <div .uk-width-1-1>
       <div .uk-align-right>
         <ul .uk-breadcrumb>
           <li each="{parent.data.breadcrumbItems}">
-            <a onclick="{switchBreadcrumb}">{label}
+            <a onclick="{switchBreadcrumb}">
+              {label}
   <script>
     \ switchNav(event) {
     \   event.preventDefault()
@@ -267,9 +270,11 @@
           <tbody>
             <tr each="{parent.data.pages.admin.users}">
               <td .uk-table-link>
-                <a onclick="{editUser}" .uk-link-reset>{entity.ident}
+                <a onclick="{editUser}" .uk-link-reset>
+                  {entity.ident}
               <td .uk-table-link>
-                <a onclick="{editUser}" .uk-link-reset>{entity.email}
+                <a onclick="{editUser}" .uk-link-reset>
+                  {entity.email}
               <td .uk-table-link>
                 <a onclick="{editUser}" .uk-link-reset>
                   <span uk-icon="icon: check" if="{entity.isAdmin}">
@@ -461,7 +466,8 @@
       <tbody>
         <tr each="{parent.data.pages.demobDetail.democs}">
           <td .uk-table-link>
-            <a onclick="{editDemoc}" .uk-link-reset>{entity.myattr}
+            <a onclick="{editDemoc}" .uk-link-reset>
+              {entity.myattr}
           <td .uk-width-small>
             <button .uk-float-right .uk-button .uk-button-link title="{parent.parent.data.translation.msgDemocDeleteDemoc}" uk-tooltip onclick="{deleteDemoc}">
               <span uk-icon="icon: trash">
