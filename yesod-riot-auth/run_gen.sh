@@ -114,9 +114,9 @@ fi
 f=src/Handler/TestMail.hs
 m=testmail
 if test -z "$1" -o "$1" = $m; then
-    exec_ginger2 $m handler_data_add.gtmpl $f '-- gen data add'
-    exec_ginger2 $m handler_get_add_form.gtmpl $f '-- gen get add form'
-    exec_ginger2 $m handler_add_form.gtmpl $f '-- gen add form'
+    exec_ginger2 $m handler_data_action.gtmpl $f '-- gen data action'
+    exec_ginger2 $m handler_get_action_form.gtmpl $f '-- gen get action form'
+    exec_ginger2 $m handler_action_form.gtmpl $f '-- gen action form'
 fi
 
 f=src/Handler/Demoa.hs

@@ -551,8 +551,8 @@ User-agent: *
   editConfigForm/#ConfigId EditConfigFormR GET
   editConfig/#ConfigId EditConfigR POST
 
-  sendTestMailForm AddTestmailFormR GET
-  sendTestMail AddTestmailR POST
+  sendTestMailForm SendTestmailFormR GET
+  sendTestMail SendTestmailR POST
 
 /myproject MyprojectR:
   home MyprojectHomeR GET
@@ -1115,60 +1115,6 @@ context =
           , BTranslation { bTranslationKey = "editConfig", bTranslationDe = "Konfiguration bearbeiten", bTranslationEn = "Edit config" }
           ]
         }
-      , BCrudModel
-        { bCrudModelName = "testmail"
-        , bCrudModelIsJson = False
-        , bCrudModelDbUniquenesses = []
-        , bCrudModelDbHasHistoryTable = False
-        , bCrudModelHsDerivings = []
-        , bCrudModelAddFormArgs = Nothing
-        , bCrudModelEditFormArgs = Nothing
-        , bCrudModelAddFormEntityLoader = Nothing
-        , bCrudModelEditFormEntityLoader = Nothing
-        , bCrudModelDeleteFormEntityLoader = Nothing
-        , bCrudModelAddFormDataJsonUrl = Nothing
-        , bCrudModelEditFormDataJsonUrl = Just "MyprojectR TestMailDataJsonR"
-        , bCrudModelDeleteFormDataJsonUrl = Nothing
-        , bCrudModelAddFormHasDefaultModel = False
-        , bCrudModelEditPostLoadsModel = False
-        , bCrudModelDeletePostLoadsModel = False
-        , bCrudModelAddPostExtraStoreFunc = Nothing
-        , bCrudModelEditPostExtraStoreFunc = Nothing
-        , bCrudModelAddFormTitleMsg = Just "MsgTestmailSendTestMail"
-        , bCrudModelEditFormTitleMsg = Nothing
-        , bCrudModelDeleteFormTitleMsg = Nothing
-        , bCrudModelParentHsType = Nothing
-        , bCrudModelFormRouteHsType = "AdminR"
-        , bCrudModelFields =
-            [ BCrudField
-              { bCrudFieldName = "email"
-              , bCrudFieldLabelDe = Just "Email"
-              , bCrudFieldLabelEn = Just "Email"
-              , bCrudFieldHsType = "Text"
-              , bCrudFieldDb = Nothing
-              , bCrudFieldFormFieldType = Just "textField"
-              , bCrudFieldAddView =
-                  Just $
-                  BFieldView
-                  { bFieldViewIsRequired = True
-                  , bFieldViewIsDisabled = False
-                  , bFieldViewAttrs =
-                      [ BFieldAttr
-                        { bFieldAttrKey = "class"
-                        , bFieldAttrValue =
-                            "uk-input uk-form-small uk-form-width-large"
-                        }
-                      ]
-                  , bFieldViewDefault = Nothing
-                  }
-              , bCrudFieldEditView = Nothing
-              }
-            ]
-        , bCrudModelTranslations = Just
-          [ BTranslation { bTranslationKey = "testMail", bTranslationDe = "Test-Mail", bTranslationEn = "Test-Mail" }
-          , BTranslation { bTranslationKey = "sendTestMail", bTranslationDe = "Test-Mail senden...", bTranslationEn = "Send Test-Mail..." }
-          ]
-        }
 
       , BCrudModel
         { bCrudModelName = "demoa"
@@ -1431,8 +1377,47 @@ context =
       ]
 
   , bContextActionModels =
-      [
-      ]
+      [ BActionModel
+        { bActionModelName = "testmail"
+        , bActionModelAction = "send"
+        , bActionModelFormArgs = Nothing
+        , bActionModelFormEntityLoader = Nothing
+        , bActionModelFormDataJsonUrl = Nothing
+        , bActionModelFormHasDefaultModel = False
+        , bActionModelPostExtraStoreFunc = Nothing
+        , bActionModelFormTitleMsg = Just "MsgTestmailSendTestMail"
+        , bActionModelFormRouteHsType = "AdminR"
+        , bActionModelFields =
+            [ BActionField
+              { bActionFieldName = "email"
+              , bActionFieldLabelDe = Just "Email"
+              , bActionFieldLabelEn = Just "Email"
+              , bActionFieldHsType = "Text"
+              , bActionFieldFormFieldType = Just "textField"
+              , bActionFieldView =
+                  Just $
+                  BFieldView
+                  { bFieldViewIsRequired = True
+                  , bFieldViewIsDisabled = False
+                  , bFieldViewAttrs =
+                      [ BFieldAttr
+                        { bFieldAttrKey = "class"
+                        , bFieldAttrValue =
+                            "uk-input uk-form-small uk-form-width-large"
+                        }
+                      ]
+                  , bFieldViewDefault = Nothing
+                  }
+              }
+            ]
+        , bActionModelTranslations =
+          Just
+          [ BTranslation { bTranslationKey = "testMail", bTranslationDe = "Test-Mail", bTranslationEn = "Test-Mail" }
+          , BTranslation { bTranslationKey = "sendTestMail", bTranslationDe = "Test-Mail senden...", bTranslationEn = "Send Test-Mail..." }
+          ]
+        }
+
+    ]
 
   , bContextGlobalTranslations =
     [ BTranslation { bTranslationKey = "home", bTranslationDe = "Home", bTranslationEn = "Home" }
@@ -1813,9 +1798,9 @@ fi
 f=src/Handler/TestMail.hs
 m=testmail
 if test -z "$1" -o "$1" = $m; then
-    exec_ginger2 $m handler_data_add.gtmpl $f '-- gen data add'
-    exec_ginger2 $m handler_get_add_form.gtmpl $f '-- gen get add form'
-    exec_ginger2 $m handler_add_form.gtmpl $f '-- gen add form'
+    exec_ginger2 $m handler_data_action.gtmpl $f '-- gen data action'
+    exec_ginger2 $m handler_get_action_form.gtmpl $f '-- gen get action form'
+    exec_ginger2 $m handler_action_form.gtmpl $f '-- gen action form'
 fi
 
 f=src/Handler/Demoa.hs
@@ -4881,45 +4866,45 @@ data Testmail = Testmail
   { testmailEmail :: Text
   }
 
-postAddTestmailR :: Handler Value
-postAddTestmailR = do
-  ((result, formWidget), _) <- runFormPost $ vAddTestmailForm Nothing
+postSendTestmailR :: Handler Value
+postSendTestmailR = do
+  ((result, formWidget), _) <- runFormPost $ vSendTestmailForm Nothing
   case result of
-    FormSuccess vAddTestmail -> do
+    FormSuccess vSendTestmail -> do
       urlRenderer <- getUrlRender
-      sendTestMail $ vAddTestmailEmail vAddTestmail
+      sendTestMail $ vSendTestmailEmail vSendTestmail
       returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
         { fsInvalidModalWidgetHtml = toStrict $ Blaze.renderHtml resultHtml }
 
--- gen data add - start
-data VAddTestmail = VAddTestmail
-  { vAddTestmailEmail :: Text
+-- gen data action - start
+data VSendTestmail = VSendTestmail
+  { vSendTestmailEmail :: Text
   }
--- gen data add - end
+-- gen data action - end
 
--- gen get add form - start
-getAddTestmailFormR :: Handler Html
-getAddTestmailFormR = do
-  (formWidget, _) <- generateFormPost $ vAddTestmailForm Nothing
+-- gen get action form - start
+getSendTestmailFormR :: Handler Html
+getSendTestmailFormR = do
+  (formWidget, _) <- generateFormPost $ vSendTestmailForm Nothing
   formLayout $ do
     toWidget [whamlet|
       <h1>_{MsgTestmailSendTestMail}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ AddTestmailR}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ SendTestmailR}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
--- gen get add form - end
+-- gen get action form - end
 
--- gen add form - start
-vAddTestmailForm :: Maybe Testmail -> Html -> MForm Handler (FormResult VAddTestmail, Widget)
-vAddTestmailForm maybeTestmail extra = do
+-- gen action form - start
+vSendTestmailForm :: Maybe Testmail -> Html -> MForm Handler (FormResult VSendTestmail, Widget)
+vSendTestmailForm maybeTestmail extra = do
   (emailResult, emailView) <- mreq textField
     emailFs
     (testmailEmail <$> maybeTestmail)
-  let vAddTestmailResult = VAddTestmail <$> emailResult
+  let vSendTestmailResult = VSendTestmail <$> emailResult
   let formWidget = toWidget [whamlet|
     #{extra}
     <div .uk-margin-small :not $ null $ fvErrors emailView:.uk-form-danger>
@@ -4929,7 +4914,7 @@ vAddTestmailForm maybeTestmail extra = do
         $maybe err <- fvErrors emailView
           &nbsp;#{err}
     |]
-  return (vAddTestmailResult, formWidget)
+  return (vSendTestmailResult, formWidget)
   where
     emailFs :: FieldSettings App
     emailFs = FieldSettings
@@ -4939,7 +4924,7 @@ vAddTestmailForm maybeTestmail extra = do
       , fsName = Just "email"
       , fsAttrs = [ ("class","uk-form-width-large uk-input uk-form-small") ]
       }
--- gen add form - end
+-- gen action form - end
 
 {-# START_FILE src/Handler/User.hs #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -7087,7 +7072,7 @@ dCk6ZS5yaW90PXQoKTsK
     \ }
     \ sendTestMail(event) {
     \   event.preventDefault()
-    \   parent.tag.showModalForm("@{AdminR AddTestmailFormR}")
+    \   parent.tag.showModalForm("@{AdminR SendTestmailFormR}")
     \ }
 
 <demoa-list-page-tag>

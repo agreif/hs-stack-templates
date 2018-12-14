@@ -21,8 +21,8 @@
   editConfigForm/#ConfigId EditConfigFormR GET
   editConfig/#ConfigId EditConfigR POST
 
-  sendTestMailForm AddTestmailFormR GET
-  sendTestMail AddTestmailR POST
+  sendTestMailForm SendTestmailFormR GET
+  sendTestMail SendTestmailR POST
 
 /myproject MyprojectR:
   home MyprojectHomeR GET
