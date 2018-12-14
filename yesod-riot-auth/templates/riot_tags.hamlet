@@ -345,7 +345,7 @@
     \ }
     \ sendTestMail(event) {
     \   event.preventDefault()
-    \   parent.tag.showModalForm("@{AdminR AddTestmailFormR}")
+    \   parent.tag.showModalForm("@{AdminR SendTestmailFormR}")
     \ }
 
 <demoa-list-page-tag>

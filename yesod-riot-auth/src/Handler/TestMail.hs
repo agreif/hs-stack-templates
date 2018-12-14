@@ -17,45 +17,45 @@ data Testmail = Testmail
   { testmailEmail :: Text
   }
 
-postAddTestmailR :: Handler Value
-postAddTestmailR = do
-  ((result, formWidget), _) <- runFormPost $ vAddTestmailForm Nothing
+postSendTestmailR :: Handler Value
+postSendTestmailR = do
+  ((result, formWidget), _) <- runFormPost $ vSendTestmailForm Nothing
   case result of
-    FormSuccess vAddTestmail -> do
+    FormSuccess vSendTestmail -> do
       urlRenderer <- getUrlRender
-      sendTestMail $ vAddTestmailEmail vAddTestmail
+      sendTestMail $ vSendTestmailEmail vSendTestmail
       returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
         { fsInvalidModalWidgetHtml = toStrict $ Blaze.renderHtml resultHtml }
 
--- gen data add - start
-data VAddTestmail = VAddTestmail
-  { vAddTestmailEmail :: Text
+-- gen data action - start
+data VSendTestmail = VSendTestmail
+  { vSendTestmailEmail :: Text
   }
--- gen data add - end
+-- gen data action - end
 
--- gen get add form - start
-getAddTestmailFormR :: Handler Html
-getAddTestmailFormR = do
-  (formWidget, _) <- generateFormPost $ vAddTestmailForm Nothing
+-- gen get action form - start
+getSendTestmailFormR :: Handler Html
+getSendTestmailFormR = do
+  (formWidget, _) <- generateFormPost $ vSendTestmailForm Nothing
   formLayout $ do
     toWidget [whamlet|
       <h1>_{MsgTestmailSendTestMail}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ AddTestmailR}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ SendTestmailR}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
--- gen get add form - end
+-- gen get action form - end
 
--- gen add form - start
-vAddTestmailForm :: Maybe Testmail -> Html -> MForm Handler (FormResult VAddTestmail, Widget)
-vAddTestmailForm maybeTestmail extra = do
+-- gen action form - start
+vSendTestmailForm :: Maybe Testmail -> Html -> MForm Handler (FormResult VSendTestmail, Widget)
+vSendTestmailForm maybeTestmail extra = do
   (emailResult, emailView) <- mreq textField
     emailFs
     (testmailEmail <$> maybeTestmail)
-  let vAddTestmailResult = VAddTestmail <$> emailResult
+  let vSendTestmailResult = VSendTestmail <$> emailResult
   let formWidget = toWidget [whamlet|
     #{extra}
     <div .uk-margin-small :not $ null $ fvErrors emailView:.uk-form-danger>
@@ -65,7 +65,7 @@ vAddTestmailForm maybeTestmail extra = do
         $maybe err <- fvErrors emailView
           &nbsp;#{err}
     |]
-  return (vAddTestmailResult, formWidget)
+  return (vSendTestmailResult, formWidget)
   where
     emailFs :: FieldSettings App
     emailFs = FieldSettings
@@ -75,4 +75,4 @@ vAddTestmailForm maybeTestmail extra = do
       , fsName = Just "email"
       , fsAttrs = [ ("class","uk-form-width-large uk-input uk-form-small") ]
       }
--- gen add form - end
+-- gen action form - end
