@@ -5,7 +5,7 @@ set -e
 input_dir="$1"
 
 if [ -z "$input_dir" ]; then
-    echo "Usage: join-hsfiles INPUT_DIR"
+    echo "Usage: $0 INPUT_DIR"
     exit 1;
 fi
 
