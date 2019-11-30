@@ -524,8 +524,7 @@ randomMixedCaseString len = do
   values <- evalRandIO (sequence (replicate len $ rnd 65 90))
   let str = toLower $ map C.chr values
   -- in average in every 2 chars is an uppercase char
-  str' <- upcaseChars (quot len 2) str
-  return str'
+  upcaseChars (quot len 2) str
   where
     upcaseChars :: Int -> String -> IO String
     upcaseChars countChars str =
@@ -571,19 +570,19 @@ $newline never
 dbSystemUser :: Text
 dbSystemUser = "system"
 
-groupEntities :: [(Entity a, Entity b)] -> [(Entity a, [Entity b])]
-groupEntities es =
-  L.map ((\(es1, es2) -> (L.head es1, es2)) . L.unzip) $
-  L.groupBy (\(Entity id1 _, _) (Entity id2 _, _) -> id1 == id2) es
+-- groupEntities :: [(Entity a, Entity b)] -> [(Entity a, [Entity b])]
+-- groupEntities es =
+--   L.map ((\(es1, es2) -> (L.head es1, es2)) . L.unzip) $
+--   L.groupBy (\(Entity id1 _, _) (Entity id2 _, _) -> id1 == id2) es
 
-groupEntitiesMaybe :: [(Entity a, Maybe (Entity b))] -> [(Entity a, [Entity b])]
-groupEntitiesMaybe es =
-  L.map ((\(es1, es2) -> (L.head es1, M.catMaybes es2)) . L.unzip) $
-  L.groupBy (\(Entity id1 _, _) (Entity id2 _, _) -> id1 == id2) es
+-- groupEntitiesMaybe :: [(Entity a, Maybe (Entity b))] -> [(Entity a, [Entity b])]
+-- groupEntitiesMaybe es =
+--   L.map ((\(es1, es2) -> (L.head es1, M.catMaybes es2)) . L.unzip) $
+--   L.groupBy (\(Entity id1 _, _) (Entity id2 _, _) -> id1 == id2) es
 
 fileBytes :: FileInfo -> Handler B.ByteString
 fileBytes fileInfo = do
-  bytesL <- runResourceT $ fileSource fileInfo $$ CB.sinkLbs
+  bytesL <- runConduit $ fileSource fileInfo .| CB.sinkLbs
   return $ toStrict bytesL
 
 humanReadableBytes :: Integer -> String
@@ -598,7 +597,7 @@ humanReadableBytes size
     units = ["","KB","MB","GB","TB","PB","EB","ZB"] :: [String]
 
 getCurrentDay :: IO Day
-getCurrentDay = getCurrentTime >>= return . utctDay
+getCurrentDay = utctDay <$> getCurrentTime
 
 maybeTextToText :: Maybe Text -> Text
 maybeTextToText Nothing = ""
