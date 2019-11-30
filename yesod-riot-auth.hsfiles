@@ -6734,9 +6734,9 @@ dCk6ZS5yaW90PXQoKTsK
     <meta charset="UTF-8">
     <title>#{pageTitle pc}
 
-    <link href="@{StaticR css_uikit_3_2_3_rc26_min_css}" rel="stylesheet" type="text/css">
-    <script src="@{StaticR js_uikit_3_2_3_rc26_min_js}" type="text/javascript">
-    <script src="@{StaticR js_uikit_icons_3_2_3_rc26_min_js}" type="text/javascript">
+    <link href="@{StaticR css_uikit_3_2_3_min_css}" rel="stylesheet" type="text/css">
+    <script src="@{StaticR js_uikit_3_2_3_min_js}" type="text/javascript">
+    <script src="@{StaticR js_uikit_icons_3_2_3_min_js}" type="text/javascript">
 
     ^{pageHead pc}
 
@@ -6774,9 +6774,9 @@ dCk6ZS5yaW90PXQoKTsK
 
     <script src="@{StaticR js_jquery_3_3_1_min_js}" type="text/javascript">
 
-    <link href="@{StaticR css_uikit_3_2_3_rc26_min_css}" rel="stylesheet" type="text/css">
-    <script src="@{StaticR js_uikit_3_2_3_rc26_min_js}" type="text/javascript">
-    <script src="@{StaticR js_uikit_icons_3_2_3_rc26_min_js}" type="text/javascript">
+    <link href="@{StaticR css_uikit_3_2_3_min_css}" rel="stylesheet" type="text/css">
+    <script src="@{StaticR js_uikit_3_2_3_min_js}" type="text/javascript">
+    <script src="@{StaticR js_uikit_icons_3_2_3_min_js}" type="text/javascript">
 
     <script src="@{StaticR js_riot_compiler_3_9_4_min_js}" type="text/javascript">
 
