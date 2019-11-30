@@ -2,7 +2,6 @@
 {-# LANGUAGE NoImplicitPrelude     #-}
 {-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE QuasiQuotes           #-}
-{-# LANGUAGE TemplateHaskell       #-}
 {-# LANGUAGE TypeFamilies          #-}
 
 module Handler.Mailer where
@@ -29,13 +28,12 @@ sendTestMail email = do
 
 sendPasswordNewAccountMail :: User -> Text -> Handler ()
 sendPasswordNewAccountMail user passwd = do
-  do
-    loginUrl <- renderUrlToText $ AuthR LoginR
-    appName <- runDB $ configAppName
-    sendMail' (userEmail user)
-      ("[" ++ appName ++ "] Neuer Nutzer angelegt")
-      (textPartContent user appName loginUrl)
-      (htmlPartContent user appName loginUrl)
+  loginUrl <- renderUrlToText $ AuthR LoginR
+  appName <- runDB configAppName
+  sendMail' (userEmail user)
+    ("[" ++ appName ++ "] Neuer Nutzer angelegt")
+    (textPartContent user appName loginUrl)
+    (htmlPartContent user appName loginUrl)
   where
     textPartContent user' appName loginUrl = encodeUtf8
       [stext|
@@ -72,7 +70,7 @@ Ihr #{appName} Team
 
 sendPasswordResetMail :: User -> Text -> Handler ()
 sendPasswordResetMail user passwd = do
-  appName <- runDB $ configAppName
+  appName <- runDB configAppName
   sendMail' (userEmail user)
     ("[" ++ appName ++ "] Ihr Passwort wurde zurückgesetzt")
     (textPartContent user passwd appName)
@@ -105,37 +103,31 @@ Ihr #{appName} Team
 sendMail' :: Text -> Text -> LBS.ByteString -> LBS.ByteString -> Handler ()
 sendMail' to subject textPartContent htmlPartContent = do
   from <- runDB $ configEmailFrom
+  appName <- runDB $ configAppName
   let mail = Mail
-        { mailFrom = Address Nothing from
+        { mailFrom = Address (Just appName) from
         , mailTo = [Address Nothing to]
         , mailCc = []
         , mailBcc = []
         , mailHeaders =
-            [ ("Subject", subject),
-              ("Reply-To", from)
+            [ ("Subject", subject)
+            , ("Reply-To", from)
             ]
-        , mailParts = [[textPart', htmlPart']]
+        , mailParts = [[htmlPart', textPart']]
         }
 
   _ <- liftIO $ forkIO $ renderSendMailCustom "/run/wrappers/bin/sendmail" ["-t"] mail
   return ()
-
-  -- _ <- liftIO $ forkIO $ renderSendMail (emptyMail $ Address Nothing from)
-  --   { mailTo = [Address Nothing to]
-  --   , mailHeaders =
-  --        [ ("Subject", subject),
-  --          ("Reply-To", from)
-  --        ]
-  --   , mailParts = [[textPart', htmlPart']] }
-  -- return ()
   where
     textPart' = Part { partType = "text/plain; charset=utf-8"
                      , partEncoding = None
-                     , partFilename = Nothing
-                     , partContent = textPartContent
-                     , partHeaders = [] }
+                     , partDisposition = DefaultDisposition
+                     , partHeaders = []
+                     , partContent = PartContent textPartContent
+                     }
     htmlPart' = Part { partType = "text/html; charset=utf-8"
                      , partEncoding = None
-                     , partFilename = Nothing
-                     , partContent = htmlPartContent
-                     , partHeaders = [] }
+                     , partDisposition = DefaultDisposition
+                     , partHeaders = []
+                     , partContent = PartContent htmlPartContent
+                     }

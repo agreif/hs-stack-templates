@@ -8,6 +8,7 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE FlexibleContexts #-}
 
 module Foundation where
 
@@ -53,11 +54,11 @@ data App = App
 mkYesodData "App" $(parseRoutesFile "config/routes")
 
 -- | A convenient synonym for creating forms.
-type Form x = Html -> MForm (HandlerT App IO) (FormResult x, Widget)
+type Form x = Html -> MForm (HandlerFor App) (FormResult x, Widget)
 
 -- | A convenient synonym for database access functions.
 type DB a = forall (m :: * -> *).
-    (MonadIO m, Functor m) => ReaderT SqlBackend m a
+    (MonadIO m) => ReaderT SqlBackend m a
 
 -- Please see the documentation for the Yesod typeclass. There are a number
 -- of settings which can be configured by overriding methods here.
@@ -94,12 +95,7 @@ instance Yesod App where
         defaultYesodMiddleware $ defaultCsrfSetCookieMiddleware $ (if dontCheckCsrf then id else defaultCsrfCheckMiddleware) app
 
     defaultLayout :: Widget -> Handler Html
-    defaultLayout widget = do
-        pc <- widgetToPageContent $ do
-            addStylesheet $ StaticR css_local_css
-            addScript $ StaticR js_local_js
-            widget
-        withUrlRenderer $(hamletFile "templates/riot-layout-wrapper.hamlet")
+    defaultLayout = myDefaultLayout
 
     -- The page to be redirected to when authentication is required.
     authRoute _ = Just $ AuthR LoginR
@@ -154,6 +150,22 @@ instance Yesod App where
     makeLogger :: App -> IO Logger
     makeLogger = return . appLogger
 
+myDefaultLayout :: Widget -> Handler Html
+myDefaultLayout widget = do
+  pc <- widgetToPageContent $ do
+    addStylesheet $ StaticR css_local_css
+    addScript $ StaticR js_local_js
+    widget
+  withUrlRenderer $(hamletFile "templates/riot-layout-wrapper.hamlet")
+
+myAuthLayout :: Widget -> Handler Html
+myAuthLayout widget = do
+  pc <- widgetToPageContent $ do
+    addStylesheet $ StaticR css_local_css
+    addScript $ StaticR js_local_js
+    widget
+  withUrlRenderer $(hamletFile "templates/login-layout-wrapper.hamlet")
+
 formLayout :: Widget -> Handler Html
 formLayout widget = do
     pc <- widgetToPageContent widget
@@ -174,21 +186,6 @@ instance YesodPersistRunner App where
 instance YesodAuth App where
     type AuthId App = UserId
 
-    authLayout widget = do
-        pc <- widgetToPageContent $ do
-            addStylesheet $ StaticR css_local_css
-            addScript $ StaticR js_local_js
-            widget
-        withUrlRenderer $(hamletFile "templates/login-layout-wrapper.hamlet")
-
-    loginHandler = do
-      maybeAppName <- lift $ runDB $ maybeConfigText "app_name"
-      tp <- getRouteToParent
-      lift $ authLayout $ do
-        when (isJust maybeAppName) $ setTitle $ toHtml $ M.fromJust maybeAppName
-        master <- getYesod
-        mapM_ (flip apLogin tp) (authPlugins master)
-
     -- Where to send a user after successful login
     loginDest :: App -> Route App
     loginDest _ = HomeR
@@ -204,21 +201,26 @@ instance YesodAuth App where
 
     -- authenticate :: (MonadHandler m, HandlerSite m ~ App)
     --              => Creds App -> m (AuthenticationResult App)
-    authenticate creds = runDB $ do
+    authenticate creds = liftHandler $ runDB $ do
         x <- getBy $ UniqueUser $ credsIdent creds
         case x of
             Just (Entity uid _) -> return $ Authenticated uid
             Nothing -> return $ UserError InvalidLogin
 
-    -- You can add other plugins like Google Email, email or OAuth here
     authPlugins :: App -> [AuthPlugin App]
     authPlugins _ = [authHashDBWithForm myLoginForm (Just . UniqueUser)]
 
-    -- authPlugins app = [authOpenId Claimed []] ++ extraAuthPlugins
-    --     -- Enable authDummy login if enabled.
-    --     where extraAuthPlugins = []
+    authLayout :: (MonadHandler m, HandlerSite m ~ App) => WidgetFor App () -> m Html
+    authLayout = liftHandler . myAuthLayout
 
-    authHttpManager = getHttpManager
+    loginHandler :: AuthHandler App Html
+    loginHandler = do
+      maybeAppName <- liftHandler $ runDB $ maybeConfigText "app_name"
+      tp <- getRouteToParent
+      authLayout $ do
+        when (isJust maybeAppName) $ setTitle $ toHtml $ M.fromJust maybeAppName
+        master <- getYesod
+        mapM_ (flip apLogin tp) (authPlugins master)
 
     -- override, to avoid DB lookup on every request
     maybeAuthId = runMaybeT $ do
@@ -228,9 +230,17 @@ instance YesodAuth App where
 
 myLoginForm :: Route App -> Widget
 myLoginForm loginRoute = do
-    request <- getRequest
-    let maybeToken = reqToken request
-    $(whamletFile "templates/login_form.hamlet")
+  request <- getRequest
+  let maybeToken = reqToken request
+  $(whamletFile "templates/login_form.hamlet")
+
+-- | Access function to determine if a user is logged in.
+isAuthenticated :: Handler AuthResult
+isAuthenticated = do
+    muid <- maybeAuthId
+    return $ case muid of
+        Nothing -> Unauthorized "You must login to access this page"
+        Just _ -> Authorized
 
 instance HashDBUser User where
     userPasswordHash = userPassword
