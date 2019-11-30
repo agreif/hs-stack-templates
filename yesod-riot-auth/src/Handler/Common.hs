@@ -18,7 +18,6 @@ import qualified Data.Char as C
 import qualified Data.List as L
 import qualified Data.Text as T
 import qualified Text.Printf as PF
-import qualified Data.Maybe as M
 import qualified Data.Conduit.Binary as CB
 import qualified Data.ByteString as B
 import Data.Time
@@ -489,8 +488,8 @@ getPaginationJDatas allCount pageSize curPageNum visibleNumsCount' routeFunc= do
 --------------------------------------------------------------------------------
 
 verticalCheckboxesField :: (YesodPersist site, RenderMessage site FormMessage, YesodPersistBackend site ~ SqlBackend, Eq a)
-                 => HandlerT site IO (OptionList a)
-                 -> Field (HandlerT site IO) [a]
+                 => HandlerFor site (OptionList a)
+                 -> Field (HandlerFor site) [a]
 verticalCheckboxesField ioptlist = (multiSelectField ioptlist)
     { fieldView =
         \theId name attrs val _isReq -> do

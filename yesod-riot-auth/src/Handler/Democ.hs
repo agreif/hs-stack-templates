@@ -13,9 +13,6 @@ import Import
 
 import qualified Text.Blaze.Html.Renderer.Text as Blaze
 import Database.Persist.Sql (updateWhereCount)
-import qualified Data.Text.Encoding as TE
-import qualified Data.CaseInsensitive as CI
-import qualified Database.Esqueleto as E
 
 -------------------------------------------------------
 -- add
