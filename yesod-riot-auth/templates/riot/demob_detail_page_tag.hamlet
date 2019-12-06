@@ -1,0 +1,68 @@
+<demob-detail-page-tag>
+  <div if="{context.data.pages.demobDetail}">
+    <h1>
+      {context.data.translation.msgDemobDemob}:
+      {context.data.pages.demobDetail.demobEnt.myattr}
+    <!-- master data -->
+    <table .uk-table .uk-table-small .uk-table-divider .uk-table-hover .uk-background-muted>
+      <thead>
+        <tr>
+          <th>
+            {context.data.translation.msgDemobMyattr}
+          <th .uk-align-right>
+      <tbody>
+        <tr>
+          <td .uk-table-link>
+            <a onclick="{editDemob}" .uk-link-reset>
+              {context.data.pages.demobDetail.demobEnt.myattr}
+          <td .uk-width-small>
+            <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgDemobEditDemob}" uk-tooltip onclick="{editDemob}">
+              <span uk-icon="icon: pencil">
+    <h2>
+      {context.data.translation.msgDemocDemocs}
+    <!-- democ list -->
+    <table .uk-table .uk-table-small .uk-table-divider .uk-table-hover .uk-background-muted>
+      <thead>
+        <tr>
+          <th>
+            {context.data.translation.msgDemocMyattr}
+          <th .uk-align-right>
+            <button .uk-background-primary .uk-light .uk-padding-small .modal-form-link .uk-button .uk-button-link title="{context.data.translation.msgDemocAddDemoc}" uk-tooltip onclick="{addDemoc}">
+              <span uk-icon="icon: plus">
+      <tbody>
+        <tr each="{democ in context.data.pages.demobDetail.democs}">
+          <td .uk-table-link>
+            <a onclick="{(e)=>editDemoc(e,democ)}" .uk-link-reset>
+              {democ.entity.myattr}
+          <td .uk-width-small>
+            <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgDemocDeleteDemoc}" uk-tooltip onclick="{(e)=>deleteDemoc(e,democ)}">
+              <span uk-icon="icon: trash">
+            <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgDemocEditDemoc}" uk-tooltip onclick="{(e)=>editDemoc(e,democ)}">
+              <span uk-icon="icon: pencil">
+
+  <script>
+    \ export default {
+    \   onBeforeMount(props, state) {
+    \     this.context = props.context
+    \   },
+    \   editDemob(event) {
+    \     event.preventDefault()
+    \     this.context.showModalForm(this.context.data.pages.demobDetail.demobEditFormUrl)
+    \     event.currentTarget.blur()
+    \   },
+    \   addDemoc(event) {
+    \     event.preventDefault()
+    \     this.context.showModalForm(this.context.data.pages.demobDetail.democAddFormUrl)
+    \     event.currentTarget.blur()
+    \   },
+    \   editDemoc(event, item) {
+    \     event.preventDefault()
+    \     this.context.showModalForm(item.editFormUrl)
+    \     event.currentTarget.blur()
+    \   },
+    \   deleteDemoc(event, item) {
+    \     event.preventDefault()
+    \     this.context.showModalForm(item.deleteFormUrl)
+    \     event.currentTarget.blur()
+    \   }
+    \ }

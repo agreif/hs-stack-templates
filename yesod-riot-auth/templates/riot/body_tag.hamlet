@@ -1,0 +1,139 @@
+<body-tag>
+  <div .uk-container .uk-margin-left>
+    <nav-tag context="{this}">
+    <home-page-tag context="{this}">
+    <admin-page-tag context="{this}">
+    <demoa-list-page-tag context="{this}">
+    <demob-list-page-tag context="{this}">
+    <demob-detail-page-tag context="{this}">
+
+  <script>
+    \ export default {
+    \   data: {pages:{}, translation: {}},
+    \   refreshData(dataJsonUrl, storeInHistory, scrollToTop) {
+    \     tag = this
+    \     $.ajax({
+    \       url: dataJsonUrl,
+    \       type: "GET",
+    \       dataType: "json",
+    \     }).done(function(data, textStatus, jqXHR) {
+    \       tag.data = data
+    \       document.title = data.appName
+    \       tag.update()
+    \       if (scrollToTop) {
+    \         window.scrollTo(0, 0)
+    \       }
+    \       if (data.historyState && storeInHistory) {
+    \         window.history.pushState({dataJsonUrl: dataJsonUrl}, data.historyState.title, data.historyState.url);
+    \       }
+    \     }).fail(function(jqXHR, textStatus) {
+    \       if (jqXHR.status == 401)
+    \         window.location.href = "@{AuthR LoginR}"
+    \       else
+    \         alert("error" + jqXHR.status + " ------ " + textStatus)
+    \     })
+    \   },
+    \   postRequest(url, scrollToTop) {
+    \     tag = this
+    \     headers = {}
+    \     headers[tag.data.csrfHeaderName] = tag.data.csrfToken
+    \     $.ajax({
+    \         url: url,
+    \         type: "POST",
+    \         dataType: "json",
+    \         headers: headers
+    \     }).done(function(data, textStatus, jqXHR) {
+    \         tag.refreshData(data.dataJsonUrl, false, scrollToTop)
+    \     }).fail(function(jqXHR, textStatus) {
+    \       if (jqXHR.status == 401)
+    \         window.location.href = "@{AuthR LoginR}"
+    \       else
+    \         alert("error" + jqXHR.status + " ------ " + textStatus)
+    \     })
+    \   },
+    \   scrollToTop(event) {
+    \     event.preventDefault()
+    \     $('html, body').animate({scrollTop : 0},800);
+    \     event.currentTarget.blur()
+    \   },
+    \   showModalForm(modalFormUrl, dataJsonUrl) {
+    \     tag = this
+    \     var modal = new tingle.modal({
+    \       footer: true,
+    \       stickyFooter: true,
+    \       cssClass: [],
+    \       closeMethods: ['escape'],
+    \     });
+    \     $.get(modalFormUrl, function(data) {
+    \       modal.setContent(data);
+    \       modal.open();
+    \     })
+    \     modal.addFooterBtn('OK', 'tingle-btn tingle-btn--primary tingle-btn--pull-right', function() {
+    \       var formElem = $("#modal-form");
+    \       var serializedElems = formElem.serializeArray();
+    \       var formData = new FormData();
+    \       $.each($('input[type=file]'), function(i, field) {
+    \         formData.append("file", field.files[0]);
+    \       })
+    \       $.each(serializedElems, function(i, field) {
+    \         formData.append(field.name, field.value)
+    \       })
+    \       var progressBar = document.getElementById("modal-form-progressbar")
+    \       var xhr = new XMLHttpRequest();
+    \       xhr.open("POST", formElem.attr("action"), true);
+    \       xhr.upload.onprogress = function(pe) {
+    \         if(progressBar && pe.lengthComputable) {
+    \           progressBar.max = pe.total
+    \           progressBar.value = pe.loaded
+    \         }
+    \       }
+    \       xhr.onload = function () {
+    \         if (xhr.readyState === xhr.DONE) {
+    \           if (xhr.status === 200) {
+    \             var data = jQuery.parseJSON(xhr.response)
+    \             if (data.isStaleObjectState) {
+    \               alert("Speicherung ist fehlfeschlagen!\nDaten wurden zwischenzeitlich von einem anderen User verändert.\nBitte nehmen Sie Ihre Änderungen nochmal vor.")
+    \               tag.refreshData(dataJsonUrl ? dataJsonUrl : data.dataJsonUrl, false, false)
+    \               modal.close();
+    \               modal.destroy();
+    \             } else if (data.isFormValid) {
+    \               tag.refreshData(dataJsonUrl ? dataJsonUrl : data.dataJsonUrl, false, false)
+    \               modal.close();
+    \               modal.destroy();
+    \             } else {
+    \               if (progressBar)
+    \                 progressBar.value = 0
+    \               $("#modal-form-widget").html(data.modalWidgetHtml);
+    \             }
+    \           } else {
+    \             alert("error " + xhr.status)
+    \           }
+    \         }
+    \       };
+    \       xhr.send(formData);
+    \     });
+    \     modal.addFooterBtn(tag.data.translation.msgGlobalCancel, 'tingle-btn tingle-btn--default tingle-btn--pull-right', function() {
+    \       modal.close();
+    \       modal.destroy();
+    \     });
+    \   },
+    \   showModalInfo(modalContentUrl) {
+    \     var modal = new tingle.modal({
+    \       footer: true,
+    \       stickyFooter: true,
+    \       cssClass: [],
+    \       closeMethods: ['escape'],
+    \     });
+    \     $.get(modalContentUrl, function(data) {
+    \       modal.setContent(data);
+    \       modal.open();
+    \     })
+    \     modal.addFooterBtn('OK', 'tingle-btn tingle-btn--primary tingle-btn--pull-right', function() {
+    \       modal.close();
+    \       modal.destroy();
+    \     })
+    \   },
+    \   formatDouble(value) {
+    \     return formatDouble(value, this.data.currentLanguage)
+    \   },
+    \ }

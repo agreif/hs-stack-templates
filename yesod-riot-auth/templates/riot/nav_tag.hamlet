@@ -1,0 +1,90 @@
+<nav-tag>
+  <nav .uk-navbar-container .uk-margin-small-top uk-navbar="offset: -10">
+    <div .uk-navbar-left>
+      <div .uk-navbar-item .uk-logo>
+        {context.data.appName}
+      <ul .uk-navbar-nav>
+        <li each="{item in context.data.mainNavItems}" class="{getNavItemActiveClasses(item)}">
+          <a href="{item.url}" onclick="{(e)=>switchNav(e,item)}" if="{!Array.isArray(item.dropdownItems) || !item.dropdownItems.length}">
+            {item.label}
+            <span if="{item.badge}" .uk-badge .uk-margin-small-left>
+              {badge}
+          <a href="#" if="{item.dropdownItems}">
+            {item.label}
+          <div .uk-navbar-dropdown .uk-navbar-dropdown-width-2 if="{item.dropdownItems}">
+            <ul .uk-nav .uk-navbar-dropdown-nav>
+              <li each="{dditem in item.dropdownItems}">
+                <a onclick="{(e)=>switchNav(e,dditem)}">
+                  {dditem.label}
+    <div .uk-navbar-right>
+      <ul .uk-navbar-nav>
+        <li>
+          <a href="#">
+            {context.data.translation.msgGlobalLanguage}
+          <div .uk-navbar-dropdown>
+            <ul .uk-nav .uk-navbar-dropdown-nav>
+              <li class="{getLangDeActiveClasses(context.data.currentLanguage)}">
+                <a onclick="{changeLanguageDe}">DE
+              <li class="{getLangEnActiveClasses(context.data.currentLanguage)}">
+                <a onclick="{changeLanguageEn}">EN
+        <li>
+          <a onclick="{editMyProfile}">
+            {context.data.translation.msgGlobalMyProfile}
+        <li>
+          <a href=@{AuthR LogoutR}>
+            <div>
+              {context.data.translation.msgGlobalLogout}
+              <div .uk-navbar-subtitle>
+                {context.data.userIdent}
+  <div if="{context.data.subNavItems && context.data.subNavItems.length != 0}" uk-grid>
+    <div .uk-width-1-1>
+      <ul .uk-subnav .uk-subnav-divider>
+        <li each="{item in context.data.subNavItems}" class="{getNavItemActiveClasses(item)}">
+          <a onclick="{switchNav}">
+            {item.label}
+  <div .uk-child-width-expand .uk-margin-small-top .uk-margin-small-right uk-grid>
+    <div .uk-width-1-1>
+      <div .uk-align-right>
+        <ul .uk-breadcrumb>
+          <li each="{item in context.data.breadcrumbItems}">
+            <a onclick="{switchBreadcrumb}">
+              {item.label}
+
+  <script>
+    \ export default {
+    \   onBeforeMount(props, state) {
+    \     this.context = props.context
+    \   },
+    \   getNavItemActiveClasses(item) {
+    \     return classNames({'uk-active': item.isActive})
+    \   },
+    \   getLangDeActiveClasses(curLang) {
+    \     return classNames({'uk-active': curLang == 'DE'})
+    \   },
+    \   getLangEnActiveClasses(curLang) {
+    \     return classNames({'uk-active': curLang == 'EN'})
+    \   },
+    \   switchNav(event, item) {
+    \     event.preventDefault()
+    \     this.context.refreshData(item.dataUrl, true, false)
+    \   },
+    \   switchBreadcrumb(event) {
+    \     event.preventDefault()
+    \     this.context.refreshData(event.dataUrl, true, false)
+    \   },
+    \   editMyProfile(event) {
+    \     event.preventDefault()
+    \     dataJsonUrl = window.history.state ? window.history.state.dataJsonUrl : "@{MyprojectR HomeDataR}"
+    \     this.context.showModalForm("@{MyprojectR EditMyprofileFormR}", dataJsonUrl)
+    \   },
+    \   changeLanguageDe(event) {
+    \     event.preventDefault()
+    \     this.context.postRequest(this.context.data.languageDeUrl)
+    \     event.currentTarget.blur()
+    \   },
+    \   changeLanguageEn(event) {
+    \     event.preventDefault()
+    \     this.context.postRequest(this.context.data.languageEnUrl)
+    \     event.currentTarget.blur()
+    \   }
+    \ }

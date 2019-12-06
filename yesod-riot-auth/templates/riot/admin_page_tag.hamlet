@@ -1,0 +1,115 @@
+<admin-page-tag>
+  <div if="{context.data.pages.admin}">
+    <h1>
+      {context.data.translation.msgGlobalAdmin}
+    <ul uk-tab>
+      <li>
+        <a href="#">
+          {context.data.translation.msgUserUsers}
+      <li>
+        <a href="#">
+          {context.data.translation.msgConfigConfigurations}
+      <li>
+        <a href="#">
+          {context.data.translation.msgTestmailTestMail}
+    <ul .uk-switcher .uk-margin>
+      <li>
+        <!-- user list -->
+        <table .uk-table .uk-table-small .uk-table-divider .uk-table-hover .uk-background-muted>
+          <thead>
+            <tr>
+              <th>
+                {context.data.translation.msgUserIdent}
+              <th>
+                {context.data.translation.msgUserEmail}
+              <th>
+                {context.data.translation.msgUserIsAdmin}
+              <th .uk-align-right>
+                <button .uk-background-primary .uk-light .uk-padding-small .uk-background-primary .uk-light .uk-padding-small .modal-form-link .uk-button .uk-button-link title="{context.data.translation.msgUserAddUser}" uk-tooltip onclick="{addUser}">
+                  <span uk-icon="icon: plus">
+          <tbody>
+            <tr each="{user in context.data.pages.admin.users}">
+              <td .uk-table-link>
+                <a onclick="{(e)=>editUser(e,user)}" .uk-link-reset>
+                  {user.entity.ident}
+              <td .uk-table-link>
+                <a onclick="{(e)=>editUser(e,user)}" .uk-link-reset>
+                  {user.entity.email}
+              <td .uk-table-link>
+                <a onclick="{(e)=>editUser(e,user)}" .uk-link-reset>
+                  <span uk-icon="icon: check" if="{user.entity.isAdmin}">
+              <td .uk-width-small>
+                <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgUserDeleteUser}" uk-tooltip onclick="{(e)=>deleteUser(e,user)}">
+                  <span uk-icon="icon: trash">
+                <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgUserEditUser}" uk-tooltip onclick="{(e)=>editUser(e,user)}">
+                  <span uk-icon="icon: pencil">
+      <li>
+        <!-- config list -->
+        <table .uk-table .uk-table-small .uk-table-divider .uk-table-hover .uk-background-muted>
+          <thead>
+            <tr>
+              <th>
+                {context.data.translation.msgConfigCode}
+              <th>
+                {context.data.translation.msgConfigStringValue}
+              <th>
+                {context.data.translation.msgConfigIntValue}
+              <th>
+                {context.data.translation.msgConfigDoubleValue}
+              <th>
+                {context.data.translation.msgConfigBoolValue}
+              <th .uk-align-right>
+          <tbody>
+            <tr each="{config in context.data.pages.admin.configs}">
+              <td .uk-table-link>
+                <a onclick="{(e)=>editConfig(e,config)}" .uk-link-reset>
+                  {config.entity.code}
+              <td .uk-table-link>
+                <a onclick="{(e)=>editConfig(e,config)}" .uk-link-reset>
+                  {config.entity.stringValue}
+              <td .uk-table-link>
+                <a onclick="{(e)=>editConfig(e,config)}" .uk-link-reset>
+                  {config.entity.intValue}
+              <td .uk-table-link>
+                <a onclick="{(e)=>editConfig(e,config)}" .uk-link-reset>
+                  {context.formatDouble(config.entity.doubleValue)}
+              <td>
+                <span uk-icon="icon: check" if="{config.entity.boolValue}">
+              <td .uk-width-small>
+                <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgConfigEditConfig}" uk-tooltip onclick="{(e)=>editConfig(e,config)}">
+                  <span uk-icon="icon: pencil">
+      <li>
+        <!-- test mail -->
+        <button .uk-button .uk-button-primary onclick="{sendTestMail}">
+          {context.data.translation.msgTestmailSendTestMail}
+
+  <script>
+    \ export default {
+    \   onBeforeMount(props, state) {
+    \     this.context = props.context
+    \   },
+    \   addUser(event) {
+    \     event.preventDefault()
+    \     this.context.showModalForm("@{AdminR AddUserFormR}")
+    \     event.currentTarget.blur()
+    \   },
+    \   editUser(event, item) {
+    \     event.preventDefault()
+    \     this.context.showModalForm(item.editFormUrl)
+    \     event.currentTarget.blur()
+    \   },
+    \   deleteUser(event, item) {
+    \     event.preventDefault()
+    \     this.context.showModalForm(item.deleteFormUrl)
+    \     event.currentTarget.blur()
+    \   },
+    \   editConfig(event, item) {
+    \     event.preventDefault()
+    \     this.context.showModalForm(item.editFormUrl)
+    \     event.currentTarget.blur()
+    \   },
+    \   sendTestMail(event) {
+    \     event.preventDefault()
+    \     this.context.showModalForm("@{AdminR SendTestmailFormR}")
+    \   }
+    \ }

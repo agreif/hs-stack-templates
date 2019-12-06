@@ -1,0 +1,47 @@
+<demoa-list-page-tag>
+  <div if="{context.data.pages.demoaList}">
+    <h1>
+      {context.data.translation.msgDemoaDemoas}
+    <pagination-tag context="{context}" items="{context.data.pages.demoaList.paginationItems}">
+    <table .uk-table .uk-table-small .uk-table-divider .uk-table-hover .uk-background-muted>
+      <thead>
+        <tr>
+          <th>
+            {context.data.translation.msgDemoaMyattr}
+          <th .uk-align-right>
+            <button .uk-background-primary .uk-light .uk-padding-small .modal-form-link .uk-button .uk-button-link title="{context.data.translation.msgDemoaAddDemoa}" uk-tooltip onclick="{addDemoa}">
+              <span uk-icon="icon: plus">
+      <tbody>
+        <tr each="{demoa in context.data.pages.demoaList.demoas}">
+          <td .uk-table-link>
+            <a onclick="{(e)=>editDemoa(e,demoa)}" .uk-link-reset>
+              {demoa.entity.myattr}
+          <td .uk-width-small>
+            <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgDemoaDeleteDemoa}" uk-tooltip onclick="{(e)=>deleteDemoa(e,demoa)}">
+              <span uk-icon="icon: trash">
+            <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgDemoaEditDemoa}" uk-tooltip onclick="{(e)=>editDemoa(e,demoa)}">
+              <span uk-icon="icon: pencil">
+    <pagination-tag context="{context}" items="{context.data.pages.demoaList.paginationItems}">
+    <button .uk-button .scrollToTop uk-totop onclick="{context.scrollToTop}">
+
+  <script>
+    \ export default {
+    \   onBeforeMount(props, state) {
+    \     this.context = props.context
+    \   },
+    \   addDemoa(event) {
+    \     event.preventDefault()
+    \     this.context.showModalForm("@{MyprojectR AddDemoaFormR}")
+    \     event.currentTarget.blur()
+    \   },
+    \   editDemoa(event, item) {
+    \     event.preventDefault()
+    \     this.context.showModalForm(item.editFormUrl)
+    \     event.currentTarget.blur()
+    \   },
+    \   deleteDemoa(event, item) {
+    \     event.preventDefault()
+    \     this.context.showModalForm(item.deleteFormUrl)
+    \     event.currentTarget.blur()
+    \   }
+    \ }

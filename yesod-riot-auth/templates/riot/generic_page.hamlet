@@ -1,0 +1,8 @@
+<body-tag>
+
+<script>
+  \ (async function main() {
+  \   await riot.compile()
+  \   const bodyTag = riot.mount('body-tag')[0]
+  \   bodyTag.refreshData("#{dataUrl}")
+  \ }())

@@ -1,0 +1,26 @@
+<pagination-tag>
+  <ul .uk-pagination .uk-flex-center uk-margin if="{props.items}">
+    <li class="{getPaginationItemActiveClasses(item)}" each="{item in props.items}">
+      <a onclick="{(e)=>showPage(e,item)}" if="{!item.isDisabled}">
+        <span if="{item.label}">
+          {item.label}
+        <span .uk-pagination-previous if="{item.isPrevious}">
+          <span uk-icon="icon: chevron-left">
+        <span .uk-pagination-next if="{item.isNext}">
+          <span uk-icon="icon: chevron-right">
+      <span if="{item.isDisabled}">
+        {item.label}
+  <script>
+    \ export default {
+    \   onBeforeMount(props, state) {
+    \     this.context = props.context
+    \   },
+    \   getPaginationItemActiveClasses(item) {
+    \     return classNames({'uk-active': item.isActive})
+    \   },
+    \   showPage(event, item) {
+    \     event.preventDefault()
+    \     this.context.postRequest(item.dataUrl, true)
+    \     event.currentTarget.blur()
+    \   }
+    \ }

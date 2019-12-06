@@ -1,0 +1,47 @@
+<demob-list-page-tag>
+  <div if="{context.data.pages.demobList}">
+    <h1>
+      {context.data.translation.msgDemobDemobs}
+    <pagination-tag context="{context}" items="{context.data.pages.demobList.paginationItems}">
+    <table .uk-table .uk-table-small .uk-table-divider .uk-table-hover .uk-background-muted>
+      <thead>
+        <tr>
+          <th>
+            {context.data.translation.msgDemobMyattr}
+          <th .uk-align-right>
+            <button .uk-background-primary .uk-light .uk-padding-small .modal-form-link .uk-button .uk-button-link title="{context.data.translation.msgDemobAddDemob}" uk-tooltip onclick="{addDemob}">
+              <span uk-icon="icon: plus">
+      <tbody>
+        <tr each="{demob in context.data.pages.demobList.demobs}">
+          <td .uk-table-link>
+            <a href="{demob.detailUrl}" onclick="{(e)=>detailDemob(e,demob)}" .uk-link-reset>
+              {demob.entity.myattr}
+          <td .uk-width-small>
+            <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgDemobDeleteDemob}" uk-tooltip onclick="{(e)=>deleteDemob(e,demob)}">
+              <span uk-icon="icon: trash">
+            <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgDemobEditDemob}" uk-tooltip onclick="{(e)=>detailDemob(e,demob)}">
+              <span uk-icon="icon: file-edit">
+    <pagination-tag context="{context}" items="{context.data.pages.demobList.paginationItems}">
+    <button .uk-button .scrollToTop uk-totop onclick="{context.scrollToTop}">
+
+  <script>
+    \ export default {
+    \   onBeforeMount(props, state) {
+    \     this.context = props.context
+    \   },
+    \   addDemob(event) {
+    \     event.preventDefault()
+    \     this.context.showModalForm("@{MyprojectR AddDemobFormR}")
+    \     event.currentTarget.blur()
+    \   },
+    \   detailDemob(event, item) {
+    \     event.preventDefault()
+    \     this.context.refreshData(item.detailDataUrl, true, true)
+    \     event.currentTarget.blur()
+    \   },
+    \   deleteDemob(event, item) {
+    \     event.preventDefault()
+    \     this.context.showModalForm(item.deleteFormUrl)
+    \     event.currentTarget.blur()
+    \   }
+    \ }

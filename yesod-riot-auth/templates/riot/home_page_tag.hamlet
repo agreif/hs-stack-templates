@@ -1,0 +1,10 @@
+<home-page-tag>
+  <div if="{context.data.pages.home}">
+    <h1>Homepage {context.data.pages.home.content}
+
+  <script>
+    \ export default {
+    \   onBeforeMount(props, state) {
+    \     this.context = props.context
+    \   }
+    \ }
