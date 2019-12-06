@@ -9,20 +9,16 @@ module Handler.Admin where
 
 import Handler.Common
 import Import
+import Text.Hamlet (hamletFile)
 import qualified Database.Esqueleto as E
 import qualified Data.Text.Encoding as TE
 import qualified Data.CaseInsensitive as CI
 
 getAdminHomeR :: Handler Html
-getAdminHomeR = defaultLayout $ do
-  toWidget [whamlet|
-                   <body-tag>
-                   <script>
-                     \ riot.compile(function() {
-                     \   bodyTag = riot.mount('body-tag')[0]
-                     \   bodyTag.refreshData("@{AdminR $ AdminDataR}")
-                     \ })
-                   |]
+getAdminHomeR = do
+  let route = AdminR AdminDataR
+  dataUrl <- getUrlRender <*> pure route
+  defaultLayout $ toWidget =<< withUrlRenderer $(hamletFile "templates/riot/generic_page.hamlet")
 
 getAdminDataR :: Handler Value
 getAdminDataR = do

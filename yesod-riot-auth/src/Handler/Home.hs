@@ -17,15 +17,10 @@ getHomeR :: Handler Html
 getHomeR = redirect $ MyprojectR MyprojectHomeR
 
 getMyprojectHomeR :: Handler Html
-getMyprojectHomeR = defaultLayout $ do
-  toWidget [whamlet|
-                   <body-tag>
-                   <script>
-                     \ riot.compile(function() {
-                     \   bodyTag = riot.mount('body-tag')[0]
-                     \   bodyTag.refreshData("@{MyprojectR $ HomeDataR}")
-                     \ })
-                   |]
+getMyprojectHomeR = do
+  let route = MyprojectR HomeDataR
+  dataUrl <- getUrlRender <*> pure route
+  defaultLayout $ toWidget =<< withUrlRenderer $(hamletFile "templates/riot/generic_page.hamlet")
 
 getHomeDataR :: Handler Value
 getHomeDataR = do
@@ -64,8 +59,26 @@ getHomeDataR = do
     , jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
     }
 
-getRiotTagsR :: Handler Html
-getRiotTagsR = withUrlRenderer $(hamletFile "templates/riot_tags.hamlet")
+getRiotBodyTagR :: Handler Html
+getRiotBodyTagR = withUrlRenderer $(hamletFile "templates/riot/body_tag.hamlet")
+
+getRiotNavTagR :: Handler Html
+getRiotNavTagR = withUrlRenderer $(hamletFile "templates/riot/nav_tag.hamlet")
+
+getRiotHomePageTagR :: Handler Html
+getRiotHomePageTagR = withUrlRenderer $(hamletFile "templates/riot/home_page_tag.hamlet")
+
+getRiotAdminPageTagR :: Handler Html
+getRiotAdminPageTagR = withUrlRenderer $(hamletFile "templates/riot/admin_page_tag.hamlet")
+
+getRiotDemoaListPageTagR :: Handler Html
+getRiotDemoaListPageTagR = withUrlRenderer $(hamletFile "templates/riot/demoa_list_page_tag.hamlet")
+
+getRiotDemobListPageTagR :: Handler Html
+getRiotDemobListPageTagR = withUrlRenderer $(hamletFile "templates/riot/demob_list_page_tag.hamlet")
+
+getRiotDemobDetailPageTagR :: Handler Html
+getRiotDemobDetailPageTagR = withUrlRenderer $(hamletFile "templates/riot/demob_detail_page_tag.hamlet")
 
 postLanguageDeR :: Text -> Handler Value
 postLanguageDeR dataUrlStr = do

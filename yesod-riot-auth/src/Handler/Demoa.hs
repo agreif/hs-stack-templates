@@ -10,7 +10,7 @@ module Handler.Demoa where
 
 import Handler.Common
 import Import
-
+import Text.Hamlet (hamletFile)
 import qualified Text.Blaze.Html.Renderer.Text as Blaze
 import Database.Persist.Sql (updateWhereCount)
 import qualified Data.Text.Encoding as TE
@@ -22,15 +22,10 @@ import qualified Database.Esqueleto as E
 -------------------------------------------------------
 
 getDemoaListR :: Handler Html
-getDemoaListR = defaultLayout $ do
-  toWidget [whamlet|
-                   <body-tag>
-                   <script>
-                     \ riot.compile(function() {
-                     \   bodyTag = riot.mount('body-tag')[0]
-                     \   bodyTag.refreshData("@{MyprojectR $ DemoaListDataR}")
-                     \ })
-                   |]
+getDemoaListR = do
+  let route = MyprojectR $ DemoaListDataR
+  dataUrl <- getUrlRender <*> pure route
+  defaultLayout $ toWidget =<< withUrlRenderer $(hamletFile "templates/riot/generic_page.hamlet")
 
 getDemoaListDataR :: Handler Value
 getDemoaListDataR = demoaListPageNumDataR 1

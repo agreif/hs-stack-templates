@@ -10,12 +10,18 @@
     <script src="@{StaticR js_uikit_3_2_3_min_js}" type="text/javascript">
     <script src="@{StaticR js_uikit_icons_3_2_3_min_js}" type="text/javascript">
 
-    <script src="@{StaticR js_riot_compiler_3_13_2_min_js}" type="text/javascript">
 
     <link href="@{StaticR css_tingle_0_13_2_min_css}" rel="stylesheet" type="text/css">
     <script src="@{StaticR js_tingle_0_13_2_min_js}" type="text/javascript">
 
-    <script data-src="@{MyprojectR RiotTagsR}" type="riot/tag">
+    <script src="@{StaticR js_riot_compiler_4_6_2_min_js}" type="text/javascript">
+    <script data-src="@{MyprojectR RiotBodyTagR}" type="riot">
+    <script data-src="@{MyprojectR RiotNavTagR}" type="riot">
+    <script data-src="@{MyprojectR RiotHomePageTagR}" type="riot">
+    <script data-src="@{MyprojectR RiotAdminPageTagR}" type="riot">
+    <script data-src="@{MyprojectR RiotDemoaListPageTagR}" type="riot">
+    <script data-src="@{MyprojectR RiotDemobListPageTagR}" type="riot">
+    <script data-src="@{MyprojectR RiotDemobDetailPageTagR}" type="riot">
 
     ^{pageHead pc}
 

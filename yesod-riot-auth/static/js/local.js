@@ -1,30 +1,30 @@
-window.addEventListener('popstate', function(event) {
-    //document.location.href = document.location
-    if (!event.state) {
-        return
-    }
-    dataJsonUrl = event.state['dataJsonUrl']
-    $.ajax({
-        url: dataJsonUrl,
-        type: "GET",
-        dataType: "json",
-    }).done(function(data, textStatus, jqXHR) {
-        bodyTag = riot.mount('body-tag')[0]
-        bodyTag.data = data
-        bodyTag.update()
-    })
-});
+// window.addEventListener('popstate', function(event) {
+//     //document.location.href = document.location
+//     if (!event.state) {
+//         return
+//     }
+//     dataJsonUrl = event.state['dataJsonUrl']
+//     $.ajax({
+//         url: dataJsonUrl,
+//         type: "GET",
+//         dataType: "json",
+//     }).done(function(data, textStatus, jqXHR) {
+//         bodyTag = riot.mount('body-tag')[0]
+//         bodyTag.data = data
+//         bodyTag.update()
+//     })
+// });
 
-$(document).ready(function(){
-    //Check to see if the window is top if not then display button
-    $(window).scroll(function(){
-        if ($(this).scrollTop() > 100) {
-            $('.scrollToTop').fadeIn();
-        } else {
-            $('.scrollToTop').fadeOut();
-        }
-    });
-});
+// $(document).ready(function(){
+//     //Check to see if the window is top if not then display button
+//     $(window).scroll(function(){
+//         if ($(this).scrollTop() > 100) {
+//             $('.scrollToTop').fadeIn();
+//         } else {
+//             $('.scrollToTop').fadeOut();
+//         }
+//     });
+// });
 
 function formatDouble(num, langs) {
     if (typeof langs == "undefined") console.log("formatDouble: languages missing (" + num + ")")
@@ -104,3 +104,10 @@ function arrayChunks (arr, len) {
     return chunks;
 }
 
+function classNames(classes) {
+    return Object.entries(classes).reduce((acc, item) => {
+	const [key, value] = item
+	if (value) return [...acc, key]
+	return acc
+    }, []).join(' ')
+}

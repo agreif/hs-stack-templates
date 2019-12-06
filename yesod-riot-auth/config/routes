@@ -26,7 +26,14 @@
 
 /myproject MyprojectR:
   home MyprojectHomeR GET
-  riotTags RiotTagsR GET
+
+  riot/bodyTag RiotBodyTagR GET
+  riot/navTag RiotNavTagR GET
+  riot/homePageTag RiotHomePageTagR GET
+  riot/adminPageTag RiotAdminPageTagR GET
+  riot/demoaListPageTag RiotDemoaListPageTagR GET
+  riot/demobListPageTag RiotDemobListPageTagR GET
+  riot/demobDetailPageTag RiotDemobDetailPageTagR GET
 
   homeData HomeDataR GET
 

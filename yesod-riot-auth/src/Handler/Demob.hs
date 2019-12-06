@@ -10,7 +10,7 @@ module Handler.Demob where
 
 import Handler.Common
 import Import
-
+import Text.Hamlet (hamletFile)
 import qualified Text.Blaze.Html.Renderer.Text as Blaze
 import Database.Persist.Sql (updateWhereCount)
 import qualified Data.Text.Encoding as TE
@@ -22,15 +22,10 @@ import qualified Database.Esqueleto as E
 -------------------------------------------------------
 
 getDemobListR :: Handler Html
-getDemobListR = defaultLayout $ do
-  toWidget [whamlet|
-                   <body-tag>
-                   <script>
-                     \ riot.compile(function() {
-                     \   bodyTag = riot.mount('body-tag')[0]
-                     \   bodyTag.refreshData("@{MyprojectR $ DemobListDataR}")
-                     \ })
-                   |]
+getDemobListR = do
+  let route = MyprojectR DemobListDataR
+  dataUrl <- getUrlRender <*> pure route
+  defaultLayout $ toWidget =<< withUrlRenderer $(hamletFile "templates/riot/generic_page.hamlet")
 
 getDemobListDataR :: Handler Value
 getDemobListDataR = demobListPageNumDataR 1
@@ -126,15 +121,10 @@ demobListPageSize = 5
 -------------------------------------------------------
 
 getDemobDetailR :: DemobId -> Handler Html
-getDemobDetailR demobId = defaultLayout $ do
-  toWidget [whamlet|
-                   <body-tag>
-                   <script>
-                     \ riot.compile(function() {
-                     \   bodyTag = riot.mount('body-tag')[0]
-                     \   bodyTag.refreshData("@{MyprojectR $ DemobDetailDataR demobId}")
-                     \ })
-                   |]
+getDemobDetailR demobId = do
+  let route = MyprojectR $ DemobDetailDataR demobId
+  dataUrl <- getUrlRender <*> pure route
+  defaultLayout $ toWidget =<< withUrlRenderer $(hamletFile "templates/riot/generic_page.hamlet")
 
 getDemobDetailDataR :: DemobId -> Handler Value
 getDemobDetailDataR demobId = do
