@@ -17,4 +17,4 @@
           <input .uk-input type="password" name="password" placeholder="Passwort" required>
       <div .uk-margin>
         <div .uk-form-controls>
-          <button href="@{AuthR LoginR}">Login
+          <button .uk-button .uk-button-primary href="@{AuthR LoginR}">Login

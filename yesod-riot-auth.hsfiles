@@ -2331,7 +2331,6 @@ myAuthLayout :: Widget -> Handler Html
 myAuthLayout widget = do
   pc <- widgetToPageContent $ do
     addStylesheet $ StaticR css_local_css
-    addScript $ StaticR js_local_js
     widget
   withUrlRenderer $(hamletFile "templates/login-layout-wrapper.hamlet")
 
@@ -6779,7 +6778,7 @@ LmFtZD9kZWZpbmUodCk6ZS5yaW90PXQoKTsK
           <input .uk-input type="password" name="password" placeholder="Passwort" required>
       <div .uk-margin>
         <div .uk-form-controls>
-          <button href="@{AuthR LoginR}">Login
+          <button .uk-button .uk-button-primary href="@{AuthR LoginR}">Login
 
 {-# START_FILE templates/riot-layout-wrapper.hamlet #-}
 <!doctype html>
