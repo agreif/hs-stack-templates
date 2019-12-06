@@ -5970,6 +5970,7 @@ window.addEventListener('popstate', function(event) {
         type: "GET",
         dataType: "json",
     }).done(function(data, textStatus, jqXHR) {
+	riot.unmount('body-tag', true)
         bodyTag = riot.mount('body-tag')[0]
         bodyTag.data = data
         bodyTag.update()
@@ -6955,7 +6956,9 @@ LmFtZD9kZWZpbmUodCk6ZS5yaW90PXQoKTsK
     \         window.scrollTo(0, 0)
     \       }
     \       if (data.historyState && storeInHistory) {
-    \         window.history.pushState({dataJsonUrl: dataJsonUrl}, data.historyState.title, data.historyState.url);
+    \         if (!window.history.state || (window.history.state.dataJsonUrl && (window.history.state.dataJsonUrl != dataJsonUrl))) {
+    \           window.history.pushState({dataJsonUrl: dataJsonUrl}, data.historyState.title, data.historyState.url)
+    \         }
     \       }
     \     }).fail(function(jqXHR, textStatus) {
     \       if (jqXHR.status == 401)
@@ -7244,7 +7247,7 @@ LmFtZD9kZWZpbmUodCk6ZS5yaW90PXQoKTsK
   \ (async function main() {
   \   await riot.compile()
   \   const bodyTag = riot.mount('body-tag')[0]
-  \   bodyTag.refreshData("#{dataUrl}")
+  \   bodyTag.refreshData("#{dataUrl}", true)
   \ }())
 
 {-# START_FILE templates/riot/home_page_tag.hamlet #-}

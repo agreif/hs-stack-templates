@@ -24,7 +24,9 @@
     \         window.scrollTo(0, 0)
     \       }
     \       if (data.historyState && storeInHistory) {
-    \         window.history.pushState({dataJsonUrl: dataJsonUrl}, data.historyState.title, data.historyState.url);
+    \         if (!window.history.state || (window.history.state.dataJsonUrl && (window.history.state.dataJsonUrl != dataJsonUrl))) {
+    \           window.history.pushState({dataJsonUrl: dataJsonUrl}, data.historyState.title, data.historyState.url)
+    \         }
     \       }
     \     }).fail(function(jqXHR, textStatus) {
     \       if (jqXHR.status == 401)

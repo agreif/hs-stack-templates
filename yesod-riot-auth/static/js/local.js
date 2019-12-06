@@ -8,6 +8,7 @@ window.addEventListener('popstate', function(event) {
         type: "GET",
         dataType: "json",
     }).done(function(data, textStatus, jqXHR) {
+	riot.unmount('body-tag', true)
         bodyTag = riot.mount('body-tag')[0]
         bodyTag.data = data
         bodyTag.update()
