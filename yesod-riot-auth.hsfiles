@@ -7312,7 +7312,7 @@ LmFtZD9kZWZpbmUodCk6ZS5yaW90PXQoKTsK
       <div .uk-align-right>
         <ul .uk-breadcrumb>
           <li each="{item in context.data.breadcrumbItems}">
-            <a onclick="{switchBreadcrumb}">
+            <a onclick="{(e)=>switchBreadcrumb(e,item)}">
               {item.label}
 
   <script>
@@ -7333,9 +7333,9 @@ LmFtZD9kZWZpbmUodCk6ZS5yaW90PXQoKTsK
     \     event.preventDefault()
     \     this.context.refreshData(item.dataUrl, true, false)
     \   },
-    \   switchBreadcrumb(event) {
+    \   switchBreadcrumb(event, item) {
     \     event.preventDefault()
-    \     this.context.refreshData(event.dataUrl, true, false)
+    \     this.context.refreshData(item.dataUrl, true, false)
     \   },
     \   editMyProfile(event) {
     \     event.preventDefault()
