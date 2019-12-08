@@ -19,6 +19,8 @@ getHomeR = redirect $ MyprojectR MyprojectHomeR
 getMyprojectHomeR :: Handler Html
 getMyprojectHomeR = do
   let route = MyprojectR HomeDataR
+  master <- getYesod
+  let isDev = appDev $ appSettings master
   dataUrl <- getUrlRender <*> pure route
   defaultLayout $ toWidget =<< withUrlRenderer $(hamletFile "templates/riot/generic_page.hamlet")
 

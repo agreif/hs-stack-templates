@@ -152,6 +152,8 @@ instance Yesod App where
 
 myDefaultLayout :: Widget -> Handler Html
 myDefaultLayout widget = do
+  master <- getYesod
+  let isDev = appDev $ appSettings master
   pc <- widgetToPageContent $ do
     addStylesheet $ StaticR css_local_css
     addScript $ StaticR js_local_js

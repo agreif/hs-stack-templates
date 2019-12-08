@@ -24,6 +24,8 @@ import qualified Database.Esqueleto as E
 getDemobListR :: Handler Html
 getDemobListR = do
   let route = MyprojectR DemobListDataR
+  master <- getYesod
+  let isDev = appDev $ appSettings master
   dataUrl <- getUrlRender <*> pure route
   defaultLayout $ toWidget =<< withUrlRenderer $(hamletFile "templates/riot/generic_page.hamlet")
 
@@ -123,6 +125,8 @@ demobListPageSize = 5
 getDemobDetailR :: DemobId -> Handler Html
 getDemobDetailR demobId = do
   let route = MyprojectR $ DemobDetailDataR demobId
+  master <- getYesod
+  let isDev = appDev $ appSettings master
   dataUrl <- getUrlRender <*> pure route
   defaultLayout $ toWidget =<< withUrlRenderer $(hamletFile "templates/riot/generic_page.hamlet")
 

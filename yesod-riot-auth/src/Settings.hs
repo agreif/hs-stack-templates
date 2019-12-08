@@ -43,6 +43,8 @@ data AppSettings = AppSettings
     -- ^ Get the IP address from the header when logging. Useful when sitting
     -- behind a reverse proxy.
 
+    , appDev                    :: Bool
+
     , appDetailedRequestLogging :: Bool
     -- ^ Use detailed request logging system
     , appShouldLogAll           :: Bool
@@ -79,18 +81,18 @@ instance FromJSON AppSettings where
         appPort                   <- o .: "port"
         appIpFromHeader           <- o .: "ip-from-header"
 
-        dev                       <- o .:? "development"      .!= defaultDev
+        appDev                    <- o .:? "development"      .!= defaultDev
 
-        appDetailedRequestLogging <- o .:? "detailed-logging" .!= dev
-        appShouldLogAll           <- o .:? "should-log-all"   .!= dev
-        appReloadTemplates        <- o .:? "reload-templates" .!= dev
-        appMutableStatic          <- o .:? "mutable-static"   .!= dev
-        appSkipCombining          <- o .:? "skip-combining"   .!= dev
+        appDetailedRequestLogging <- o .:? "detailed-logging" .!= appDev
+        appShouldLogAll           <- o .:? "should-log-all"   .!= appDev
+        appReloadTemplates        <- o .:? "reload-templates" .!= appDev
+        appMutableStatic          <- o .:? "mutable-static"   .!= appDev
+        appSkipCombining          <- o .:? "skip-combining"   .!= appDev
 
         -- appCopyright              <- o .:  "copyright"
         -- appAnalytics              <- o .:? "analytics"
 
-        -- appAuthDummyLogin         <- o .:? "auth-dummy-login"      .!= dev
+        -- appAuthDummyLogin         <- o .:? "auth-dummy-login"      .!= appDev
 
         return AppSettings {..}
 

@@ -24,6 +24,8 @@ import qualified Database.Esqueleto as E
 getDemoaListR :: Handler Html
 getDemoaListR = do
   let route = MyprojectR $ DemoaListDataR
+  master <- getYesod
+  let isDev = appDev $ appSettings master
   dataUrl <- getUrlRender <*> pure route
   defaultLayout $ toWidget =<< withUrlRenderer $(hamletFile "templates/riot/generic_page.hamlet")
 

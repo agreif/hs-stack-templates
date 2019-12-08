@@ -1,8 +1,31 @@
 <body-tag>
 
-<script>
-  \ (async function main() {
-  \   await riot.compile()
-  \   const bodyTag = riot.mount('body-tag')[0]
-  \   bodyTag.refreshData("#{dataUrl}", true)
-  \ }())
+  $if isDev
+    <script>
+      \ (async function main() {
+      \   await riot.compile()
+      \   const bodyTag = riot.mount('body-tag')[0]
+      \   bodyTag.refreshData("#{dataUrl}", true)
+      \ }())
+  $else
+    <script type="module">
+      \ import BodyTag from '@{StaticR riot_bodyTag_js}'
+      \ riot.register('body-tag', BodyTag)
+      \ import AdminPageTag from '@{StaticR riot_adminPageTag_js}'
+      \ riot.register('admin-page-tag', AdminPageTag)
+      \ import NavTag from '@{StaticR riot_navTag_js}'
+      \ riot.register('nav-tag', NavTag)
+      \ import PaginationTag from '@{StaticR riot_paginationTag_js}'
+      \ riot.register('pagination-tag', PaginationTag)
+      \ import HomePageTag from '@{StaticR riot_homePageTag_js}'
+      \ riot.register('home-page-tag', HomePageTag)
+      \
+      \ import DemoaListPageTag from '@{StaticR riot_demoa_list_page_tag_js}'
+      \ riot.register('demoa-list-page-tag', DemoaListPageTag)
+      \ import DemobListPageTag from '@{StaticR riot_demob_list_page_tag_js}'
+      \ riot.register('demob-list-page-tag', demobListPageTag)
+      \ import DemobDetailPageTag from '@{StaticR riot_demob_detail_page_tag_js}'
+      \ riot.register('demob-detail-page-tag', demobDetailPageTag)
+      \
+      \ const _bodyTag = riot.mount('body-tag')[0]
+      \ _bodyTag.refreshData("#{dataUrl}", true)

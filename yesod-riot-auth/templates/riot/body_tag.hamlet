@@ -11,7 +11,7 @@
     \ export default {
     \   data: {pages:{}, translation: {}},
     \   refreshData(dataJsonUrl, storeInHistory, scrollToTop) {
-    \     tag = this
+    \     var tag = this
     \     $.ajax({
     \       url: dataJsonUrl,
     \       type: "GET",
@@ -36,7 +36,7 @@
     \     })
     \   },
     \   postRequest(url, scrollToTop) {
-    \     tag = this
+    \     var tag = this
     \     headers = {}
     \     headers[tag.data.csrfHeaderName] = tag.data.csrfToken
     \     $.ajax({
@@ -59,7 +59,7 @@
     \     event.currentTarget.blur()
     \   },
     \   showModalForm(modalFormUrl, dataJsonUrl) {
-    \     tag = this
+    \     var tag = this
     \     var modal = new tingle.modal({
     \       footer: true,
     \       stickyFooter: true,
