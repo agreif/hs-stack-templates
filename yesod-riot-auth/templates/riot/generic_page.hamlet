@@ -9,22 +9,22 @@
       \ }())
   $else
     <script type="module">
-      \ import BodyTag from '@{StaticR riot_bodyTag_js}'
+      \ import BodyTag from '@{StaticR js_riot_body_tag_js}'
       \ riot.register('body-tag', BodyTag)
-      \ import AdminPageTag from '@{StaticR riot_adminPageTag_js}'
+      \ import AdminPageTag from '@{StaticR js_riot_admin_page_tag_js}'
       \ riot.register('admin-page-tag', AdminPageTag)
-      \ import NavTag from '@{StaticR riot_navTag_js}'
+      \ import NavTag from '@{StaticR js_riot_nav_tag_js}'
       \ riot.register('nav-tag', NavTag)
-      \ import PaginationTag from '@{StaticR riot_paginationTag_js}'
+      \ import PaginationTag from '@{StaticR js_riot_pagination_tag_js}'
       \ riot.register('pagination-tag', PaginationTag)
-      \ import HomePageTag from '@{StaticR riot_homePageTag_js}'
+      \ import HomePageTag from '@{StaticR js_riot_home_page_tag_js}'
       \ riot.register('home-page-tag', HomePageTag)
       \
-      \ import DemoaListPageTag from '@{StaticR riot_demoa_list_page_tag_js}'
+      \ import DemoaListPageTag from '@{StaticR js_riot_demoa_list_page_tag_js}'
       \ riot.register('demoa-list-page-tag', DemoaListPageTag)
-      \ import DemobListPageTag from '@{StaticR riot_demob_list_page_tag_js}'
+      \ import DemobListPageTag from '@{StaticR js_riot_demob_list_page_tag_js}'
       \ riot.register('demob-list-page-tag', demobListPageTag)
-      \ import DemobDetailPageTag from '@{StaticR riot_demob_detail_page_tag_js}'
+      \ import DemobDetailPageTag from '@{StaticR js_riot_demob_detail_page_tag_js}'
       \ riot.register('demob-detail-page-tag', demobDetailPageTag)
       \
       \ const _bodyTag = riot.mount('body-tag')[0]
