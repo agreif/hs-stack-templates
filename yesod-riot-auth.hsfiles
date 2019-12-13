@@ -6359,7 +6359,7 @@ var t,e;t=this,e=function(t){"use strict";const e=new Map,n=Symbol("riot-compone
     \   },
     \   postRequest(url, scrollToTop) {
     \     var tag = this
-    \     headers = {}
+    \     var headers = {}
     \     headers[tag.data.csrfHeaderName] = tag.data.csrfToken
     \     $.ajax({
     \         url: url,
@@ -6752,7 +6752,7 @@ var t,e;t=this,e=function(t){"use strict";const e=new Map,n=Symbol("riot-compone
     \   },
     \   editMyProfile(event) {
     \     event.preventDefault()
-    \     dataJsonUrl = window.history.state ? window.history.state.dataJsonUrl : "@{MyprojectR HomeDataR}"
+    \     var dataJsonUrl = window.history.state ? window.history.state.dataJsonUrl : "@{MyprojectR HomeDataR}"
     \     this.context.showModalForm("@{MyprojectR EditMyprofileFormR}", dataJsonUrl)
     \   },
     \   changeLanguageDe(event) {

@@ -37,7 +37,7 @@
     \   },
     \   postRequest(url, scrollToTop) {
     \     var tag = this
-    \     headers = {}
+    \     var headers = {}
     \     headers[tag.data.csrfHeaderName] = tag.data.csrfToken
     \     $.ajax({
     \         url: url,
