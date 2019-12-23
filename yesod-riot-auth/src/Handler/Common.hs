@@ -35,7 +35,7 @@ getRobotsR = return $ TypedContent typePlain
                     $ toContent $(embedFile "config/robots.txt")
 
 
-data VPostSubmitSuccess = VPostSubmitSuccess
+newtype VPostSubmitSuccess = VPostSubmitSuccess
   { fsPostSuccessDataJsonUrl :: Text
   }
 instance ToJSON VPostSubmitSuccess where
@@ -43,7 +43,7 @@ instance ToJSON VPostSubmitSuccess where
     [ "dataJsonUrl" .= fsPostSuccessDataJsonUrl o
     ]
 
-data VFormSubmitSuccess = VFormSubmitSuccess
+newtype VFormSubmitSuccess = VFormSubmitSuccess
   { fsSuccessDataJsonUrl :: Text
   }
 instance ToJSON VFormSubmitSuccess where
@@ -52,7 +52,7 @@ instance ToJSON VFormSubmitSuccess where
     , "dataJsonUrl" .= fsSuccessDataJsonUrl o
     ]
 
-data VFormSubmitInvalid = VFormSubmitInvalid
+newtype VFormSubmitInvalid = VFormSubmitInvalid
   { fsInvalidModalWidgetHtml :: Text
   }
 instance ToJSON VFormSubmitInvalid where
@@ -60,7 +60,7 @@ instance ToJSON VFormSubmitInvalid where
     [ "modalWidgetHtml" .= fsInvalidModalWidgetHtml o
     ]
 
-data VFormSubmitStale = VFormSubmitStale
+newtype VFormSubmitStale = VFormSubmitStale
   { fsStaleDataJsonUrl :: Text
   }
 instance ToJSON VFormSubmitStale where
@@ -103,7 +103,8 @@ instance ToJSON JData where
     ]
 
 data JDataNavItem = JDataNavItem
-  { jDataNavItemLabel :: Text
+  { jDataNavItemId :: Maybe Text
+  , jDataNavItemLabel :: Text
   , jDataNavItemIsActive :: Bool
   , jDataNavItemUrl :: Maybe Text
   , jDataNavItemDataUrl :: Maybe Text
@@ -112,7 +113,8 @@ data JDataNavItem = JDataNavItem
   }
 instance ToJSON JDataNavItem where
   toJSON o = object
-    [ "label" .= jDataNavItemLabel o
+    [ "id" .= jDataNavItemId o
+    , "label" .= jDataNavItemLabel o
     , "isActive" .= jDataNavItemIsActive o
     , "url" .= jDataNavItemUrl o
     , "dataUrl" .= jDataNavItemDataUrl o
@@ -142,6 +144,7 @@ instance ToJSON JDataHistoryState where
     , "title" .= jDataHistoryStateTitle o
     ]
 
+
 data JDataPaginationItem = JDataPaginationItem
   { jDataPaginationItemLabel :: Maybe Text
   , jDataPaginationItemDataUrl :: Maybe Text
@@ -159,6 +162,7 @@ instance ToJSON JDataPaginationItem where
     , "isPrevious" .= jDataPaginationItemIsPrevious o
     , "isNext" .= jDataPaginationItemIsNext o
     ]
+
 
 instance ToJSON User where
   toJSON o = object
@@ -332,7 +336,8 @@ mainNavData user mainNav = do
   msgDemobs <- localizedMsg MsgDemobDemobs
   return $
     [ JDataNavItem
-      { jDataNavItemLabel = msgHome
+      { jDataNavItemId = Nothing
+      , jDataNavItemLabel = msgHome
       , jDataNavItemIsActive = mainNav == MainNavHome
       , jDataNavItemUrl = Just $ urlRenderer $ MyprojectR MyprojectHomeR
       , jDataNavItemDataUrl = Just $ urlRenderer $ MyprojectR HomeDataR
@@ -343,7 +348,8 @@ mainNavData user mainNav = do
     ++
     ( if userIsAdmin user
       then [ JDataNavItem
-             { jDataNavItemLabel = msgAdmin
+             { jDataNavItemId = Nothing
+             , jDataNavItemLabel = msgAdmin
              , jDataNavItemIsActive = mainNav == MainNavAdmin
              , jDataNavItemUrl = Just $ urlRenderer $ AdminR AdminHomeR
              , jDataNavItemDataUrl = Just $ urlRenderer $ AdminR AdminDataR
@@ -354,7 +360,8 @@ mainNavData user mainNav = do
     )
     ++
     [ JDataNavItem
-      { jDataNavItemLabel = msgDemoas
+      { jDataNavItemId = Nothing
+      , jDataNavItemLabel = msgDemoas
       , jDataNavItemIsActive = mainNav == MainNavDemoa
       , jDataNavItemUrl = Just $ urlRenderer $ MyprojectR DemoaListR
       , jDataNavItemDataUrl = Just $ urlRenderer $ MyprojectR DemoaListDataR
@@ -364,7 +371,8 @@ mainNavData user mainNav = do
     ]
     ++
     [ JDataNavItem
-      { jDataNavItemLabel = msgDemobs
+      { jDataNavItemId = Nothing
+      , jDataNavItemLabel = msgDemobs
       , jDataNavItemIsActive = mainNav == MainNavDemob
       , jDataNavItemUrl = Just $ urlRenderer $ MyprojectR DemobListR
       , jDataNavItemDataUrl = Just $ urlRenderer $ MyprojectR DemobListDataR

@@ -94,7 +94,7 @@ function fileSize(b, langs) {
            ) + ' KMGTPEZY'[u] + 'B';
 }
 
-function arrayChunks (arr, len) {
+function arrayChunks(arr, len) {
     var chunks = [],
         i = 0,
         n = arr.length;

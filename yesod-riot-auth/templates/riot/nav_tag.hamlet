@@ -8,12 +8,12 @@
           <a href="{item.url}" onclick="{(e)=>switchNav(e,item)}" if="{!Array.isArray(item.dropdownItems) || !item.dropdownItems.length}">
             {item.label}
             <span if="{item.badge}" .uk-badge .uk-margin-small-left>
-              {badge}
+              {item.badge}
           <a href="#" if="{item.dropdownItems}">
             {item.label}
-          <div .uk-navbar-dropdown .uk-navbar-dropdown-width-2 if="{item.dropdownItems}">
+          <div id="{item.id}" .uk-navbar-dropdown .uk-navbar-dropdown-width-2 if="{item.dropdownItems}">
             <ul .uk-nav .uk-navbar-dropdown-nav>
-              <li each="{dditem in item.dropdownItems}">
+              <li uk-toggle="{getToggle(item.id)}" each="{dditem in item.dropdownItems}">
                 <a onclick="{(e)=>switchNav(e,dditem)}">
                   {dditem.label}
     <div .uk-navbar-right>
@@ -21,11 +21,11 @@
         <li>
           <a href="#">
             {context.data.translation.msgGlobalLanguage}
-          <div .uk-navbar-dropdown>
+          <div id="languageMenuItem" .uk-navbar-dropdown>
             <ul .uk-nav .uk-navbar-dropdown-nav>
-              <li class="{getLangDeActiveClasses(context.data.currentLanguage)}">
+              <li uk-toggle="target: #languageMenuItem" class="{getLangDeActiveClasses(context.data.currentLanguage)}">
                 <a onclick="{changeLanguageDe}">DE
-              <li class="{getLangEnActiveClasses(context.data.currentLanguage)}">
+              <li uk-toggle="target: #languageMenuItem" class="{getLangEnActiveClasses(context.data.currentLanguage)}">
                 <a onclick="{changeLanguageEn}">EN
         <li>
           <a onclick="{editMyProfile}">
@@ -54,6 +54,9 @@
     \ export default {
     \   onBeforeMount(props, state) {
     \     this.context = props.context
+    \   },
+    \   getToggle(id) {
+    \     return id ? 'target: #'+id : ''
     \   },
     \   getNavItemActiveClasses(item) {
     \     return classNames({'uk-active': item.isActive})
