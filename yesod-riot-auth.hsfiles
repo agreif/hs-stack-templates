@@ -45,7 +45,7 @@ context.json
 
 # Template installation
 ```
-stack new my-project https://raw.githubusercontent.com/Greif-IT/hs-stack-templates/master/{{name}}.hsfiles
+stack new my-project https://raw.githubusercontent.com/agreif/hs-stack-templates/master/{{name}}.hsfiles
 ```
 
 # Create PostgreSQL database (ubuntu)

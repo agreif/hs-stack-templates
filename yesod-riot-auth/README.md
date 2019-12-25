@@ -14,7 +14,7 @@
 
 # Template installation
 ```
-stack new my-project https://raw.githubusercontent.com/Greif-IT/hs-stack-templates/master/yesod-riot-auth.hsfiles
+stack new my-project https://raw.githubusercontent.com/agreif/hs-stack-templates/master/yesod-riot-auth.hsfiles
 ```
 
 # Create PostgreSQL database (ubuntu)
