@@ -23,7 +23,7 @@ import qualified Database.Esqueleto as E
 
 getDemoaListR :: Handler Html
 getDemoaListR = do
-  let route = MyprojectR $ DemoaListDataR
+  let route = MyprojectR DemoaListDataR
   master <- getYesod
   let isDev = appDev $ appSettings master
   dataUrl <- getUrlRender <*> pure route
@@ -242,8 +242,8 @@ postEditDemoaR demoaId = do
                                ] persistFields
         return uc
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListDataR }
-        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListDataR }
+        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemoaListDataR }
+        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ MyprojectR DemoaListDataR }
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $ VFormSubmitInvalid
@@ -313,7 +313,7 @@ postDeleteDemoaR :: DemoaId -> Handler Value
 postDeleteDemoaR demoaId = do
   runDB $ delete demoaId
   urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListDataR }
+  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemoaListDataR }
 -- gen post delete form - end
 
 -- gen delete form - start

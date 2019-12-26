@@ -225,7 +225,7 @@ getAddDemobFormR = do
   formLayout $ do
     toWidget [whamlet|
       <h1>_{MsgDemobAddDemob}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ AddDemobR}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR AddDemobR}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -404,7 +404,7 @@ postDeleteDemobR :: DemobId -> Handler Value
 postDeleteDemobR demobId = do
   runDB $ delete demobId
   urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobListDataR }
+  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemobListDataR }
 -- gen post delete form - end
 
 -- gen delete form - start
