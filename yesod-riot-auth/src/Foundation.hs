@@ -109,9 +109,9 @@ instance Yesod App where
     isAuthorized (AdminR _) _ = do
         userId <- requireAuthId
         user <- runDB $ get404 userId
-        return $ case userIsAdmin user of
-                   True -> Authorized
-                   False -> Unauthorized "Admins Only!"
+        return $ if userIsAdmin user
+                 then Authorized
+                 else Unauthorized "Admins Only!"
     isAuthorized _ _ = return Authorized
 
     -- This function creates static content files in the static folder
@@ -221,13 +221,12 @@ instance YesodAuth App where
       authLayout $ do
         when (isJust maybeAppName) $ setTitle $ toHtml $ M.fromJust maybeAppName
         master <- getYesod
-        mapM_ (flip apLogin tp) (authPlugins master)
+        mapM_ (`apLogin` tp) (authPlugins master)
 
     -- override, to avoid DB lookup on every request
     maybeAuthId = runMaybeT $ do
       s   <- MaybeT $ lookupSession credsKey
-      aid <- MaybeT $ return $ fromPathPiece s
-      return aid
+      MaybeT $ return $ fromPathPiece s
 
 myLoginForm :: Route App -> Widget
 myLoginForm loginRoute = do
@@ -296,28 +295,28 @@ maybeConfigText :: Text -> YesodDB App (Maybe Text)
 maybeConfigText code = do
   maybeConfigEnt <- selectFirst [ConfigCode ==. code] []
   case maybeConfigEnt of
-    Just (Entity _ (Config {configStringValue = result})) -> return result
+    Just (Entity _ Config {configStringValue = result}) -> return result
     Nothing -> return Nothing
 
 maybeConfigInt :: Text -> YesodDB App (Maybe Int)
 maybeConfigInt code = do
   maybeConfigEnt <- selectFirst [ConfigCode ==. code] []
   case maybeConfigEnt of
-    Just (Entity _ (Config {configIntValue = result})) -> return result
+    Just (Entity _ Config {configIntValue = result}) -> return result
     Nothing -> return Nothing
 
 maybeConfigDouble :: Text -> YesodDB App (Maybe Double)
 maybeConfigDouble code = do
   maybeConfigEnt <- selectFirst [ConfigCode ==. code] []
   case maybeConfigEnt of
-    Just (Entity _ (Config {configDoubleValue = result})) -> return result
+    Just (Entity _ Config {configDoubleValue = result}) -> return result
     Nothing -> return Nothing
 
 configBool :: Text -> YesodDB App Bool
 configBool code = do
   maybeConfigEnt <- selectFirst [ConfigCode ==. code] []
   case maybeConfigEnt of
-    Just (Entity _ (Config {configBoolValue = result})) -> return result
+    Just (Entity _ Config {configBoolValue = result}) -> return result
     Nothing -> return False
 
 configAppName :: YesodDB App Text

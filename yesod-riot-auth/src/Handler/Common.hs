@@ -13,7 +13,7 @@ import Data.FileEmbed (embedFile)
 import Import
 import qualified Crypto.PasswordStore as Crypto
 import qualified Data.ByteString.Char8 as BSC
-import Control.Monad.Random
+import qualified Control.Monad.Random as R
 import qualified Data.Char as C
 import qualified Data.List as L
 import qualified Data.Text as T
@@ -523,12 +523,12 @@ verticalCheckboxesField ioptlist = (multiSelectField ioptlist)
 -- generic helpers
 --------------------------------------------------------------------------------
 
-rnd :: (RandomGen g) => Int -> Int -> Rand g Int
-rnd x y = getRandomR (x, y)
+rnd :: (R.RandomGen g) => Int -> Int -> R.Rand g Int
+rnd x y = R.getRandomR (x, y)
 
 randomMixedCaseString :: Int -> IO String
 randomMixedCaseString len = do
-  values <- evalRandIO (sequence (replicate len $ rnd 65 90))
+  values <- R.evalRandIO (replicateM len $ rnd 65 90)
   let str = toLower $ map C.chr values
   -- in average in every 2 chars is an uppercase char
   upcaseChars (quot len 2) str
@@ -538,7 +538,7 @@ randomMixedCaseString len = do
       if countChars == 0 then
         return str
       else do
-        p <- evalRandIO $ rnd 0 (length str - 2)
+        p <- R.evalRandIO $ rnd 0 (length str - 2)
         let (prefix, c:suffix) = splitAt p str
         upcaseChars (countChars-1) (prefix ++ toUpper [c] ++ suffix)
 

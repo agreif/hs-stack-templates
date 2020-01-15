@@ -67,6 +67,12 @@ getRiotBodyTagR = withUrlRenderer $(hamletFile "templates/riot/body_tag.hamlet")
 getRiotNavTagR :: Handler Html
 getRiotNavTagR = withUrlRenderer $(hamletFile "templates/riot/nav_tag.hamlet")
 
+getRiotRawTagR :: Handler Html
+getRiotRawTagR = withUrlRenderer $(hamletFile "templates/riot/raw_tag.hamlet")
+
+getRiotPaginationTagR :: Handler Html
+getRiotPaginationTagR = withUrlRenderer $(hamletFile "templates/riot/pagination_tag.hamlet")
+
 getRiotHomePageTagR :: Handler Html
 getRiotHomePageTagR = withUrlRenderer $(hamletFile "templates/riot/home_page_tag.hamlet")
 

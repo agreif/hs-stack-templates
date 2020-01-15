@@ -1,0 +1,15 @@
+<raw>
+
+  <script>
+    \ // e.g.: <raw content="{var}">
+    \ export default {
+    \   onMounted(props) {
+    \     this.setInnerHTML(props.content)
+    \   },
+    \   onUpdated(props) {
+    \     this.setInnerHTML(props.content)
+    \   },
+    \   setInnerHTML(content) {
+    \     this.root.innerHTML = content
+    \   }
+    \ }

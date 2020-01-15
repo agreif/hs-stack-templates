@@ -29,6 +29,7 @@
 
   riot/bodyTag RiotBodyTagR GET
   riot/navTag RiotNavTagR GET
+  riot/rawTag RiotRawTagR GET
   riot/homePageTag RiotHomePageTagR GET
   riot/adminPageTag RiotAdminPageTagR GET
   riot/demoaListPageTag RiotDemoaListPageTagR GET

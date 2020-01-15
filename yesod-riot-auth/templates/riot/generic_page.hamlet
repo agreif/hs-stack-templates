@@ -19,6 +19,8 @@
       \ riot.register('pagination-tag', PaginationTag)
       \ import HomePageTag from '@{StaticR js_riot_home_page_tag_js}'
       \ riot.register('home-page-tag', HomePageTag)
+      \ import RawTag from '@{StaticR js_riot_raw_tag_js}'
+      \ riot.register('raw-tag', RawTag)
       \
       \ import DemoaListPageTag from '@{StaticR js_riot_demoa_list_page_tag_js}'
       \ riot.register('demoa-list-page-tag', DemoaListPageTag)

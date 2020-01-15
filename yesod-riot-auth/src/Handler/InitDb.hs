@@ -15,11 +15,11 @@ getInitDbR adminEmail = do
   curTime <- liftIO getCurrentTime
   runDB $ do
     userCount <- count ([] :: [Filter User])
-    if userCount == 0 then
+    when (userCount == 0)
       ( do
         (adminPasswd, adminPasswdHash) <- liftIO $ generatePassword 32
         _ <- insert $ User { userIdent = "admin"
-                           , userPassword = (Just adminPasswdHash)
+                           , userPassword = Just adminPasswdHash
                            , userEmail = adminEmail
                            , userIsAdmin = True
                            , userVersion = 1
@@ -35,7 +35,6 @@ getInitDbR adminEmail = do
         $(logError) $ "admin email:         " ++ adminEmail
         $(logError) $ "###############################"
       )
-      else return ()
 
     maybeConfigAppName <- selectFirst [ConfigCode ==. "app_name"] []
     case maybeConfigAppName of

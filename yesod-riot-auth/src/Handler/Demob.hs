@@ -46,7 +46,7 @@ demobListPageNumDataR :: Int -> Handler Value
 demobListPageNumDataR pageNum = do
   Entity _ user <- requireAuth
   req <- getRequest
-  appName <- runDB $ configAppName
+  appName <- runDB configAppName
   urlRenderer <- getUrlRender
   mainNavItems <- mainNavData user MainNavDemob
   (jDataDemobs, jDataPaginationItems) <- demobListJDatas pageNum
@@ -134,7 +134,7 @@ getDemobDetailDataR :: DemobId -> Handler Value
 getDemobDetailDataR demobId = do
   Entity _ user <- requireAuth
   req <- getRequest
-  appName <- runDB $ configAppName
+  appName <- runDB configAppName
   mainNavItems <- mainNavData user MainNavDemob
   demob <- runDB $ get404 demobId
   jDataDemocs <- democJDatas demobId

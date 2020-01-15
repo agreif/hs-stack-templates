@@ -26,7 +26,7 @@ getAdminDataR :: Handler Value
 getAdminDataR = do
   Entity _ user <- requireAuth
   req <- getRequest
-  appName <- runDB $ configAppName
+  appName <- runDB configAppName
   urlRenderer <- getUrlRender
   mainNavItems <- mainNavData user MainNavAdmin
   jDataUsers <- userListJDataEnts
@@ -73,7 +73,7 @@ userListJDataEnts :: Handler [JDataUser]
 userListJDataEnts = do
   urlRenderer <- getUrlRender
   userTuples <- runDB loadUserListTuples
-  let jUserList = map (\(userEnt@(Entity userId _)) ->
+  let jUserList = map (\userEnt@(Entity userId _) ->
                            JDataUser
                            { jDataUserEnt = userEnt
                            , jDataUserEditFormUrl = urlRenderer $ AdminR $ EditUserFormR userId
@@ -82,18 +82,17 @@ userListJDataEnts = do
                         ) userTuples
   return jUserList
 
-loadUserListTuples :: YesodDB App [(Entity User)]
-loadUserListTuples = do
-  tuples <- E.select $ E.from $ \(user) -> do
+loadUserListTuples :: YesodDB App [Entity User]
+loadUserListTuples =
+  E.select $ E.from $ \user -> do
     E.orderBy [E.asc (user E.^. UserId)]
-    return (user)
-  return tuples
+    return user
 
 configListJDataEnts :: Handler [JDataConfig]
 configListJDataEnts = do
   urlRenderer <- getUrlRender
   configTuples <- runDB loadConfigListTuples
-  let jConfigList = map (\(configEnt@(Entity configId _)) ->
+  let jConfigList = map (\configEnt@(Entity configId _) ->
                            JDataConfig
                            { jDataConfigEnt = configEnt
                            , jDataConfigEditFormUrl = urlRenderer $ AdminR $ EditConfigFormR configId
@@ -101,9 +100,8 @@ configListJDataEnts = do
                         ) configTuples
   return jConfigList
 
-loadConfigListTuples :: YesodDB App [(Entity Config)]
-loadConfigListTuples = do
-  tuples <- E.select $ E.from $ \(config) -> do
+loadConfigListTuples :: YesodDB App [Entity Config]
+loadConfigListTuples =
+  E.select $ E.from $ \config -> do
     E.orderBy [E.asc (config E.^. ConfigId)]
-    return (config)
-  return tuples
+    return config

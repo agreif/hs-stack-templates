@@ -19,7 +19,7 @@
           <td .uk-width-small>
             <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgDemobDeleteDemob}" uk-tooltip onclick="{(e)=>deleteDemob(e,demob)}">
               <span uk-icon="icon: trash">
-            <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgDemobEditDemob}" uk-tooltip onclick="{(e)=>detailDemob(e,demob)}">
+            <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgDemobDetailDemob}" uk-tooltip onclick="{(e)=>detailDemob(e,demob)}">
               <span uk-icon="icon: file-edit">
     <pagination-tag context="{context}" items="{context.data.pages.demobList.paginationItems}">
     <button .uk-button .scrollToTop uk-totop onclick="{context.scrollToTop}">

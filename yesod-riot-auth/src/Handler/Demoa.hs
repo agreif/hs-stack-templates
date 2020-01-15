@@ -46,7 +46,7 @@ demoaListPageNumDataR :: Int -> Handler Value
 demoaListPageNumDataR pageNum = do
   Entity _ user <- requireAuth
   req <- getRequest
-  appName <- runDB $ configAppName
+  appName <- runDB configAppName
   urlRenderer <- getUrlRender
   mainNavItems <- mainNavData user MainNavDemoa
   (jDataDemoas, jDataPaginationItems) <- demoaListJDatas pageNum

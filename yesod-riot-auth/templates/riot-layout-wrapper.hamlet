@@ -18,6 +18,8 @@
       <script src="@{StaticR js_riot_compiler_4_7_1_min_js}" type="text/javascript">
       <script data-src="@{MyprojectR RiotBodyTagR}" type="riot">
       <script data-src="@{MyprojectR RiotNavTagR}" type="riot">
+      <script data-src="@{MyprojectR RiotPaginationTagR}" type="riot">
+      <script data-src="@{MyprojectR RiotRawTagR}" type="riot">
       <script data-src="@{MyprojectR RiotHomePageTagR}" type="riot">
       <script data-src="@{MyprojectR RiotAdminPageTagR}" type="riot">
       <script data-src="@{MyprojectR RiotDemoaListPageTagR}" type="riot">
