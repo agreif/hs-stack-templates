@@ -12,12 +12,12 @@ packages:
     version: 0.0.0
     git: https://github.com/agreif/hs-yesod-model-generator.git
     pantry-tree:
-      size: 1757
-      sha256: 517ab412fea35117af0cbbcbfc11b673fbef250731bff44d1e36e050d380f32d
-    commit: 1a56b5614b8ecbe46b0f150db702e34f994124c6
+      size: 1812
+      sha256: 61d01a79801b96272b5340d22a0d98410280240fb37cf0aa0d0ef25ce5cba544
+    commit: e6421e17dfa2da32dc11d465fcaa09742b71aea1
   original:
     git: https://github.com/agreif/hs-yesod-model-generator.git
-    commit: 1a56b5614b8ecbe46b0f150db702e34f994124c6
+    commit: e6421e17dfa2da32dc11d465fcaa09742b71aea1
 - completed:
     hackage: pwstore-fast-2.4.4@sha256:9b6a37510d8b9f37f409a8ab3babac9181afcaaa3fce8ba1c131a7ed3de30698,1351
     pantry-tree:
@@ -27,7 +27,7 @@ packages:
     hackage: pwstore-fast-2.4.4@sha256:9b6a37510d8b9f37f409a8ab3babac9181afcaaa3fce8ba1c131a7ed3de30698,1351
 snapshots:
 - completed:
-    size: 524155
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/14/19.yaml
-    sha256: 9f79f6494473c9b46911364b94c4b5ef19ca8d35ebf62e46697cf651f198ee19
-  original: lts-14.19
+    size: 524154
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/14/20.yaml
+    sha256: 2f5099f69ddb6abfe64400fe1e6a604e8e628f55e6837211cd70a81eb0a8fa4d
+  original: lts-14.20

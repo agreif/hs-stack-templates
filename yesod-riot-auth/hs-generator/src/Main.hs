@@ -699,7 +699,6 @@ context =
         , bActionModelFormEntityLoader = Nothing
         , bActionModelFormDataJsonUrl = Nothing
         , bActionModelFormHasDefaultModel = False
-        , bActionModelPostExtraStoreFunc = Nothing
         , bActionModelFormTitleMsg = Just "MsgTestmailSendTestMail"
         , bActionModelFormRouteHsType = "AdminR"
         , bActionModelFields =

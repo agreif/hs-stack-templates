@@ -25,9 +25,9 @@
       \ import DemoaListPageTag from '@{StaticR js_riot_demoa_list_page_tag_js}'
       \ riot.register('demoa-list-page-tag', DemoaListPageTag)
       \ import DemobListPageTag from '@{StaticR js_riot_demob_list_page_tag_js}'
-      \ riot.register('demob-list-page-tag', demobListPageTag)
+      \ riot.register('demob-list-page-tag', DemobListPageTag)
       \ import DemobDetailPageTag from '@{StaticR js_riot_demob_detail_page_tag_js}'
-      \ riot.register('demob-detail-page-tag', demobDetailPageTag)
+      \ riot.register('demob-detail-page-tag', DemobDetailPageTag)
       \
       \ const _bodyTag = riot.mount('body-tag')[0]
       \ _bodyTag.refreshData("#{dataUrl}", true)
