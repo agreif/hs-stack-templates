@@ -12,6 +12,9 @@
       <li>
         <a href="#">
           {context.data.translation.msgTestmailTestMail}
+      <li>
+        <a href="#">
+          {context.data.translation.msgGlobalInfo}
     <ul .uk-switcher .uk-margin>
       <li>
         <!-- user list -->
@@ -82,6 +85,22 @@
         <!-- test mail -->
         <button .uk-button .uk-button-primary onclick="{sendTestMail}">
           {context.data.translation.msgTestmailSendTestMail}
+      <li>
+        <!-- info -->
+        <table .uk-table .uk-table-small>
+          <tbody>
+            <tr>
+              <th>Git Commit Date:
+              <td>{context.data.pages.admin.gitCommitDate}
+            <tr>
+              <th>Git Commit Branch:
+              <td>{context.data.pages.admin.gitCommitBranch}
+            <tr>
+              <th>Git Commit Hash:
+              <td>{context.data.pages.admin.gitCommitHash}
+            <tr>
+              <th>Git Commit Message:
+              <td>{context.data.pages.admin.gitCommitMessage}
 
   <script>
     \ export default {

@@ -15,6 +15,7 @@ data AppMessage =
   | MsgGlobalEditMyProfile
   | MsgGlobalReallyDelete
   | MsgGlobalCancel
+  | MsgGlobalInfo
   | MsgUserIdent
   | MsgUserPassword
   | MsgUserEmail
@@ -63,6 +64,7 @@ renderMessageGerman MsgGlobalMyProfile = "Mein Profil"
 renderMessageGerman MsgGlobalEditMyProfile = "Mein Profil bearbeiten"
 renderMessageGerman MsgGlobalReallyDelete = "Möchten sie wirklich löschen?"
 renderMessageGerman MsgGlobalCancel = "Abbrechen"
+renderMessageGerman MsgGlobalInfo = "Info"
 renderMessageGerman MsgUserIdent = "Login"
 renderMessageGerman MsgUserPassword = "Passwort"
 renderMessageGerman MsgUserEmail = "Email"
@@ -111,6 +113,7 @@ renderMessageEnglish MsgGlobalMyProfile = "My Profile"
 renderMessageEnglish MsgGlobalEditMyProfile = "Edit my profile"
 renderMessageEnglish MsgGlobalReallyDelete = "Are you sure to delete?"
 renderMessageEnglish MsgGlobalCancel = "Cancel"
+renderMessageEnglish MsgGlobalInfo = "Info"
 renderMessageEnglish MsgUserIdent = "Login"
 renderMessageEnglish MsgUserPassword = "Password"
 renderMessageEnglish MsgUserEmail = "Email"
@@ -159,6 +162,7 @@ data Translation = Translation
   , msgGlobalEditMyProfile :: Text
   , msgGlobalReallyDelete :: Text
   , msgGlobalCancel :: Text
+  , msgGlobalInfo :: Text
   , msgUserIdent :: Text
   , msgUserPassword :: Text
   , msgUserEmail :: Text
@@ -211,6 +215,7 @@ translationDe = Translation
   , msgGlobalEditMyProfile = "Mein Profil bearbeiten"
   , msgGlobalReallyDelete = "Möchten sie wirklich löschen?"
   , msgGlobalCancel = "Abbrechen"
+  , msgGlobalInfo = "Info"
   , msgUserIdent = "Login"
   , msgUserPassword = "Passwort"
   , msgUserEmail = "Email"
@@ -260,6 +265,7 @@ translationEn = Translation
   , msgGlobalEditMyProfile = "Edit my profile"
   , msgGlobalReallyDelete = "Are you sure to delete?"
   , msgGlobalCancel = "Cancel"
+  , msgGlobalInfo = "Info"
   , msgUserIdent = "Login"
   , msgUserPassword = "Password"
   , msgUserEmail = "Email"

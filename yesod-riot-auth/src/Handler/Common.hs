@@ -209,11 +209,19 @@ instance ToJSON JDataPageHome where
 data JDataPageAdmin = JDataPageAdmin
   { jDataPageAdminUsers :: [JDataUser]
   , jDataPageAdminConfigs :: [JDataConfig]
+  , jDataPageAdminGitCommitDate :: String
+  , jDataPageAdminGitCommitMessage :: String
+  , jDataPageAdminGitCommitHash :: String
+  , jDataPageAdminGitCommitBranch :: String
   }
 instance ToJSON JDataPageAdmin where
   toJSON o = object
     [ "users" .= jDataPageAdminUsers o
     , "configs" .= jDataPageAdminConfigs o
+    , "gitCommitDate" .= jDataPageAdminGitCommitDate o
+    , "gitCommitMessage" .=jDataPageAdminGitCommitMessage o
+    , "gitCommitHash" .=jDataPageAdminGitCommitHash o
+    , "gitCommitBranch" .=jDataPageAdminGitCommitBranch o
     ]
 
 
@@ -346,18 +354,17 @@ mainNavData user mainNav = do
       }
     ]
     ++
-    ( if userIsAdmin user
-      then [ JDataNavItem
-             { jDataNavItemId = Nothing
-             , jDataNavItemLabel = msgAdmin
-             , jDataNavItemIsActive = mainNav == MainNavAdmin
-             , jDataNavItemUrl = Just $ urlRenderer $ AdminR AdminHomeR
-             , jDataNavItemDataUrl = Just $ urlRenderer $ AdminR AdminDataR
-             , jDataNavItemBadge = Nothing
-             , jDataNavItemDropdownItems = Nothing
-             } ]
-      else []
-    )
+    [ JDataNavItem
+      { jDataNavItemId = Nothing
+      , jDataNavItemLabel = msgAdmin
+      , jDataNavItemIsActive = mainNav == MainNavAdmin
+      , jDataNavItemUrl = Just $ urlRenderer $ AdminR AdminHomeR
+      , jDataNavItemDataUrl = Just $ urlRenderer $ AdminR AdminDataR
+      , jDataNavItemBadge = Nothing
+      , jDataNavItemDropdownItems = Nothing
+      }
+    | userIsAdmin user
+    ]
     ++
     [ JDataNavItem
       { jDataNavItemId = Nothing

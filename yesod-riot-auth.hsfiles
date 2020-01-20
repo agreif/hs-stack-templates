@@ -1440,6 +1440,7 @@ context =
     , BTranslation { bTranslationKey = "editMyProfile", bTranslationDe = "Mein Profil bearbeiten", bTranslationEn = "Edit my profile" }
     , BTranslation { bTranslationKey = "reallyDelete", bTranslationDe = "Möchten sie wirklich löschen?", bTranslationEn = "Are you sure to delete?" }
     , BTranslation { bTranslationKey = "cancel", bTranslationDe = "Abbrechen", bTranslationEn = "Cancel" }
+    , BTranslation { bTranslationKey = "info", bTranslationDe = "Info", bTranslationEn = "Info" }
     ]
   }
 
@@ -1557,6 +1558,7 @@ dependencies:
 - blaze-html
 - mime-mail
 - esqueleto
+- githash
 
 # The library contains all of our application code. The executable
 # defined below is just a thin wrapper.
@@ -2594,13 +2596,14 @@ getAdminDataR = do
       }
     , jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName
     , jDataCsrfToken = reqToken req
-    , jDataBreadcrumbItems = [ JDataBreadcrumbItem
-                               { jDataBreadcrumbItemLabel = msgHome
-                               , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomeDataR }
-                             , JDataBreadcrumbItem
-                               { jDataBreadcrumbItemLabel = msgAdmin
-                               , jDataBreadcrumbItemDataUrl = currentDataUrl }
-                             ]
+    , jDataBreadcrumbItems =
+      [ JDataBreadcrumbItem
+        { jDataBreadcrumbItemLabel = msgHome
+        , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomeDataR }
+      , JDataBreadcrumbItem
+        { jDataBreadcrumbItemLabel = msgAdmin
+        , jDataBreadcrumbItemDataUrl = currentDataUrl }
+      ]
     , jDataCurrentLanguage = currentLanguage
     , jDataTranslation = translation
     , jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl
@@ -2611,13 +2614,14 @@ userListJDataEnts :: Handler [JDataUser]
 userListJDataEnts = do
   urlRenderer <- getUrlRender
   userTuples <- runDB loadUserListTuples
-  let jUserList = map (\userEnt@(Entity userId _) ->
-                           JDataUser
-                           { jDataUserEnt = userEnt
-                           , jDataUserEditFormUrl = urlRenderer $ AdminR $ EditUserFormR userId
-                           , jDataUserDeleteFormUrl = urlRenderer $ AdminR $ DeleteUserFormR userId
-                           }
-                        ) userTuples
+  let jUserList =
+        map (\userEnt@(Entity userId _) ->
+                JDataUser
+                { jDataUserEnt = userEnt
+                , jDataUserEditFormUrl = urlRenderer $ AdminR $ EditUserFormR userId
+                , jDataUserDeleteFormUrl = urlRenderer $ AdminR $ DeleteUserFormR userId
+                }
+            ) userTuples
   return jUserList
 
 loadUserListTuples :: YesodDB App [Entity User]
@@ -2630,12 +2634,13 @@ configListJDataEnts :: Handler [JDataConfig]
 configListJDataEnts = do
   urlRenderer <- getUrlRender
   configTuples <- runDB loadConfigListTuples
-  let jConfigList = map (\configEnt@(Entity configId _) ->
-                           JDataConfig
-                           { jDataConfigEnt = configEnt
-                           , jDataConfigEditFormUrl = urlRenderer $ AdminR $ EditConfigFormR configId
-                           }
-                        ) configTuples
+  let jConfigList =
+        map (\configEnt@(Entity configId _) ->
+                JDataConfig
+                { jDataConfigEnt = configEnt
+                , jDataConfigEditFormUrl = urlRenderer $ AdminR $ EditConfigFormR configId
+                }
+            ) configTuples
   return jConfigList
 
 loadConfigListTuples :: YesodDB App [Entity Config]
@@ -2856,11 +2861,19 @@ instance ToJSON JDataPageHome where
 data JDataPageAdmin = JDataPageAdmin
   { jDataPageAdminUsers :: [JDataUser]
   , jDataPageAdminConfigs :: [JDataConfig]
+  , jDataPageAdminGitCommitDate :: String
+  , jDataPageAdminGitCommitMessage :: String
+  , jDataPageAdminGitCommitHash :: String
+  , jDataPageAdminGitCommitBranch :: String
   }
 instance ToJSON JDataPageAdmin where
   toJSON o = object
     [ "users" .= jDataPageAdminUsers o
     , "configs" .= jDataPageAdminConfigs o
+    , "gitCommitDate" .= jDataPageAdminGitCommitDate o
+    , "gitCommitMessage" .=jDataPageAdminGitCommitMessage o
+    , "gitCommitHash" .=jDataPageAdminGitCommitHash o
+    , "gitCommitBranch" .=jDataPageAdminGitCommitBranch o
     ]
 
 
@@ -2993,18 +3006,17 @@ mainNavData user mainNav = do
       }
     ]
     ++
-    ( if userIsAdmin user
-      then [ JDataNavItem
-             { jDataNavItemId = Nothing
-             , jDataNavItemLabel = msgAdmin
-             , jDataNavItemIsActive = mainNav == MainNavAdmin
-             , jDataNavItemUrl = Just $ urlRenderer $ AdminR AdminHomeR
-             , jDataNavItemDataUrl = Just $ urlRenderer $ AdminR AdminDataR
-             , jDataNavItemBadge = Nothing
-             , jDataNavItemDropdownItems = Nothing
-             } ]
-      else []
-    )
+    [ JDataNavItem
+      { jDataNavItemId = Nothing
+      , jDataNavItemLabel = msgAdmin
+      , jDataNavItemIsActive = mainNav == MainNavAdmin
+      , jDataNavItemUrl = Just $ urlRenderer $ AdminR AdminHomeR
+      , jDataNavItemDataUrl = Just $ urlRenderer $ AdminR AdminDataR
+      , jDataNavItemBadge = Nothing
+      , jDataNavItemDropdownItems = Nothing
+      }
+    | userIsAdmin user
+    ]
     ++
     [ JDataNavItem
       { jDataNavItemId = Nothing
@@ -5374,6 +5386,7 @@ data AppMessage =
   | MsgGlobalEditMyProfile
   | MsgGlobalReallyDelete
   | MsgGlobalCancel
+  | MsgGlobalInfo
   | MsgUserIdent
   | MsgUserPassword
   | MsgUserEmail
@@ -5422,6 +5435,7 @@ renderMessageGerman MsgGlobalMyProfile = "Mein Profil"
 renderMessageGerman MsgGlobalEditMyProfile = "Mein Profil bearbeiten"
 renderMessageGerman MsgGlobalReallyDelete = "Möchten sie wirklich löschen?"
 renderMessageGerman MsgGlobalCancel = "Abbrechen"
+renderMessageGerman MsgGlobalInfo = "Info"
 renderMessageGerman MsgUserIdent = "Login"
 renderMessageGerman MsgUserPassword = "Passwort"
 renderMessageGerman MsgUserEmail = "Email"
@@ -5470,6 +5484,7 @@ renderMessageEnglish MsgGlobalMyProfile = "My Profile"
 renderMessageEnglish MsgGlobalEditMyProfile = "Edit my profile"
 renderMessageEnglish MsgGlobalReallyDelete = "Are you sure to delete?"
 renderMessageEnglish MsgGlobalCancel = "Cancel"
+renderMessageEnglish MsgGlobalInfo = "Info"
 renderMessageEnglish MsgUserIdent = "Login"
 renderMessageEnglish MsgUserPassword = "Password"
 renderMessageEnglish MsgUserEmail = "Email"
@@ -5518,6 +5533,7 @@ data Translation = Translation
   , msgGlobalEditMyProfile :: Text
   , msgGlobalReallyDelete :: Text
   , msgGlobalCancel :: Text
+  , msgGlobalInfo :: Text
   , msgUserIdent :: Text
   , msgUserPassword :: Text
   , msgUserEmail :: Text
@@ -5570,6 +5586,7 @@ translationDe = Translation
   , msgGlobalEditMyProfile = "Mein Profil bearbeiten"
   , msgGlobalReallyDelete = "Möchten sie wirklich löschen?"
   , msgGlobalCancel = "Abbrechen"
+  , msgGlobalInfo = "Info"
   , msgUserIdent = "Login"
   , msgUserPassword = "Passwort"
   , msgUserEmail = "Email"
@@ -5619,6 +5636,7 @@ translationEn = Translation
   , msgGlobalEditMyProfile = "Edit my profile"
   , msgGlobalReallyDelete = "Are you sure to delete?"
   , msgGlobalCancel = "Cancel"
+  , msgGlobalInfo = "Info"
   , msgUserIdent = "Login"
   , msgUserPassword = "Password"
   , msgUserEmail = "Email"
@@ -6257,6 +6275,9 @@ var t,e;t=this,e=function(t){"use strict";const e=new Map,n=Symbol("riot-compone
       <li>
         <a href="#">
           {context.data.translation.msgTestmailTestMail}
+      <li>
+        <a href="#">
+          {context.data.translation.msgGlobalInfo}
     <ul .uk-switcher .uk-margin>
       <li>
         <!-- user list -->
@@ -6327,6 +6348,22 @@ var t,e;t=this,e=function(t){"use strict";const e=new Map,n=Symbol("riot-compone
         <!-- test mail -->
         <button .uk-button .uk-button-primary onclick="{sendTestMail}">
           {context.data.translation.msgTestmailSendTestMail}
+      <li>
+        <!-- info -->
+        <table .uk-table .uk-table-small>
+          <tbody>
+            <tr>
+              <th>Git Commit Date:
+              <td>{context.data.pages.admin.gitCommitDate}
+            <tr>
+              <th>Git Commit Branch:
+              <td>{context.data.pages.admin.gitCommitBranch}
+            <tr>
+              <th>Git Commit Hash:
+              <td>{context.data.pages.admin.gitCommitHash}
+            <tr>
+              <th>Git Commit Message:
+              <td>{context.data.pages.admin.gitCommitMessage}
 
   <script>
     \ export default {
