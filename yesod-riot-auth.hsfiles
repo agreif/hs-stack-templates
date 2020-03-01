@@ -576,8 +576,8 @@ User-agent: *
   editMyProfile EditMyprofileR POST
 
   demoaList DemoaListR GET
-  demoaListDataR DemoaListDataR GET
-  demoaListDataR/#Int DemoaListPageNumDataR GET POST
+  demoaListData DemoaListDataR GET
+  demoaListData/#Int DemoaListPageNumDataR GET POST
   addDemoaForm AddDemoaFormR GET
   addDemoa AddDemoaR POST
   editDemoaForm/#DemoaId EditDemoaFormR GET
@@ -586,8 +586,8 @@ User-agent: *
   deleteDemoa/#DemoaId DeleteDemoaR POST
 
   demobList DemobListR GET
-  demobListDataR DemobListDataR GET
-  demobListDataR/#Int DemobListPageNumDataR GET POST
+  demobListData DemobListDataR GET
+  demobListData/#Int DemobListPageNumDataR GET POST
   addDemobForm AddDemobFormR GET
   addDemob AddDemobR POST
   demobDetail/#DemobId DemobDetailR GET
@@ -1853,7 +1853,7 @@ if test -z "$1" -o "$1" = $m; then
     exec_ginger2 $m handler_get_edit_form.gtmpl $f '-- gen get edit form'
     exec_ginger2 $m handler_edit_form.gtmpl $f '-- gen edit form'
     exec_ginger2 $m handler_get_delete_form.gtmpl $f '-- gen get delete form'
-    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete form'
+    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete'
     exec_ginger2 $m handler_delete_form.gtmpl $f '-- gen delete form'
 fi
 
@@ -1886,7 +1886,7 @@ if test -z "$1" -o "$1" = $m; then
     exec_ginger2 $m handler_post_edit_form.gtmpl $f '-- gen post edit'
     exec_ginger2 $m handler_edit_form.gtmpl $f '-- gen edit form'
     exec_ginger2 $m handler_get_delete_form.gtmpl $f '-- gen get delete form'
-    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete form'
+    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete'
     exec_ginger2 $m handler_delete_form.gtmpl $f '-- gen delete form'
 fi
 
@@ -1902,7 +1902,7 @@ if test -z "$1" -o "$1" = $m; then
     exec_ginger2 $m handler_post_edit_form.gtmpl $f '-- gen post edit'
     exec_ginger2 $m handler_edit_form.gtmpl $f '-- gen edit form'
     exec_ginger2 $m handler_get_delete_form.gtmpl $f '-- gen get delete form'
-    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete form'
+    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete'
     exec_ginger2 $m handler_delete_form.gtmpl $f '-- gen delete form'
 fi
 
@@ -1918,7 +1918,7 @@ if test -z "$1" -o "$1" = $m; then
     exec_ginger2 $m handler_post_edit_form.gtmpl $f '-- gen post edit'
     exec_ginger2 $m handler_edit_form.gtmpl $f '-- gen edit form'
     exec_ginger2 $m handler_get_delete_form.gtmpl $f '-- gen get delete form'
-    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete form'
+    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete'
     exec_ginger2 $m handler_delete_form.gtmpl $f '-- gen delete form'
 fi
 
@@ -2297,15 +2297,14 @@ instance Yesod App where
     -- The page to be redirected to when authentication is required.
     authRoute _ = Just $ AuthR LoginR
 
-    isAuthorized (HomeR) _ = do
+    isAuthorized HomeR _ = do
         _ <- requireAuthId
         return Authorized
     isAuthorized (MyprojectR _) _ = do
         _ <- requireAuthId
         return Authorized
     isAuthorized (AdminR _) _ = do
-        userId <- requireAuthId
-        user <- runDB $ get404 userId
+        Entity _ user <- requireAuth
         return $ if userIsAdmin user
                  then Authorized
                  else Unauthorized "Admins Only!"
@@ -2903,13 +2902,11 @@ instance ToJSON JDataConfig where
 
 data JDataPageDemoaList = JDataPageDemoaList
   { jDataPageDemoaListDemoas :: [JDataDemoa]
-  , jDataPageDemoaListAddFormUrl :: Text
   , jDataPageDemoaListPaginationItems :: Maybe [JDataPaginationItem]
   }
 instance ToJSON JDataPageDemoaList where
   toJSON o = object
     [ "demoas" .= jDataPageDemoaListDemoas o
-    , "addFormUrl" .= jDataPageDemoaListAddFormUrl o
     , "paginationItems" .= jDataPageDemoaListPaginationItems o
     ]
 
@@ -3045,7 +3042,7 @@ mainNavData user mainNav = do
 --------------------------------------------------------------------------------
 
 getPaginationJDatas :: Int -> Int -> Int -> Int -> (Int -> Route App) -> Handler (Maybe [JDataPaginationItem])
-getPaginationJDatas allCount pageSize curPageNum visibleNumsCount' routeFunc= do
+getPaginationJDatas allCount pageSize curPageNum visibleNumsCount' routeFunc = do
   urlRenderer <- getUrlRender
   let visibleNumsCount = if mod visibleNumsCount' 2 == 0 then visibleNumsCount'+1 else visibleNumsCount'
   let pageCount' = div allCount pageSize
@@ -3065,6 +3062,7 @@ getPaginationJDatas allCount pageSize curPageNum visibleNumsCount' routeFunc= do
 
   let pageNums = [firstPageNum..lastPageNum]
   case pageCount of
+    0 -> return Nothing
     1 -> return Nothing
     _ -> return $
       Just $
@@ -3621,7 +3619,6 @@ demoaListPageNumDataR pageNum = do
         { jDataPageDemoaList =
             Just $ JDataPageDemoaList
             { jDataPageDemoaListDemoas = jDataDemoas
-            , jDataPageDemoaListAddFormUrl = urlRenderer $ MyprojectR AddDemoaFormR
             , jDataPageDemoaListPaginationItems = jDataPaginationItems
             }
         }
@@ -3874,13 +3871,13 @@ getDeleteDemoaFormR demoaId = do
       |]
 -- gen get delete form - end
 
--- gen post delete form - start
+-- gen post delete - start
 postDeleteDemoaR :: DemoaId -> Handler Value
 postDeleteDemoaR demoaId = do
   runDB $ delete demoaId
   urlRenderer <- getUrlRender
   returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemoaListDataR }
--- gen post delete form - end
+-- gen post delete - end
 
 -- gen delete form - start
 vDeleteDemoaForm :: Html -> MForm Handler (FormResult (), Widget)
@@ -4079,7 +4076,7 @@ getDemobDetailDataR demobId = do
 democJDatas :: DemobId -> Handler [JDataDemoc]
 democJDatas demobId = do
   urlRenderer <- getUrlRender
-  democTuples <- runDB $ loadDemocTuples demobId
+  democTuples <- runDB loadDemocTuples
   return $ map
     (\(democEnt@(Entity democId _)) ->
        JDataDemoc
@@ -4088,18 +4085,13 @@ democJDatas demobId = do
        , jDataDemocDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteDemocFormR democId
        })
     democTuples
-
-loadDemocTuples :: DemobId -> YesodDB App [(Entity Democ)]
-loadDemocTuples demobId = do
-  E.select $ E.from $ \(dc) -> do
-    E.orderBy [ E.desc (dc E.^. DemocId) ]
-    E.where_ (dc E.^. DemocDemobId E.==. E.val demobId)
-    return (dc)
-
-
-
-
-
+  where
+    loadDemocTuples :: YesodDB App [(Entity Democ)]
+    loadDemocTuples =
+      E.select $ E.from $ \(dc) -> do
+        E.orderBy [ E.desc (dc E.^. DemocId) ]
+        E.where_ (dc E.^. DemocDemobId E.==. E.val demobId)
+        return (dc)
 
 -------------------------------------------------------
 -- add
@@ -4292,13 +4284,13 @@ getDeleteDemobFormR demobId = do
       |]
 -- gen get delete form - end
 
--- gen post delete form - start
+-- gen post delete - start
 postDeleteDemobR :: DemobId -> Handler Value
 postDeleteDemobR demobId = do
   runDB $ delete demobId
   urlRenderer <- getUrlRender
   returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemobListDataR }
--- gen post delete form - end
+-- gen post delete - end
 
 -- gen delete form - start
 vDeleteDemobForm :: Html -> MForm Handler (FormResult (), Widget)
@@ -4313,7 +4305,6 @@ vDeleteDemobForm extra = do
 {-# LANGUAGE NoImplicitPrelude     #-}
 {-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE QuasiQuotes           #-}
-{-# LANGUAGE TemplateHaskell       #-}
 {-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE FlexibleContexts      #-}
 
@@ -4518,14 +4509,14 @@ getDeleteDemocFormR democId = do
       |]
 -- gen get delete form - end
 
--- gen post delete form - start
+-- gen post delete - start
 postDeleteDemocR :: DemocId -> Handler Value
 postDeleteDemocR democId = do
   democ <- runDB $ get404 democId
   runDB $ delete democId
   urlRenderer <- getUrlRender
   returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ }
--- gen post delete form - end
+-- gen post delete - end
 
 -- gen delete form - start
 vDeleteDemocForm :: Html -> MForm Handler (FormResult (), Widget)
@@ -5347,6 +5338,14 @@ vDeleteUserForm extra = do
   return (formResult, formWidget)
 -- gen delete form - end
 
+-- gen post delete - start
+postDeleteUserR :: UserId -> Handler Value
+postDeleteUserR userId = do
+  runDB $ delete userId
+  urlRenderer <- getUrlRender
+  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR }
+-- gen post delete - end
+
 -- gen get delete form - start
 getDeleteUserFormR :: UserId -> Handler Html
 getDeleteUserFormR userId = do
@@ -5359,14 +5358,6 @@ getDeleteUserFormR userId = do
           ^{formWidget}
       |]
 -- gen get delete form - end
-
--- gen post delete form - start
-postDeleteUserR :: UserId -> Handler Value
-postDeleteUserR userId = do
-  runDB $ delete userId
-  urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR }
--- gen post delete form - end
 
 {-# START_FILE src/I18n.hs #-}
 {-# LANGUAGE OverloadedStrings     #-}
@@ -6594,6 +6585,7 @@ var t,e;t=this,e=function(t){"use strict";const e=new Map,n=Symbol("riot-compone
     <h1>
       {context.data.translation.msgDemobDemob}:
       {context.data.pages.demobDetail.demobEnt.myattr}
+
     <!-- master data -->
     <table .uk-table .uk-table-small .uk-table-divider .uk-table-hover .uk-background-muted>
       <thead>
@@ -6609,9 +6601,10 @@ var t,e;t=this,e=function(t){"use strict";const e=new Map,n=Symbol("riot-compone
           <td .uk-width-small>
             <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgDemobEditDemob}" uk-tooltip onclick="{editDemob}">
               <span uk-icon="icon: pencil">
+
+    <!-- democ list -->
     <h2>
       {context.data.translation.msgDemocDemocs}
-    <!-- democ list -->
     <table .uk-table .uk-table-small .uk-table-divider .uk-table-hover .uk-background-muted>
       <thead>
         <tr>
