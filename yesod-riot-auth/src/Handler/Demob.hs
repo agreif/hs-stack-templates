@@ -186,7 +186,7 @@ getDemobDetailDataR demobId = do
 democJDatas :: DemobId -> Handler [JDataDemoc]
 democJDatas demobId = do
   urlRenderer <- getUrlRender
-  democTuples <- runDB $ loadDemocTuples demobId
+  democTuples <- runDB loadDemocTuples
   return $ map
     (\(democEnt@(Entity democId _)) ->
        JDataDemoc
@@ -195,18 +195,13 @@ democJDatas demobId = do
        , jDataDemocDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteDemocFormR democId
        })
     democTuples
-
-loadDemocTuples :: DemobId -> YesodDB App [(Entity Democ)]
-loadDemocTuples demobId = do
-  E.select $ E.from $ \(dc) -> do
-    E.orderBy [ E.desc (dc E.^. DemocId) ]
-    E.where_ (dc E.^. DemocDemobId E.==. E.val demobId)
-    return (dc)
-
-
-
-
-
+  where
+    loadDemocTuples :: YesodDB App [(Entity Democ)]
+    loadDemocTuples =
+      E.select $ E.from $ \(dc) -> do
+        E.orderBy [ E.desc (dc E.^. DemocId) ]
+        E.where_ (dc E.^. DemocDemobId E.==. E.val demobId)
+        return (dc)
 
 -------------------------------------------------------
 -- add
@@ -399,13 +394,13 @@ getDeleteDemobFormR demobId = do
       |]
 -- gen get delete form - end
 
--- gen post delete form - start
+-- gen post delete - start
 postDeleteDemobR :: DemobId -> Handler Value
 postDeleteDemobR demobId = do
   runDB $ delete demobId
   urlRenderer <- getUrlRender
   returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemobListDataR }
--- gen post delete form - end
+-- gen post delete - end
 
 -- gen delete form - start
 vDeleteDemobForm :: Html -> MForm Handler (FormResult (), Widget)

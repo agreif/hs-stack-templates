@@ -100,15 +100,14 @@ instance Yesod App where
     -- The page to be redirected to when authentication is required.
     authRoute _ = Just $ AuthR LoginR
 
-    isAuthorized (HomeR) _ = do
+    isAuthorized HomeR _ = do
         _ <- requireAuthId
         return Authorized
     isAuthorized (MyprojectR _) _ = do
         _ <- requireAuthId
         return Authorized
     isAuthorized (AdminR _) _ = do
-        userId <- requireAuthId
-        user <- runDB $ get404 userId
+        Entity _ user <- requireAuth
         return $ if userIsAdmin user
                  then Authorized
                  else Unauthorized "Admins Only!"

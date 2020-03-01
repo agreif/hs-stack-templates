@@ -46,8 +46,8 @@
   editMyProfile EditMyprofileR POST
 
   demoaList DemoaListR GET
-  demoaListDataR DemoaListDataR GET
-  demoaListDataR/#Int DemoaListPageNumDataR GET POST
+  demoaListData DemoaListDataR GET
+  demoaListData/#Int DemoaListPageNumDataR GET POST
   addDemoaForm AddDemoaFormR GET
   addDemoa AddDemoaR POST
   editDemoaForm/#DemoaId EditDemoaFormR GET
@@ -56,8 +56,8 @@
   deleteDemoa/#DemoaId DeleteDemoaR POST
 
   demobList DemobListR GET
-  demobListDataR DemobListDataR GET
-  demobListDataR/#Int DemobListPageNumDataR GET POST
+  demobListData DemobListDataR GET
+  demobListData/#Int DemobListPageNumDataR GET POST
   addDemobForm AddDemobFormR GET
   addDemob AddDemobR POST
   demobDetail/#DemobId DemobDetailR GET

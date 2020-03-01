@@ -98,7 +98,7 @@ if test -z "$1" -o "$1" = $m; then
     exec_ginger2 $m handler_get_edit_form.gtmpl $f '-- gen get edit form'
     exec_ginger2 $m handler_edit_form.gtmpl $f '-- gen edit form'
     exec_ginger2 $m handler_get_delete_form.gtmpl $f '-- gen get delete form'
-    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete form'
+    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete'
     exec_ginger2 $m handler_delete_form.gtmpl $f '-- gen delete form'
 fi
 
@@ -131,7 +131,7 @@ if test -z "$1" -o "$1" = $m; then
     exec_ginger2 $m handler_post_edit_form.gtmpl $f '-- gen post edit'
     exec_ginger2 $m handler_edit_form.gtmpl $f '-- gen edit form'
     exec_ginger2 $m handler_get_delete_form.gtmpl $f '-- gen get delete form'
-    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete form'
+    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete'
     exec_ginger2 $m handler_delete_form.gtmpl $f '-- gen delete form'
 fi
 
@@ -147,7 +147,7 @@ if test -z "$1" -o "$1" = $m; then
     exec_ginger2 $m handler_post_edit_form.gtmpl $f '-- gen post edit'
     exec_ginger2 $m handler_edit_form.gtmpl $f '-- gen edit form'
     exec_ginger2 $m handler_get_delete_form.gtmpl $f '-- gen get delete form'
-    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete form'
+    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete'
     exec_ginger2 $m handler_delete_form.gtmpl $f '-- gen delete form'
 fi
 
@@ -163,7 +163,7 @@ if test -z "$1" -o "$1" = $m; then
     exec_ginger2 $m handler_post_edit_form.gtmpl $f '-- gen post edit'
     exec_ginger2 $m handler_edit_form.gtmpl $f '-- gen edit form'
     exec_ginger2 $m handler_get_delete_form.gtmpl $f '-- gen get delete form'
-    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete form'
+    exec_ginger2 $m handler_post_delete_form.gtmpl $f '-- gen post delete'
     exec_ginger2 $m handler_delete_form.gtmpl $f '-- gen delete form'
 fi
 

@@ -3,6 +3,7 @@
     <h1>
       {context.data.translation.msgDemobDemob}:
       {context.data.pages.demobDetail.demobEnt.myattr}
+
     <!-- master data -->
     <table .uk-table .uk-table-small .uk-table-divider .uk-table-hover .uk-background-muted>
       <thead>
@@ -18,9 +19,10 @@
           <td .uk-width-small>
             <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgDemobEditDemob}" uk-tooltip onclick="{editDemob}">
               <span uk-icon="icon: pencil">
+
+    <!-- democ list -->
     <h2>
       {context.data.translation.msgDemocDemocs}
-    <!-- democ list -->
     <table .uk-table .uk-table-small .uk-table-divider .uk-table-hover .uk-background-muted>
       <thead>
         <tr>

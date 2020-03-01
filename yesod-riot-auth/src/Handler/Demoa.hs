@@ -55,7 +55,6 @@ demoaListPageNumDataR pageNum = do
         { jDataPageDemoaList =
             Just $ JDataPageDemoaList
             { jDataPageDemoaListDemoas = jDataDemoas
-            , jDataPageDemoaListAddFormUrl = urlRenderer $ MyprojectR AddDemoaFormR
             , jDataPageDemoaListPaginationItems = jDataPaginationItems
             }
         }
@@ -308,13 +307,13 @@ getDeleteDemoaFormR demoaId = do
       |]
 -- gen get delete form - end
 
--- gen post delete form - start
+-- gen post delete - start
 postDeleteDemoaR :: DemoaId -> Handler Value
 postDeleteDemoaR demoaId = do
   runDB $ delete demoaId
   urlRenderer <- getUrlRender
   returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemoaListDataR }
--- gen post delete form - end
+-- gen post delete - end
 
 -- gen delete form - start
 vDeleteDemoaForm :: Html -> MForm Handler (FormResult (), Widget)

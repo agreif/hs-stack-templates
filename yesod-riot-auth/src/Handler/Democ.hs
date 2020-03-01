@@ -2,7 +2,6 @@
 {-# LANGUAGE NoImplicitPrelude     #-}
 {-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE QuasiQuotes           #-}
-{-# LANGUAGE TemplateHaskell       #-}
 {-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE FlexibleContexts      #-}
 
@@ -207,14 +206,14 @@ getDeleteDemocFormR democId = do
       |]
 -- gen get delete form - end
 
--- gen post delete form - start
+-- gen post delete - start
 postDeleteDemocR :: DemocId -> Handler Value
 postDeleteDemocR democId = do
   democ <- runDB $ get404 democId
   runDB $ delete democId
   urlRenderer <- getUrlRender
   returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ }
--- gen post delete form - end
+-- gen post delete - end
 
 -- gen delete form - start
 vDeleteDemocForm :: Html -> MForm Handler (FormResult (), Widget)

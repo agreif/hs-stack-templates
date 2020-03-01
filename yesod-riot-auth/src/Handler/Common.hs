@@ -251,13 +251,11 @@ instance ToJSON JDataConfig where
 
 data JDataPageDemoaList = JDataPageDemoaList
   { jDataPageDemoaListDemoas :: [JDataDemoa]
-  , jDataPageDemoaListAddFormUrl :: Text
   , jDataPageDemoaListPaginationItems :: Maybe [JDataPaginationItem]
   }
 instance ToJSON JDataPageDemoaList where
   toJSON o = object
     [ "demoas" .= jDataPageDemoaListDemoas o
-    , "addFormUrl" .= jDataPageDemoaListAddFormUrl o
     , "paginationItems" .= jDataPageDemoaListPaginationItems o
     ]
 
@@ -393,7 +391,7 @@ mainNavData user mainNav = do
 --------------------------------------------------------------------------------
 
 getPaginationJDatas :: Int -> Int -> Int -> Int -> (Int -> Route App) -> Handler (Maybe [JDataPaginationItem])
-getPaginationJDatas allCount pageSize curPageNum visibleNumsCount' routeFunc= do
+getPaginationJDatas allCount pageSize curPageNum visibleNumsCount' routeFunc = do
   urlRenderer <- getUrlRender
   let visibleNumsCount = if mod visibleNumsCount' 2 == 0 then visibleNumsCount'+1 else visibleNumsCount'
   let pageCount' = div allCount pageSize
@@ -413,6 +411,7 @@ getPaginationJDatas allCount pageSize curPageNum visibleNumsCount' routeFunc= do
 
   let pageNums = [firstPageNum..lastPageNum]
   case pageCount of
+    0 -> return Nothing
     1 -> return Nothing
     _ -> return $
       Just $

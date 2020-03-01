@@ -296,6 +296,14 @@ vDeleteUserForm extra = do
   return (formResult, formWidget)
 -- gen delete form - end
 
+-- gen post delete - start
+postDeleteUserR :: UserId -> Handler Value
+postDeleteUserR userId = do
+  runDB $ delete userId
+  urlRenderer <- getUrlRender
+  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR }
+-- gen post delete - end
+
 -- gen get delete form - start
 getDeleteUserFormR :: UserId -> Handler Html
 getDeleteUserFormR userId = do
@@ -308,11 +316,3 @@ getDeleteUserFormR userId = do
           ^{formWidget}
       |]
 -- gen get delete form - end
-
--- gen post delete form - start
-postDeleteUserR :: UserId -> Handler Value
-postDeleteUserR userId = do
-  runDB $ delete userId
-  urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR }
--- gen post delete form - end
