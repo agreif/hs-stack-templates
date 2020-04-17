@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>#{pageTitle pc}
 
-    <link href="@{StaticR css_uikit_3_2_6_min_css}" rel="stylesheet" type="text/css">
-    <script src="@{StaticR js_uikit_3_2_6_min_js}" type="text/javascript">
-    <script src="@{StaticR js_uikit_icons_3_2_6_min_js}" type="text/javascript">
+    <link href="@{StaticR css_uikit_min_css}" rel="stylesheet" type="text/css">
+    <script src="@{StaticR js_uikit_min_js}" type="text/javascript">
+    <script src="@{StaticR js_uikit_icons_min_js}" type="text/javascript">
 
     ^{pageHead pc}
 
