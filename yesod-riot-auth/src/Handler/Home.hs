@@ -1,17 +1,17 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE NoImplicitPrelude     #-}
-{-# LANGUAGE OverloadedStrings     #-}
-{-# LANGUAGE QuasiQuotes           #-}
-{-# LANGUAGE TemplateHaskell       #-}
-{-# LANGUAGE TypeFamilies          #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 
 module Handler.Home where
 
+import qualified Data.CaseInsensitive as CI
+import qualified Data.Text.Encoding as TE
 import Handler.Common
 import Import
 import Text.Hamlet (hamletFile)
-import qualified Data.Text.Encoding as TE
-import qualified Data.CaseInsensitive as CI
 
 getHomeR :: Handler Html
 getHomeR = redirect $ MyprojectR MyprojectHomeR
@@ -31,35 +31,40 @@ getHomeDataR = do
   appName <- runDB $ configAppName
   urlRenderer <- getUrlRender
   mainNavItems <- mainNavData user MainNavHome
-  let pages = defaultDataPages
-        { jDataPageHome = Just $ JDataPageHome { jDataPageHomeContent = "todo" }
-        }
+  let pages =
+        defaultDataPages
+          { jDataPageHome = Just $ JDataPageHome {jDataPageHomeContent = "todo"}
+          }
   msgHome <- localizedMsg MsgGlobalHome
   currentLanguage <- getLanguage
   translation <- getTranslation
   let currentDataUrl = urlRenderer $ MyprojectR HomeDataR
-  returnJson JData
-    { jDataAppName = appName
-    , jDataUserIdent = userIdent user
-    , jDataMainNavItems = mainNavItems
-    , jDataSubNavItems = []
-    , jDataPages = pages
-    , jDataHistoryState = Just JDataHistoryState
-      { jDataHistoryStateUrl = urlRenderer $ MyprojectR MyprojectHomeR
-      , jDataHistoryStateTitle = msgHome
+  returnJson
+    JData
+      { jDataAppName = appName,
+        jDataUserIdent = userIdent user,
+        jDataMainNavItems = mainNavItems,
+        jDataSubNavItems = [],
+        jDataPages = pages,
+        jDataHistoryState =
+          Just
+            JDataHistoryState
+              { jDataHistoryStateUrl = urlRenderer $ MyprojectR MyprojectHomeR,
+                jDataHistoryStateTitle = msgHome
+              },
+        jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
+        jDataCsrfToken = reqToken req,
+        jDataBreadcrumbItems =
+          [ JDataBreadcrumbItem
+              { jDataBreadcrumbItemLabel = msgHome,
+                jDataBreadcrumbItemDataUrl = currentDataUrl
+              }
+          ],
+        jDataCurrentLanguage = currentLanguage,
+        jDataTranslation = translation,
+        jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl,
+        jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
       }
-    , jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName
-    , jDataCsrfToken = reqToken req
-    , jDataBreadcrumbItems =
-      [ JDataBreadcrumbItem
-        { jDataBreadcrumbItemLabel = msgHome
-        , jDataBreadcrumbItemDataUrl = currentDataUrl }
-      ]
-    , jDataCurrentLanguage = currentLanguage
-    , jDataTranslation = translation
-    , jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl
-    , jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
-    }
 
 getRiotBodyTagR :: Handler Html
 getRiotBodyTagR = withUrlRenderer $(hamletFile "templates/riot/body_tag.hamlet")
@@ -91,9 +96,9 @@ getRiotDemobDetailPageTagR = withUrlRenderer $(hamletFile "templates/riot/demob_
 postLanguageDeR :: Text -> Handler Value
 postLanguageDeR dataUrlStr = do
   setLanguage "de"
-  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = dataUrlStr }
+  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = dataUrlStr}
 
 postLanguageEnR :: Text -> Handler Value
 postLanguageEnR dataUrlStr = do
   setLanguage "en-US"
-  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = dataUrlStr }
+  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = dataUrlStr}

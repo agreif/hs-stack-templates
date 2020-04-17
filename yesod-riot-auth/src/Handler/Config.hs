@@ -1,16 +1,16 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE NoImplicitPrelude     #-}
-{-# LANGUAGE OverloadedStrings     #-}
-{-# LANGUAGE QuasiQuotes           #-}
-{-# LANGUAGE TemplateHaskell       #-}
-{-# LANGUAGE TypeFamilies          #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 
 module Handler.Config where
 
+import Database.Persist.Sql (updateWhereCount)
 import Handler.Common
 import Import
 import qualified Text.Blaze.Html.Renderer.Text as Blaze
-import Database.Persist.Sql (updateWhereCount)
 
 -------------------------------------------------------
 -- edit config
@@ -18,13 +18,14 @@ import Database.Persist.Sql (updateWhereCount)
 
 -- gen data edit - start
 data VEditConfig = VEditConfig
-  { vEditConfigCode :: Maybe Text
-  , vEditConfigStringValue :: Maybe Text
-  , vEditConfigIntValue :: Maybe Int
-  , vEditConfigDoubleValue :: Maybe Double
-  , vEditConfigBoolValue :: Bool
-  , vEditConfigVersion :: Int
+  { vEditConfigCode :: Maybe Text,
+    vEditConfigStringValue :: Maybe Text,
+    vEditConfigIntValue :: Maybe Int,
+    vEditConfigDoubleValue :: Maybe Double,
+    vEditConfigBoolValue :: Bool,
+    vEditConfigVersion :: Int
   }
+
 -- gen data edit - end
 
 -- gen get edit form - start
@@ -33,12 +34,14 @@ getEditConfigFormR configId = do
   config <- runDB $ get404 configId
   (formWidget, _) <- generateFormPost $ vEditConfigForm (Just config)
   formLayout $ do
-    toWidget [whamlet|
+    toWidget
+      [whamlet|
       <h1>_{MsgConfigEditConfig}
       <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ EditConfigR configId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
+
 -- gen get edit form - end
 
 -- gen post edit form - start
@@ -50,53 +53,72 @@ postEditConfigR configId = do
       curTime <- liftIO getCurrentTime
       Entity _ authUser <- requireAuth
       urlRenderer <- getUrlRender
-      let persistFields = [
-            ConfigStringValue =. vEditConfigStringValue vEditConfig
-            , ConfigIntValue =. vEditConfigIntValue vEditConfig
-            , ConfigDoubleValue =. vEditConfigDoubleValue vEditConfig
-            , ConfigBoolValue =. vEditConfigBoolValue vEditConfig
-            , ConfigVersion =. vEditConfigVersion vEditConfig + 1
-            , ConfigUpdatedAt =. curTime
-            , ConfigUpdatedBy =. userIdent authUser
+      let persistFields =
+            [ ConfigStringValue =. vEditConfigStringValue vEditConfig,
+              ConfigIntValue =. vEditConfigIntValue vEditConfig,
+              ConfigDoubleValue =. vEditConfigDoubleValue vEditConfig,
+              ConfigBoolValue =. vEditConfigBoolValue vEditConfig,
+              ConfigVersion =. vEditConfigVersion vEditConfig + 1,
+              ConfigUpdatedAt =. curTime,
+              ConfigUpdatedBy =. userIdent authUser
             ]
       updateCount <- runDB $ do
-        uc <- updateWhereCount [ ConfigId ==. configId
-                               , ConfigVersion ==. vEditConfigVersion vEditConfig
-                               ] persistFields
+        uc <-
+          updateWhereCount
+            [ ConfigId ==. configId,
+              ConfigVersion ==. vEditConfigVersion vEditConfig
+            ]
+            persistFields
         return uc
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR }
-        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ AdminR AdminDataR }
+        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR}
+        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ AdminR AdminDataR}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
-      returnJson $ VFormSubmitInvalid
-        { fsInvalidModalWidgetHtml = toStrict $ Blaze.renderHtml resultHtml }
+      returnJson $
+        VFormSubmitInvalid
+          { fsInvalidModalWidgetHtml = toStrict $ Blaze.renderHtml resultHtml
+          }
 
 -- gen post edit form - end
 
 -- gen edit form - start
 vEditConfigForm :: Maybe Config -> Html -> MForm Handler (FormResult VEditConfig, Widget)
 vEditConfigForm maybeConfig extra = do
-  (codeResult, codeView) <- mopt textField
-    codeFs
-    (Just $ configCode <$> maybeConfig)
-  (stringValueResult, stringValueView) <- mopt textField
-    stringValueFs
-    (configStringValue <$> maybeConfig)
-  (intValueResult, intValueView) <- mopt intField
-    intValueFs
-    (configIntValue <$> maybeConfig)
-  (doubleValueResult, doubleValueView) <- mopt doubleField
-    doubleValueFs
-    (configDoubleValue <$> maybeConfig)
-  (boolValueResult, boolValueView) <- mreq checkBoxField
-    boolValueFs
-    (configBoolValue <$> maybeConfig)
-  (versionResult, versionView) <- mreq hiddenField
-    versionFs
-    (configVersion <$> maybeConfig)
+  (codeResult, codeView) <-
+    mopt
+      textField
+      codeFs
+      (Just $ configCode <$> maybeConfig)
+  (stringValueResult, stringValueView) <-
+    mopt
+      textField
+      stringValueFs
+      (configStringValue <$> maybeConfig)
+  (intValueResult, intValueView) <-
+    mopt
+      intField
+      intValueFs
+      (configIntValue <$> maybeConfig)
+  (doubleValueResult, doubleValueView) <-
+    mopt
+      doubleField
+      doubleValueFs
+      (configDoubleValue <$> maybeConfig)
+  (boolValueResult, boolValueView) <-
+    mreq
+      checkBoxField
+      boolValueFs
+      (configBoolValue <$> maybeConfig)
+  (versionResult, versionView) <-
+    mreq
+      hiddenField
+      versionFs
+      (configVersion <$> maybeConfig)
   let vEditConfigResult = VEditConfig <$> codeResult <*> stringValueResult <*> intValueResult <*> doubleValueResult <*> boolValueResult <*> versionResult
-  let formWidget = toWidget [whamlet|
+  let formWidget =
+        toWidget
+          [whamlet|
     #{extra}
     ^{fvInput versionView}
     <div .uk-margin-small :not $ null $ fvErrors codeView:.uk-form-danger>
@@ -133,51 +155,57 @@ vEditConfigForm maybeConfig extra = do
   return (vEditConfigResult, formWidget)
   where
     codeFs :: FieldSettings App
-    codeFs = FieldSettings
-      { fsLabel = SomeMessage MsgConfigCode
-      , fsTooltip = Nothing
-      , fsId = Just "code"
-      , fsName = Just "code"
-      , fsAttrs = [ ("disabled",""), ("class","uk-form-width-large uk-input uk-form-small") ]
-      }
+    codeFs =
+      FieldSettings
+        { fsLabel = SomeMessage MsgConfigCode,
+          fsTooltip = Nothing,
+          fsId = Just "code",
+          fsName = Just "code",
+          fsAttrs = [("disabled", ""), ("class", "uk-form-width-large uk-input uk-form-small")]
+        }
     stringValueFs :: FieldSettings App
-    stringValueFs = FieldSettings
-      { fsLabel = SomeMessage MsgConfigStringValue
-      , fsTooltip = Nothing
-      , fsId = Just "stringValue"
-      , fsName = Just "stringValue"
-      , fsAttrs = [ ("class","uk-form-width-large uk-input uk-form-small") ]
-      }
+    stringValueFs =
+      FieldSettings
+        { fsLabel = SomeMessage MsgConfigStringValue,
+          fsTooltip = Nothing,
+          fsId = Just "stringValue",
+          fsName = Just "stringValue",
+          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+        }
     intValueFs :: FieldSettings App
-    intValueFs = FieldSettings
-      { fsLabel = SomeMessage MsgConfigIntValue
-      , fsTooltip = Nothing
-      , fsId = Just "intValue"
-      , fsName = Just "intValue"
-      , fsAttrs = [ ("class","uk-form-width-medium uk-input uk-form-small") ]
-      }
+    intValueFs =
+      FieldSettings
+        { fsLabel = SomeMessage MsgConfigIntValue,
+          fsTooltip = Nothing,
+          fsId = Just "intValue",
+          fsName = Just "intValue",
+          fsAttrs = [("class", "uk-form-width-medium uk-input uk-form-small")]
+        }
     doubleValueFs :: FieldSettings App
-    doubleValueFs = FieldSettings
-      { fsLabel = SomeMessage MsgConfigDoubleValue
-      , fsTooltip = Nothing
-      , fsId = Just "doubleValue"
-      , fsName = Just "doubleValue"
-      , fsAttrs = [ ("class","uk-form-width-medium uk-input uk-form-small") ]
-      }
+    doubleValueFs =
+      FieldSettings
+        { fsLabel = SomeMessage MsgConfigDoubleValue,
+          fsTooltip = Nothing,
+          fsId = Just "doubleValue",
+          fsName = Just "doubleValue",
+          fsAttrs = [("class", "uk-form-width-medium uk-input uk-form-small")]
+        }
     boolValueFs :: FieldSettings App
-    boolValueFs = FieldSettings
-      { fsLabel = SomeMessage MsgConfigBoolValue
-      , fsTooltip = Nothing
-      , fsId = Just "boolValue"
-      , fsName = Just "boolValue"
-      , fsAttrs = [ ("class","uk-checkbox") ]
-      }
+    boolValueFs =
+      FieldSettings
+        { fsLabel = SomeMessage MsgConfigBoolValue,
+          fsTooltip = Nothing,
+          fsId = Just "boolValue",
+          fsName = Just "boolValue",
+          fsAttrs = [("class", "uk-checkbox")]
+        }
     versionFs :: FieldSettings App
-    versionFs = FieldSettings
-      { fsLabel = ""
-      , fsTooltip = Nothing
-      , fsId = Just "version"
-      , fsName = Just "version"
-      , fsAttrs = []
-      }
+    versionFs =
+      FieldSettings
+        { fsLabel = "",
+          fsTooltip = Nothing,
+          fsId = Just "version",
+          fsName = Just "version",
+          fsAttrs = []
+        }
 -- gen edit form - end

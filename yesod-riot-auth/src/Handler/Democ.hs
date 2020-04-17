@@ -1,17 +1,16 @@
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE NoImplicitPrelude     #-}
-{-# LANGUAGE OverloadedStrings     #-}
-{-# LANGUAGE QuasiQuotes           #-}
-{-# LANGUAGE TypeFamilies          #-}
-{-# LANGUAGE FlexibleContexts      #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 
 module Handler.Democ where
 
+import Database.Persist.Sql (updateWhereCount)
 import Handler.Common
 import Import
-
 import qualified Text.Blaze.Html.Renderer.Text as Blaze
-import Database.Persist.Sql (updateWhereCount)
 
 -------------------------------------------------------
 -- add
@@ -21,6 +20,7 @@ import Database.Persist.Sql (updateWhereCount)
 data VAddDemoc = VAddDemoc
   { vAddDemocMyattr :: Text
   }
+
 -- gen data add - end
 
 -- gen get add form - start
@@ -28,12 +28,14 @@ getAddDemocFormR :: DemobId -> Handler Html
 getAddDemocFormR demobId = do
   (formWidget, _) <- generateFormPost $ vAddDemocForm Nothing
   formLayout $ do
-    toWidget [whamlet|
+    toWidget
+      [whamlet|
       <h1>_{MsgDemocAddDemoc}
       <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ AddDemocR demobId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
+
 -- gen get add form - end
 
 -- gen post add - start
@@ -45,34 +47,41 @@ postAddDemocR demobId = do
       curTime <- liftIO getCurrentTime
       Entity _ authUser <- requireAuth
       urlRenderer <- getUrlRender
-      let democ = Democ
-            {
-            democDemobId = demobId
-            , democMyattr = vAddDemocMyattr vAddDemoc
-            , democVersion = 1
-            , democCreatedAt = curTime
-            , democCreatedBy = userIdent authUser
-            , democUpdatedAt = curTime
-            , democUpdatedBy = userIdent authUser
-            }
+      let democ =
+            Democ
+              { democDemobId = demobId,
+                democMyattr = vAddDemocMyattr vAddDemoc,
+                democVersion = 1,
+                democCreatedAt = curTime,
+                democCreatedBy = userIdent authUser,
+                democUpdatedAt = curTime,
+                democUpdatedBy = userIdent authUser
+              }
       runDB $ do
         _ <- insert democ
         return ()
-      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId }
+      returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
-      returnJson $ VFormSubmitInvalid
-        { fsInvalidModalWidgetHtml = toStrict $ Blaze.renderHtml resultHtml }
+      returnJson $
+        VFormSubmitInvalid
+          { fsInvalidModalWidgetHtml = toStrict $ Blaze.renderHtml resultHtml
+          }
+
 -- gen post add - end
 
 -- gen add form - start
 vAddDemocForm :: Maybe Democ -> Html -> MForm Handler (FormResult VAddDemoc, Widget)
 vAddDemocForm maybeDemoc extra = do
-  (myattrResult, myattrView) <- mreq textField
-    myattrFs
-    (democMyattr <$> maybeDemoc)
+  (myattrResult, myattrView) <-
+    mreq
+      textField
+      myattrFs
+      (democMyattr <$> maybeDemoc)
   let vAddDemocResult = VAddDemoc <$> myattrResult
-  let formWidget = toWidget [whamlet|
+  let formWidget =
+        toWidget
+          [whamlet|
     #{extra}
     <div .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
       <label .uk-form-label :not $ null $ fvErrors myattrView:.uk-text-danger for=#{fvId myattrView}>#{fvLabel myattrView}
@@ -84,13 +93,15 @@ vAddDemocForm maybeDemoc extra = do
   return (vAddDemocResult, formWidget)
   where
     myattrFs :: FieldSettings App
-    myattrFs = FieldSettings
-      { fsLabel = SomeMessage MsgDemocMyattr
-      , fsTooltip = Nothing
-      , fsId = Just "myattr"
-      , fsName = Just "myattr"
-      , fsAttrs = [ ("class","uk-form-width-large uk-input uk-form-small") ]
-      }
+    myattrFs =
+      FieldSettings
+        { fsLabel = SomeMessage MsgDemocMyattr,
+          fsTooltip = Nothing,
+          fsId = Just "myattr",
+          fsName = Just "myattr",
+          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+        }
+
 -- gen add form - end
 
 -------------------------------------------------------
@@ -99,9 +110,10 @@ vAddDemocForm maybeDemoc extra = do
 
 -- gen data edit - start
 data VEditDemoc = VEditDemoc
-  { vEditDemocMyattr :: Text
-  , vEditDemocVersion :: Int
+  { vEditDemocMyattr :: Text,
+    vEditDemocVersion :: Int
   }
+
 -- gen data edit - end
 
 -- gen get edit form - start
@@ -110,12 +122,14 @@ getEditDemocFormR democId = do
   democ <- runDB $ get404 democId
   (formWidget, _) <- generateFormPost $ vEditDemocForm (Just democ)
   formLayout $ do
-    toWidget [whamlet|
+    toWidget
+      [whamlet|
       <h1>_{MsgDemocEditDemoc}
       <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ EditDemocR democId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
+
 -- gen get edit form - end
 
 -- gen post edit - start
@@ -128,38 +142,49 @@ postEditDemocR democId = do
       Entity _ authUser <- requireAuth
       urlRenderer <- getUrlRender
       democ <- runDB $ get404 democId
-      let persistFields = [
-            DemocMyattr =. vEditDemocMyattr vEditDemoc
-            , DemocVersion =. vEditDemocVersion vEditDemoc + 1
-            , DemocUpdatedAt =. curTime
-            , DemocUpdatedBy =. userIdent authUser
+      let persistFields =
+            [ DemocMyattr =. vEditDemocMyattr vEditDemoc,
+              DemocVersion =. vEditDemocVersion vEditDemoc + 1,
+              DemocUpdatedAt =. curTime,
+              DemocUpdatedBy =. userIdent authUser
             ]
       updateCount <- runDB $ do
-        uc <- updateWhereCount [ DemocId ==. democId
-                               , DemocVersion ==. vEditDemocVersion vEditDemoc
-                               ] persistFields
+        uc <-
+          updateWhereCount
+            [ DemocId ==. democId,
+              DemocVersion ==. vEditDemocVersion vEditDemoc
+            ]
+            persistFields
         return uc
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ }
-        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ }
+        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ}
+        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
-      returnJson $ VFormSubmitInvalid
-        { fsInvalidModalWidgetHtml = toStrict $ Blaze.renderHtml resultHtml }
+      returnJson $
+        VFormSubmitInvalid
+          { fsInvalidModalWidgetHtml = toStrict $ Blaze.renderHtml resultHtml
+          }
 
 -- gen post edit - end
 
 -- gen edit form - start
 vEditDemocForm :: Maybe Democ -> Html -> MForm Handler (FormResult VEditDemoc, Widget)
 vEditDemocForm maybeDemoc extra = do
-  (myattrResult, myattrView) <- mreq textField
-    myattrFs
-    (democMyattr <$> maybeDemoc)
-  (versionResult, versionView) <- mreq hiddenField
-    versionFs
-    (democVersion <$> maybeDemoc)
+  (myattrResult, myattrView) <-
+    mreq
+      textField
+      myattrFs
+      (democMyattr <$> maybeDemoc)
+  (versionResult, versionView) <-
+    mreq
+      hiddenField
+      versionFs
+      (democVersion <$> maybeDemoc)
   let vEditDemocResult = VEditDemoc <$> myattrResult <*> versionResult
-  let formWidget = toWidget [whamlet|
+  let formWidget =
+        toWidget
+          [whamlet|
     #{extra}
     ^{fvInput versionView}
     <div .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
@@ -172,21 +197,24 @@ vEditDemocForm maybeDemoc extra = do
   return (vEditDemocResult, formWidget)
   where
     myattrFs :: FieldSettings App
-    myattrFs = FieldSettings
-      { fsLabel = SomeMessage MsgDemocMyattr
-      , fsTooltip = Nothing
-      , fsId = Just "myattr"
-      , fsName = Just "myattr"
-      , fsAttrs = [ ("class","uk-form-width-large uk-input uk-form-small") ]
-      }
+    myattrFs =
+      FieldSettings
+        { fsLabel = SomeMessage MsgDemocMyattr,
+          fsTooltip = Nothing,
+          fsId = Just "myattr",
+          fsName = Just "myattr",
+          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+        }
     versionFs :: FieldSettings App
-    versionFs = FieldSettings
-      { fsLabel = ""
-      , fsTooltip = Nothing
-      , fsId = Just "version"
-      , fsName = Just "version"
-      , fsAttrs = []
-      }
+    versionFs =
+      FieldSettings
+        { fsLabel = "",
+          fsTooltip = Nothing,
+          fsId = Just "version",
+          fsName = Just "version",
+          fsAttrs = []
+        }
+
 -- gen edit form - end
 
 -------------------------------------------------------
@@ -198,12 +226,14 @@ getDeleteDemocFormR :: DemocId -> Handler Html
 getDeleteDemocFormR democId = do
   (formWidget, _) <- generateFormPost $ vDeleteDemocForm
   formLayout $ do
-    toWidget [whamlet|
+    toWidget
+      [whamlet|
       <h1>_{MsgDemocDeleteDemoc}
       <form #modal-form .uk-form-horizontal method=post action=@{MyprojectR $ DeleteDemocR democId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
+
 -- gen get delete form - end
 
 -- gen post delete - start
@@ -212,7 +242,8 @@ postDeleteDemocR democId = do
   democ <- runDB $ get404 democId
   runDB $ delete democId
   urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ }
+  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ}
+
 -- gen post delete - end
 
 -- gen delete form - start

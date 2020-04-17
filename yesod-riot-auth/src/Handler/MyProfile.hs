@@ -1,18 +1,17 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE NoImplicitPrelude     #-}
-{-# LANGUAGE OverloadedStrings     #-}
-{-# LANGUAGE QuasiQuotes           #-}
-{-# LANGUAGE TemplateHaskell       #-}
-{-# LANGUAGE TypeFamilies          #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 
 module Handler.MyProfile where
 
+import Database.Persist.Sql (updateWhereCount)
 import Handler.Common
 import Handler.Mailer
 import Import
-
 import qualified Text.Blaze.Html.Renderer.Text as Blaze
-import Database.Persist.Sql (updateWhereCount)
 
 postEditMyprofileR :: Handler Value
 postEditMyprofileR = do
@@ -24,34 +23,42 @@ postEditMyprofileR = do
       (passwd, passwdHash) <- liftIO $ generatePassword 32
       urlRenderer <- getUrlRender
       let persistFields =
-            [ UserEmail =. vEditMyprofileEmail vEditMyprofile
-            , UserVersion =. vEditMyprofileVersion vEditMyprofile + 1
-            , UserUpdatedAt =. curTime
-            , UserUpdatedBy =. userIdent authUser
+            [ UserEmail =. vEditMyprofileEmail vEditMyprofile,
+              UserVersion =. vEditMyprofileVersion vEditMyprofile + 1,
+              UserUpdatedAt =. curTime,
+              UserUpdatedBy =. userIdent authUser
             ]
-      let persistFields' = persistFields ++ if vEditMyprofileIsResetPassword vEditMyprofile
-                                            then [UserPassword =. (Just passwdHash)]
-                                            else []
-      updateCount <- runDB $ updateWhereCount [ UserId ==. userId
-                                              , UserVersion ==. vEditMyprofileVersion vEditMyprofile
-                                              ] persistFields'
-
+      let persistFields' =
+            persistFields
+              ++ if vEditMyprofileIsResetPassword vEditMyprofile
+                then [UserPassword =. (Just passwdHash)]
+                else []
+      updateCount <-
+        runDB $
+          updateWhereCount
+            [ UserId ==. userId,
+              UserVersion ==. vEditMyprofileVersion vEditMyprofile
+            ]
+            persistFields'
       when (vEditMyprofileIsResetPassword vEditMyprofile) $ do
         user' <- runDB $ get404 userId
         sendPasswordResetMail user' passwd
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR HomeDataR }
-        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ MyprojectR HomeDataR }
+        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR HomeDataR}
+        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ MyprojectR HomeDataR}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
-      returnJson $ VFormSubmitInvalid
-        { fsInvalidModalWidgetHtml = toStrict $ Blaze.renderHtml resultHtml }
+      returnJson $
+        VFormSubmitInvalid
+          { fsInvalidModalWidgetHtml = toStrict $ Blaze.renderHtml resultHtml
+          }
 
 data VEditMyprofile = VEditMyprofile
-  { vEditMyprofileEmail :: Text
-  , vEditMyprofileIsResetPassword :: Bool
-  , vEditMyprofileVersion :: Int
-  } deriving (Show)
+  { vEditMyprofileEmail :: Text,
+    vEditMyprofileIsResetPassword :: Bool,
+    vEditMyprofileVersion :: Int
+  }
+  deriving (Show)
 
 getEditMyprofileFormR :: Handler Html
 getEditMyprofileFormR = do
@@ -59,7 +66,8 @@ getEditMyprofileFormR = do
   myProfile <- runDB $ get404 userId
   (formWidget, _) <- generateFormPost $ vEditMyprofileForm $ Just myProfile
   formLayout $ do
-    toWidget [whamlet|
+    toWidget
+      [whamlet|
       <h1>_{MsgGlobalEditMyProfile}
       <form #modal-form .uk-form-horizontal method=post action=@{MyprojectR $ EditMyprofileR}>
         <div #modal-form-widget>
@@ -68,17 +76,25 @@ getEditMyprofileFormR = do
 
 vEditMyprofileForm :: Maybe User -> Html -> MForm Handler (FormResult VEditMyprofile, Widget)
 vEditMyprofileForm maybeUser extra = do
-  (emailResult, emailView) <- mreq textField
-    vMyprofileEmailFieldSettings
-    (userEmail <$> maybeUser)
-  (isResetPasswordResult, isResetPasswordView) <- mreq checkBoxField
-    vMyprofileIsResetPasswordFieldSettings
-    (Nothing)
-  (versionResult, versionView) <- mreq hiddenField
-    vMyprofileVersionFieldSettings
-    (userVersion <$> maybeUser)
+  (emailResult, emailView) <-
+    mreq
+      textField
+      vMyprofileEmailFieldSettings
+      (userEmail <$> maybeUser)
+  (isResetPasswordResult, isResetPasswordView) <-
+    mreq
+      checkBoxField
+      vMyprofileIsResetPasswordFieldSettings
+      (Nothing)
+  (versionResult, versionView) <-
+    mreq
+      hiddenField
+      vMyprofileVersionFieldSettings
+      (userVersion <$> maybeUser)
   let vEditMyprofileResult = VEditMyprofile <$> emailResult <*> isResetPasswordResult <*> versionResult
-  let formWidget = toWidget [whamlet|
+  let formWidget =
+        toWidget
+          [whamlet|
     #{extra}
     ^{fvInput versionView}
     <div .uk-margin-small :not $ null $ fvErrors emailView:.uk-form-danger>
@@ -97,26 +113,29 @@ vEditMyprofileForm maybeUser extra = do
   return (vEditMyprofileResult, formWidget)
   where
     vMyprofileEmailFieldSettings :: FieldSettings App
-    vMyprofileEmailFieldSettings = FieldSettings {
-      fsLabel = "Email",
-      fsTooltip = Nothing,
-      fsId = Just "email",
-      fsName = Just "email",
-      fsAttrs = [ ("class","uk-form-width-large uk-input uk-form-small") ]
-      }
+    vMyprofileEmailFieldSettings =
+      FieldSettings
+        { fsLabel = "Email",
+          fsTooltip = Nothing,
+          fsId = Just "email",
+          fsName = Just "email",
+          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+        }
     vMyprofileIsResetPasswordFieldSettings :: FieldSettings App
-    vMyprofileIsResetPasswordFieldSettings = FieldSettings {
-      fsLabel = "Neues Passwort generieren?",
-      fsTooltip = Nothing,
-      fsId = Just "isResetPassword",
-      fsName = Just "isResetPassword",
-      fsAttrs = [ ("class","uk-checkbox") ]
-      }
+    vMyprofileIsResetPasswordFieldSettings =
+      FieldSettings
+        { fsLabel = "Neues Passwort generieren?",
+          fsTooltip = Nothing,
+          fsId = Just "isResetPassword",
+          fsName = Just "isResetPassword",
+          fsAttrs = [("class", "uk-checkbox")]
+        }
     vMyprofileVersionFieldSettings :: FieldSettings App
-    vMyprofileVersionFieldSettings = FieldSettings {
-      fsLabel = "",
-      fsTooltip = Nothing,
-      fsId = Just "version",
-      fsName = Just "version",
-      fsAttrs = []
-      }
+    vMyprofileVersionFieldSettings =
+      FieldSettings
+        { fsLabel = "",
+          fsTooltip = Nothing,
+          fsId = Just "version",
+          fsName = Just "version",
+          fsAttrs = []
+        }

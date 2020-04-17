@@ -1,21 +1,21 @@
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE NoImplicitPrelude     #-}
-{-# LANGUAGE OverloadedStrings     #-}
-{-# LANGUAGE QuasiQuotes           #-}
-{-# LANGUAGE TemplateHaskell       #-}
-{-# LANGUAGE TypeFamilies          #-}
-{-# LANGUAGE FlexibleContexts      #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 
 module Handler.Demob where
 
+import qualified Data.CaseInsensitive as CI
+import qualified Data.Text.Encoding as TE
+import qualified Database.Esqueleto as E
+import Database.Persist.Sql (updateWhereCount)
 import Handler.Common
 import Import
-import Text.Hamlet (hamletFile)
 import qualified Text.Blaze.Html.Renderer.Text as Blaze
-import Database.Persist.Sql (updateWhereCount)
-import qualified Data.Text.Encoding as TE
-import qualified Data.CaseInsensitive as CI
-import qualified Database.Esqueleto as E
+import Text.Hamlet (hamletFile)
 
 -------------------------------------------------------
 -- list
@@ -37,7 +37,8 @@ postDemobListPageNumDataR pageNum = do
   urlRenderer <- getUrlRender
   returnJson $
     VFormSubmitSuccess
-    { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobListPageNumDataR pageNum }
+      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobListPageNumDataR pageNum
+      }
 
 getDemobListPageNumDataR :: Int -> Handler Value
 getDemobListPageNumDataR = demobListPageNumDataR
@@ -52,42 +53,49 @@ demobListPageNumDataR pageNum = do
   (jDataDemobs, jDataPaginationItems) <- demobListJDatas pageNum
   let pages =
         defaultDataPages
-        { jDataPageDemobList =
-            Just $ JDataPageDemobList
-            { jDataPageDemobListDemobs = jDataDemobs
-            , jDataPageDemobListAddFormUrl = urlRenderer $ MyprojectR AddDemobFormR
-            , jDataPageDemobListPaginationItems = jDataPaginationItems
-            }
-        }
+          { jDataPageDemobList =
+              Just $
+                JDataPageDemobList
+                  { jDataPageDemobListDemobs = jDataDemobs,
+                    jDataPageDemobListAddFormUrl = urlRenderer $ MyprojectR AddDemobFormR,
+                    jDataPageDemobListPaginationItems = jDataPaginationItems
+                  }
+          }
   msgHome <- localizedMsg MsgGlobalHome
   msgDemobs <- localizedMsg MsgDemobDemobs
   currentLanguage <- getLanguage
   translation <- getTranslation
   let currentDataUrl = urlRenderer $ MyprojectR DemobListDataR
-  returnJson JData
-    { jDataAppName = appName
-    , jDataUserIdent = userIdent user
-    , jDataMainNavItems = mainNavItems
-    , jDataSubNavItems = []
-    , jDataPages = pages
-    , jDataHistoryState = Just JDataHistoryState
-      { jDataHistoryStateUrl = urlRenderer $ MyprojectR DemobListR
-      , jDataHistoryStateTitle = msgDemobs
+  returnJson
+    JData
+      { jDataAppName = appName,
+        jDataUserIdent = userIdent user,
+        jDataMainNavItems = mainNavItems,
+        jDataSubNavItems = [],
+        jDataPages = pages,
+        jDataHistoryState =
+          Just
+            JDataHistoryState
+              { jDataHistoryStateUrl = urlRenderer $ MyprojectR DemobListR,
+                jDataHistoryStateTitle = msgDemobs
+              },
+        jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
+        jDataCsrfToken = reqToken req,
+        jDataBreadcrumbItems =
+          [ JDataBreadcrumbItem
+              { jDataBreadcrumbItemLabel = msgHome,
+                jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomeDataR
+              },
+            JDataBreadcrumbItem
+              { jDataBreadcrumbItemLabel = msgDemobs,
+                jDataBreadcrumbItemDataUrl = currentDataUrl
+              }
+          ],
+        jDataCurrentLanguage = currentLanguage,
+        jDataTranslation = translation,
+        jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl,
+        jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
       }
-    , jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName
-    , jDataCsrfToken = reqToken req
-    , jDataBreadcrumbItems = [ JDataBreadcrumbItem
-                               { jDataBreadcrumbItemLabel = msgHome
-                               , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomeDataR }
-                             , JDataBreadcrumbItem
-                               { jDataBreadcrumbItemLabel = msgDemobs
-                               , jDataBreadcrumbItemDataUrl = currentDataUrl }
-                             ]
-    , jDataCurrentLanguage = currentLanguage
-    , jDataTranslation = translation
-    , jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl
-    , jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
-    }
 
 demobListJDatas :: Int -> Handler ([JDataDemob], Maybe [JDataPaginationItem])
 demobListJDatas pageNum = do
@@ -96,21 +104,23 @@ demobListJDatas pageNum = do
   paginationJDatas <- getPaginationJDatas rowCount demobListPageSize pageNum 11 (MyprojectR . DemobListPageNumDataR)
   demobEnts <- runDB loadDemobTuples
   let demobJDatas =
-        map (\demobEnt@(Entity demobId _) ->
-               JDataDemob
-               { jDataDemobEnt = demobEnt
-               , jDataDemobDetailUrl = urlRenderer $ MyprojectR $ DemobDetailR demobId
-               , jDataDemobDetailDataUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId
-               , jDataDemobDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteDemobFormR demobId
-               }
-            ) demobEnts
+        map
+          ( \demobEnt@(Entity demobId _) ->
+              JDataDemob
+                { jDataDemobEnt = demobEnt,
+                  jDataDemobDetailUrl = urlRenderer $ MyprojectR $ DemobDetailR demobId,
+                  jDataDemobDetailDataUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId,
+                  jDataDemobDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteDemobFormR demobId
+                }
+          )
+          demobEnts
   return (demobJDatas, paginationJDatas)
   where
     loadDemobTuples :: YesodDB App [(Entity Demob)]
     loadDemobTuples = do
       let pageSize = fromIntegral demobListPageSize
       E.select $ E.from $ \(da) -> do
-        E.orderBy [ E.desc (da E.^. DemobId) ]
+        E.orderBy [E.desc (da E.^. DemobId)]
         E.offset ((fromIntegral pageNum - 1) * pageSize)
         E.limit pageSize
         return (da)
@@ -141,65 +151,75 @@ getDemobDetailDataR demobId = do
   urlRenderer <- getUrlRender
   let pages =
         defaultDataPages
-        { jDataPageDemobDetail =
-            Just $ JDataPageDemobDetail
-            { jDataPageDemobDetailDemobEnt = Entity demobId demob
-            , jDataPageDemobDetailDemocs = jDataDemocs
-            , jDataPageDemobDetailDemobEditFormUrl = urlRenderer $ MyprojectR $ EditDemobFormR demobId
-            , jDataPageDemobDetailDemocAddFormUrl = urlRenderer $ MyprojectR $ AddDemocFormR demobId
-            }
-        }
+          { jDataPageDemobDetail =
+              Just $
+                JDataPageDemobDetail
+                  { jDataPageDemobDetailDemobEnt = Entity demobId demob,
+                    jDataPageDemobDetailDemocs = jDataDemocs,
+                    jDataPageDemobDetailDemobEditFormUrl = urlRenderer $ MyprojectR $ EditDemobFormR demobId,
+                    jDataPageDemobDetailDemocAddFormUrl = urlRenderer $ MyprojectR $ AddDemocFormR demobId
+                  }
+          }
   msgHome <- localizedMsg MsgGlobalHome
   msgDemobs <- localizedMsg MsgDemobDemobs
   msgDemob <- localizedMsg MsgDemobDemob
   currentLanguage <- getLanguage
   translation <- getTranslation
   let currentDataUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId
-  returnJson JData
-    { jDataAppName = appName
-    , jDataUserIdent = userIdent user
-    , jDataMainNavItems = mainNavItems
-    , jDataSubNavItems = []
-    , jDataPages = pages
-    , jDataHistoryState = Just JDataHistoryState
-      { jDataHistoryStateUrl = urlRenderer $ MyprojectR $ DemobDetailR demobId
-      , jDataHistoryStateTitle = msgDemob
+  returnJson
+    JData
+      { jDataAppName = appName,
+        jDataUserIdent = userIdent user,
+        jDataMainNavItems = mainNavItems,
+        jDataSubNavItems = [],
+        jDataPages = pages,
+        jDataHistoryState =
+          Just
+            JDataHistoryState
+              { jDataHistoryStateUrl = urlRenderer $ MyprojectR $ DemobDetailR demobId,
+                jDataHistoryStateTitle = msgDemob
+              },
+        jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
+        jDataCsrfToken = reqToken req,
+        jDataBreadcrumbItems =
+          [ JDataBreadcrumbItem
+              { jDataBreadcrumbItemLabel = msgHome,
+                jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomeDataR
+              },
+            JDataBreadcrumbItem
+              { jDataBreadcrumbItemLabel = msgDemobs,
+                jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR DemobListDataR
+              },
+            JDataBreadcrumbItem
+              { jDataBreadcrumbItemLabel = demobMyattr demob,
+                jDataBreadcrumbItemDataUrl = currentDataUrl
+              }
+          ],
+        jDataCurrentLanguage = currentLanguage,
+        jDataTranslation = translation,
+        jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl,
+        jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
       }
-    , jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName
-    , jDataCsrfToken = reqToken req
-    , jDataBreadcrumbItems = [ JDataBreadcrumbItem
-                               { jDataBreadcrumbItemLabel = msgHome
-                               , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomeDataR }
-                             , JDataBreadcrumbItem
-                               { jDataBreadcrumbItemLabel = msgDemobs
-                               , jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR DemobListDataR }
-                             , JDataBreadcrumbItem
-                               { jDataBreadcrumbItemLabel = demobMyattr demob
-                               , jDataBreadcrumbItemDataUrl = currentDataUrl }
-                             ]
-    , jDataCurrentLanguage = currentLanguage
-    , jDataTranslation = translation
-    , jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl
-    , jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
-    }
 
 democJDatas :: DemobId -> Handler [JDataDemoc]
 democJDatas demobId = do
   urlRenderer <- getUrlRender
   democTuples <- runDB loadDemocTuples
-  return $ map
-    (\(democEnt@(Entity democId _)) ->
-       JDataDemoc
-       { jDataDemocEnt = democEnt
-       , jDataDemocEditFormUrl = urlRenderer $ MyprojectR $ EditDemocFormR democId
-       , jDataDemocDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteDemocFormR democId
-       })
-    democTuples
+  return $
+    map
+      ( \(democEnt@(Entity democId _)) ->
+          JDataDemoc
+            { jDataDemocEnt = democEnt,
+              jDataDemocEditFormUrl = urlRenderer $ MyprojectR $ EditDemocFormR democId,
+              jDataDemocDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteDemocFormR democId
+            }
+      )
+      democTuples
   where
     loadDemocTuples :: YesodDB App [(Entity Democ)]
     loadDemocTuples =
       E.select $ E.from $ \(dc) -> do
-        E.orderBy [ E.desc (dc E.^. DemocId) ]
+        E.orderBy [E.desc (dc E.^. DemocId)]
         E.where_ (dc E.^. DemocDemobId E.==. E.val demobId)
         return (dc)
 
@@ -211,6 +231,7 @@ democJDatas demobId = do
 data VAddDemob = VAddDemob
   { vAddDemobMyattr :: Text
   }
+
 -- gen data add - end
 
 -- gen get add form - start
@@ -218,12 +239,14 @@ getAddDemobFormR :: Handler Html
 getAddDemobFormR = do
   (formWidget, _) <- generateFormPost $ vAddDemobForm Nothing
   formLayout $ do
-    toWidget [whamlet|
+    toWidget
+      [whamlet|
       <h1>_{MsgDemobAddDemob}
       <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR AddDemobR}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
+
 -- gen get add form - end
 
 -- gen post add - start
@@ -235,33 +258,40 @@ postAddDemobR = do
       curTime <- liftIO getCurrentTime
       Entity _ authUser <- requireAuth
       urlRenderer <- getUrlRender
-      let demob = Demob
-            {
-            demobMyattr = vAddDemobMyattr vAddDemob
-            , demobVersion = 1
-            , demobCreatedAt = curTime
-            , demobCreatedBy = userIdent authUser
-            , demobUpdatedAt = curTime
-            , demobUpdatedBy = userIdent authUser
-            }
+      let demob =
+            Demob
+              { demobMyattr = vAddDemobMyattr vAddDemob,
+                demobVersion = 1,
+                demobCreatedAt = curTime,
+                demobCreatedBy = userIdent authUser,
+                demobUpdatedAt = curTime,
+                demobUpdatedBy = userIdent authUser
+              }
       runDB $ do
         _ <- insert demob
         return ()
-      returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemobListDataR }
+      returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemobListDataR}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
-      returnJson $ VFormSubmitInvalid
-        { fsInvalidModalWidgetHtml = toStrict $ Blaze.renderHtml resultHtml }
+      returnJson $
+        VFormSubmitInvalid
+          { fsInvalidModalWidgetHtml = toStrict $ Blaze.renderHtml resultHtml
+          }
+
 -- gen post add - end
 
 -- gen add form - start
 vAddDemobForm :: Maybe Demob -> Html -> MForm Handler (FormResult VAddDemob, Widget)
 vAddDemobForm maybeDemob extra = do
-  (myattrResult, myattrView) <- mreq textField
-    myattrFs
-    (demobMyattr <$> maybeDemob)
+  (myattrResult, myattrView) <-
+    mreq
+      textField
+      myattrFs
+      (demobMyattr <$> maybeDemob)
   let vAddDemobResult = VAddDemob <$> myattrResult
-  let formWidget = toWidget [whamlet|
+  let formWidget =
+        toWidget
+          [whamlet|
     #{extra}
     <div .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
       <label .uk-form-label :not $ null $ fvErrors myattrView:.uk-text-danger for=#{fvId myattrView}>#{fvLabel myattrView}
@@ -273,13 +303,15 @@ vAddDemobForm maybeDemob extra = do
   return (vAddDemobResult, formWidget)
   where
     myattrFs :: FieldSettings App
-    myattrFs = FieldSettings
-      { fsLabel = SomeMessage MsgDemobMyattr
-      , fsTooltip = Nothing
-      , fsId = Just "myattr"
-      , fsName = Just "myattr"
-      , fsAttrs = [ ("class","uk-form-width-large uk-input uk-form-small") ]
-      }
+    myattrFs =
+      FieldSettings
+        { fsLabel = SomeMessage MsgDemobMyattr,
+          fsTooltip = Nothing,
+          fsId = Just "myattr",
+          fsName = Just "myattr",
+          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+        }
+
 -- gen add form - end
 
 -------------------------------------------------------
@@ -288,9 +320,10 @@ vAddDemobForm maybeDemob extra = do
 
 -- gen data edit - start
 data VEditDemob = VEditDemob
-  { vEditDemobMyattr :: Text
-  , vEditDemobVersion :: Int
+  { vEditDemobMyattr :: Text,
+    vEditDemobVersion :: Int
   }
+
 -- gen data edit - end
 
 -- gen get edit form - start
@@ -299,12 +332,14 @@ getEditDemobFormR demobId = do
   demob <- runDB $ get404 demobId
   (formWidget, _) <- generateFormPost $ vEditDemobForm (Just demob)
   formLayout $ do
-    toWidget [whamlet|
+    toWidget
+      [whamlet|
       <h1>_{MsgDemobEditDemob}
       <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ EditDemobR demobId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
+
 -- gen get edit form - end
 
 -- gen post edit - start
@@ -316,38 +351,49 @@ postEditDemobR demobId = do
       curTime <- liftIO getCurrentTime
       Entity _ authUser <- requireAuth
       urlRenderer <- getUrlRender
-      let persistFields = [
-            DemobMyattr =. vEditDemobMyattr vEditDemob
-            , DemobVersion =. vEditDemobVersion vEditDemob + 1
-            , DemobUpdatedAt =. curTime
-            , DemobUpdatedBy =. userIdent authUser
+      let persistFields =
+            [ DemobMyattr =. vEditDemobMyattr vEditDemob,
+              DemobVersion =. vEditDemobVersion vEditDemob + 1,
+              DemobUpdatedAt =. curTime,
+              DemobUpdatedBy =. userIdent authUser
             ]
       updateCount <- runDB $ do
-        uc <- updateWhereCount [ DemobId ==. demobId
-                               , DemobVersion ==. vEditDemobVersion vEditDemob
-                               ] persistFields
+        uc <-
+          updateWhereCount
+            [ DemobId ==. demobId,
+              DemobVersion ==. vEditDemobVersion vEditDemob
+            ]
+            persistFields
         return uc
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId }
-        else returnJson $ VFormSubmitStale { fsStaleDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId }
+        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId}
+        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
-      returnJson $ VFormSubmitInvalid
-        { fsInvalidModalWidgetHtml = toStrict $ Blaze.renderHtml resultHtml }
+      returnJson $
+        VFormSubmitInvalid
+          { fsInvalidModalWidgetHtml = toStrict $ Blaze.renderHtml resultHtml
+          }
 
 -- gen post edit - end
 
 -- gen edit form - start
 vEditDemobForm :: Maybe Demob -> Html -> MForm Handler (FormResult VEditDemob, Widget)
 vEditDemobForm maybeDemob extra = do
-  (myattrResult, myattrView) <- mreq textField
-    myattrFs
-    (demobMyattr <$> maybeDemob)
-  (versionResult, versionView) <- mreq hiddenField
-    versionFs
-    (demobVersion <$> maybeDemob)
+  (myattrResult, myattrView) <-
+    mreq
+      textField
+      myattrFs
+      (demobMyattr <$> maybeDemob)
+  (versionResult, versionView) <-
+    mreq
+      hiddenField
+      versionFs
+      (demobVersion <$> maybeDemob)
   let vEditDemobResult = VEditDemob <$> myattrResult <*> versionResult
-  let formWidget = toWidget [whamlet|
+  let formWidget =
+        toWidget
+          [whamlet|
     #{extra}
     ^{fvInput versionView}
     <div .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
@@ -360,21 +406,24 @@ vEditDemobForm maybeDemob extra = do
   return (vEditDemobResult, formWidget)
   where
     myattrFs :: FieldSettings App
-    myattrFs = FieldSettings
-      { fsLabel = SomeMessage MsgDemobMyattr
-      , fsTooltip = Nothing
-      , fsId = Just "myattr"
-      , fsName = Just "myattr"
-      , fsAttrs = [ ("class","uk-form-width-large uk-input uk-form-small") ]
-      }
+    myattrFs =
+      FieldSettings
+        { fsLabel = SomeMessage MsgDemobMyattr,
+          fsTooltip = Nothing,
+          fsId = Just "myattr",
+          fsName = Just "myattr",
+          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+        }
     versionFs :: FieldSettings App
-    versionFs = FieldSettings
-      { fsLabel = ""
-      , fsTooltip = Nothing
-      , fsId = Just "version"
-      , fsName = Just "version"
-      , fsAttrs = []
-      }
+    versionFs =
+      FieldSettings
+        { fsLabel = "",
+          fsTooltip = Nothing,
+          fsId = Just "version",
+          fsName = Just "version",
+          fsAttrs = []
+        }
+
 -- gen edit form - end
 
 -------------------------------------------------------
@@ -386,12 +435,14 @@ getDeleteDemobFormR :: DemobId -> Handler Html
 getDeleteDemobFormR demobId = do
   (formWidget, _) <- generateFormPost $ vDeleteDemobForm
   formLayout $ do
-    toWidget [whamlet|
+    toWidget
+      [whamlet|
       <h1>_{MsgDemobDeleteDemob}
       <form #modal-form .uk-form-horizontal method=post action=@{MyprojectR $ DeleteDemobR demobId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
+
 -- gen get delete form - end
 
 -- gen post delete - start
@@ -399,7 +450,8 @@ postDeleteDemobR :: DemobId -> Handler Value
 postDeleteDemobR demobId = do
   runDB $ delete demobId
   urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemobListDataR }
+  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemobListDataR}
+
 -- gen post delete - end
 
 -- gen delete form - start
