@@ -6,7 +6,7 @@ packages:
 
 extra-deps:
 - git: https://github.com/agreif/hs-yesod-model-generator.git
-  commit: addcc86a5ea1c64c4735b53c2011353795cc7ca3
+  commit: 9b56fb2044eff645a992530aa5913341371a48d5
 - pwstore-fast-2.4.4@sha256:9b6a37510d8b9f37f409a8ab3babac9181afcaaa3fce8ba1c131a7ed3de30698,1351
 
 allow-newer: true
