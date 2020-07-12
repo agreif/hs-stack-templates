@@ -16,13 +16,12 @@ import Text.Shakespeare.Text (stext)
 
 sendTestMail :: Text -> Handler ()
 sendTestMail email = do
-  do
-    appName <- runDB $ configAppName
-    sendMail'
-      email
-      ("[" ++ appName ++ "] Test-Mail")
-      (textPartContent)
-      (htmlPartContent)
+  appName <- runDB configAppName
+  sendMail'
+    email
+    ("[" ++ appName ++ "] Test-Mail")
+    (textPartContent)
+    (htmlPartContent)
   where
     textPartContent = encodeUtf8 [stext| Test-Mail |]
     htmlPartContent = renderHtml [shamlet| Test-Mail |]
