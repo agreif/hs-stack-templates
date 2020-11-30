@@ -42,7 +42,7 @@ data VSendTestmail = VSendTestmail
 getSendTestmailFormR :: Handler Html
 getSendTestmailFormR = do
   (formWidget, _) <- generateFormPost $ vSendTestmailForm Nothing
-  formLayout $ do
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgTestmailSendTestMail}

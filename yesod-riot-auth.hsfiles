@@ -276,6 +276,13 @@ import Prelude (IO)
 main :: IO ()
 main = develMain
 
+{-# START_FILE app/genRiotFiles.hs #-}
+[200~import Application (genRiotFilesMain)
+import Prelude (IO)
+
+main :: IO ()
+main = genRiotFilesMain
+
 {-# START_FILE app/main.hs #-}
 import Prelude     (IO)
 import Application (appMain)
@@ -665,8 +672,8 @@ auth-dummy-login: true
 nixpkgs.pkgs.haskell.packages.${compiler}.callPackage ./my-project.nix { }
 
 {-# START_FILE format.sh #-}
-ormolu -p -m inplace \
-       $(find src \
+ormolu -m inplace \
+       $(find src hs-generator \
 	      -type f \
 	      -name "*.hs" \
 	      ! -path "src/Settings.hs" \
@@ -5330,7 +5337,7 @@ data VSendTestmail = VSendTestmail
 getSendTestmailFormR :: Handler Html
 getSendTestmailFormR = do
   (formWidget, _) <- generateFormPost $ vSendTestmailForm Nothing
-  formLayout $ do
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgTestmailSendTestMail}
