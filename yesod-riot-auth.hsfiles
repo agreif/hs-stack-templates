@@ -6371,6 +6371,11 @@ ul.uk-breadcrumb {
     width: 100px;
 }
 
+div.uk-form-danger input {
+    color: #f0506e;
+    border-color: #f0506e;
+}
+
 .scrollToTop {
     display: none;
     position: fixed;
