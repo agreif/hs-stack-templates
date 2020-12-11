@@ -1,4 +1,4 @@
-/*! UIkit 3.5.9 | https://www.getuikit.com | (c) 2014 - 2020 YOOtheme | MIT License */
+/*! UIkit 3.5.15 | https://www.getuikit.com | (c) 2014 - 2020 YOOtheme | MIT License */
 /* ========================================================================
    Component: Base
  ========================================================================== */
@@ -2797,13 +2797,13 @@ select.uk-form-width-xsmall {
   margin-top: -15px;
   margin-bottom: -15px;
 }
-.uk-card-body .uk-nav-default > li > a,
-.uk-card-body .uk-nav-default .uk-nav-header,
-.uk-card-body .uk-nav-default .uk-nav-divider {
+.uk-card-body > .uk-nav-default > li > a,
+.uk-card-body > .uk-nav-default .uk-nav-header,
+.uk-card-body > .uk-nav-default .uk-nav-divider {
   padding-left: 30px;
   padding-right: 30px;
 }
-.uk-card-body .uk-nav-default .uk-nav-sub {
+.uk-card-body > .uk-nav-default .uk-nav-sub {
   padding-left: 45px;
 }
 /* Desktop and bigger */
@@ -2816,13 +2816,13 @@ select.uk-form-width-xsmall {
     margin-top: -25px;
     margin-bottom: -25px;
   }
-  .uk-card-body .uk-nav-default > li > a,
-  .uk-card-body .uk-nav-default .uk-nav-header,
-  .uk-card-body .uk-nav-default .uk-nav-divider {
+  .uk-card-body > .uk-nav-default > li > a,
+  .uk-card-body > .uk-nav-default .uk-nav-header,
+  .uk-card-body > .uk-nav-default .uk-nav-divider {
     padding-left: 40px;
     padding-right: 40px;
   }
-  .uk-card-body .uk-nav-default .uk-nav-sub {
+  .uk-card-body > .uk-nav-default .uk-nav-sub {
     padding-left: 55px;
   }
 }
@@ -2837,13 +2837,13 @@ select.uk-form-width-xsmall {
   margin-top: -5px;
   margin-bottom: -5px;
 }
-.uk-card-small .uk-nav-default > li > a,
-.uk-card-small .uk-nav-default .uk-nav-header,
-.uk-card-small .uk-nav-default .uk-nav-divider {
+.uk-card-small > .uk-nav-default > li > a,
+.uk-card-small > .uk-nav-default .uk-nav-header,
+.uk-card-small > .uk-nav-default .uk-nav-divider {
   padding-left: 20px;
   padding-right: 20px;
 }
-.uk-card-small .uk-nav-default .uk-nav-sub {
+.uk-card-small > .uk-nav-default .uk-nav-sub {
   padding-left: 35px;
 }
 /*
@@ -2857,13 +2857,13 @@ select.uk-form-width-xsmall {
   .uk-card-large > .uk-nav-default:only-child {
     margin: 0;
   }
-  .uk-card-large .uk-nav-default > li > a,
-  .uk-card-large .uk-nav-default .uk-nav-header,
-  .uk-card-large .uk-nav-default .uk-nav-divider {
+  .uk-card-large > .uk-nav-default > li > a,
+  .uk-card-large > .uk-nav-default .uk-nav-header,
+  .uk-card-large > .uk-nav-default .uk-nav-divider {
     padding-left: 0;
     padding-right: 0;
   }
-  .uk-card-large .uk-nav-default .uk-nav-sub {
+  .uk-card-large > .uk-nav-default .uk-nav-sub {
     padding-left: 15px;
   }
 }
@@ -3971,11 +3971,17 @@ select.uk-form-width-xsmall {
 /* Container
  ========================================================================== */
 /*
- * 1. Clip child elements
+ * Clip child elements
  */
 .uk-slider-container {
-  /* 1 */
   overflow: hidden;
+}
+/*
+ * Widen container to prevent box-shadows from clipping, `large-box-shadow`
+ */
+.uk-slider-container-offset {
+  margin: -11px -25px -39px -25px;
+  padding: 11px 25px 39px 25px;
 }
 /* Items
  ========================================================================== */
@@ -4494,6 +4500,10 @@ select.uk-form-width-xsmall {
  ========================================================================== */
 .uk-sortable-placeholder {
   opacity: 0;
+}
+/* Item
+ ========================================================================== */
+.uk-sortable-item {
   pointer-events: none;
 }
 /* Empty modifier
@@ -5632,11 +5642,15 @@ ul.uk-nav-sub {
 /*
  * Divider
  * `nth-child` makes it also work without JS if it's only one row
+ * 1. Remove space between inline block elements.
+ * 2. Style
  */
 .uk-breadcrumb > :nth-child(n+2):not(.uk-first-column)::before {
   content: "/";
   display: inline-block;
-  margin: 0 20px;
+  /* 1 */
+  margin: 0 20px 0 calc(20px - 4px);
+  /* 2 */
   font-size: 0.875rem;
   color: #999;
 }
