@@ -53,6 +53,29 @@
     \         alert("error" + jqXHR.status + " ------ " + textStatus)
     \     })
     \   },
+    \   postForm(url, formElem, onSuccessFunc) {
+    \     var tag = this
+    \     var serializedElems = formElem.serializeArray();
+    \     var formData = new FormData();
+    \     $.each(serializedElems, function(i, field) {
+    \       formData.append(field.name, field.value)
+    \     })
+    \     var xhr = new XMLHttpRequest();
+    \     xhr.open("POST", url, true);
+    \     xhr.setRequestHeader(tag.data.csrfHeaderName, tag.data.csrfToken)
+    \     xhr.onload = function () {
+    \       if (xhr.readyState === xhr.DONE) {
+    \         if (xhr.status === 200) {
+    \           var data = jQuery.parseJSON(xhr.response)
+    \           if (onSuccessFunc) onSuccessFunc(data)
+    \           if (data.dataJsonUrl) tag.refreshData(data.dataJsonUrl, false, false)
+    \         } else {
+    \           alert("error " + xhr.status)
+    \         }
+    \       }
+    \     }
+    \     xhr.send(formData)
+    \   },
     \   scrollToTop(event) {
     \     event.preventDefault()
     \     $('html, body').animate({scrollTop : 0},800);
@@ -135,7 +158,16 @@
     \       modal.destroy();
     \     })
     \   },
+    \   getUikit() {
+    \     return UIkit
+    \   },
+    \   format(str, ...args) {
+    \     return format(str, args)
+    \   },
     \   formatDouble(value) {
     \     return formatDouble(value, this.data.currentLanguage)
+    \   },
+    \   copyTextToClipboard(text) {
+    \     return copyTextToClipboard(text)
     \   },
     \ }

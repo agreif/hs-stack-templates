@@ -1,3 +1,24 @@
+window.onerror = function (message, url, lineNo, colNo, error) {
+   console.log(arguments);
+   let container = document.createElement('div');
+   container.style.color = 'red';
+   container.style.position = 'fixed';
+   container.style.background = '#eee';
+   container.style.padding = '2em';
+   container.style.top = '1em';
+   container.style.left = '1em';
+   let msg = document.createElement('pre');
+   msg.innerText = [
+      'Message: ' + message,
+      'URL: ' + url,
+      'Line: ' + lineNo,
+      'Column: ' + colNo,
+      'Stack: ' + (error && error.stack)
+   ].join('\n');
+   container.appendChild(msg);
+   document.body.appendChild(container);
+};
+
 window.addEventListener('popstate', function(event) {
     if (!event.state) {
         return
@@ -25,6 +46,14 @@ $(document).ready(function(){
         }
     });
 });
+
+function format(str, args) {
+    return str.replace(/{(\d+)}/g, function(match, number) {
+        return typeof args[number] != 'undefined'
+            ? args[number]
+            : match
+    })
+}
 
 function formatDouble(num, langs) {
     if (typeof langs == "undefined") console.log("formatDouble: languages missing (" + num + ")")
@@ -110,4 +139,18 @@ function classNames(classes) {
 	if (value) return [...acc, key]
 	return acc
     }, []).join(' ')
+}
+
+function copyTextToClipboard(text) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        document.execCommand("copy");
+    } catch (err) {
+        console.error("Fallback: Oops, unable to copy", err);
+    }
+    document.body.removeChild(textArea);
 }

@@ -101,6 +101,9 @@
             <tr>
               <th>Git Commit Message:
               <td>{context.data.pages.admin.gitCommitMessage}
+            <tr>
+              <th>UIkit version:
+              <td>{context.getUikit().version}
 
   <script>
     \ export default {
