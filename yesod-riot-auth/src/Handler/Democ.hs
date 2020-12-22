@@ -2,6 +2,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
@@ -26,8 +27,8 @@ data VAddDemoc = VAddDemoc
 -- gen get add form - start
 getAddDemocFormR :: DemobId -> Handler Html
 getAddDemocFormR demobId = do
-  (formWidget, _) <- generateFormPost $ vAddDemocForm Nothing
-  formLayout $ do
+  (formWidget, _) <- generateFormPost $ vAddDemocForm Nothing Nothing
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgDemocAddDemoc}
@@ -41,7 +42,7 @@ getAddDemocFormR demobId = do
 -- gen post add - start
 postAddDemocR :: DemobId -> Handler Value
 postAddDemocR demobId = do
-  ((result, formWidget), _) <- runFormPost $ vAddDemocForm Nothing
+  ((result, formWidget), _) <- runFormPost $ vAddDemocForm Nothing Nothing
   case result of
     FormSuccess vAddDemoc -> do
       curTime <- liftIO getCurrentTime
@@ -71,8 +72,8 @@ postAddDemocR demobId = do
 -- gen post add - end
 
 -- gen add form - start
-vAddDemocForm :: Maybe Democ -> Html -> MForm Handler (FormResult VAddDemoc, Widget)
-vAddDemocForm maybeDemoc extra = do
+vAddDemocForm :: Maybe DemocId -> Maybe Democ -> Html -> MForm Handler (FormResult VAddDemoc, Widget)
+vAddDemocForm maybeDemocId maybeDemoc extra = do
   (myattrResult, myattrView) <-
     mreq
       textField
@@ -83,12 +84,16 @@ vAddDemocForm maybeDemoc extra = do
         toWidget
           [whamlet|
     #{extra}
-    <div .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors myattrView:.uk-text-danger for=#{fvId myattrView}>#{fvLabel myattrView}
+    <div #myattrInputWidget .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
+      <label #myattrInputLabel .uk-form-label :not $ null $ fvErrors myattrView:.uk-text-danger for=#{fvId myattrView}>#{fvLabel myattrView}
       <div .uk-form-controls>
         ^{fvInput myattrView}
+        <span #myattrInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgDemocMyattrInputInfo}
         $maybe err <- fvErrors myattrView
-          &nbsp;#{err}
+          <br>
+          <span #myattrInputError .uk-text-small .input-error>
+            &nbsp;#{err}
     |]
   return (vAddDemocResult, formWidget)
   where
@@ -99,7 +104,7 @@ vAddDemocForm maybeDemoc extra = do
           fsTooltip = Nothing,
           fsId = Just "myattr",
           fsName = Just "myattr",
-          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
 
 -- gen add form - end
@@ -120,8 +125,8 @@ data VEditDemoc = VEditDemoc
 getEditDemocFormR :: DemocId -> Handler Html
 getEditDemocFormR democId = do
   democ <- runDB $ get404 democId
-  (formWidget, _) <- generateFormPost $ vEditDemocForm (Just democ)
-  formLayout $ do
+  (formWidget, _) <- generateFormPost $ vEditDemocForm (Just democId) (Just democ)
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgDemocEditDemoc}
@@ -135,7 +140,7 @@ getEditDemocFormR democId = do
 -- gen post edit - start
 postEditDemocR :: DemocId -> Handler Value
 postEditDemocR democId = do
-  ((result, formWidget), _) <- runFormPost $ vEditDemocForm Nothing
+  ((result, formWidget), _) <- runFormPost $ vEditDemocForm (Just democId) Nothing
   case result of
     FormSuccess vEditDemoc -> do
       curTime <- liftIO getCurrentTime
@@ -169,8 +174,8 @@ postEditDemocR democId = do
 -- gen post edit - end
 
 -- gen edit form - start
-vEditDemocForm :: Maybe Democ -> Html -> MForm Handler (FormResult VEditDemoc, Widget)
-vEditDemocForm maybeDemoc extra = do
+vEditDemocForm :: Maybe DemocId -> Maybe Democ -> Html -> MForm Handler (FormResult VEditDemoc, Widget)
+vEditDemocForm maybeDemocId maybeDemoc extra = do
   (myattrResult, myattrView) <-
     mreq
       textField
@@ -187,12 +192,16 @@ vEditDemocForm maybeDemoc extra = do
           [whamlet|
     #{extra}
     ^{fvInput versionView}
-    <div .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors myattrView:.uk-text-danger for=#{fvId myattrView}>#{fvLabel myattrView}
+    <div #myattrInputWidget .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
+      <label #myattrInputLabel .uk-form-label :not $ null $ fvErrors myattrView:.uk-text-danger for=#{fvId myattrView}>#{fvLabel myattrView}
       <div .uk-form-controls>
         ^{fvInput myattrView}
+        <span #myattrInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgDemocMyattrInputInfo}
         $maybe err <- fvErrors myattrView
-          &nbsp;#{err}
+          <br>
+          <span #myattrInputError .uk-text-small .input-error>
+            &nbsp;#{err}
     |]
   return (vEditDemocResult, formWidget)
   where
@@ -203,7 +212,7 @@ vEditDemocForm maybeDemoc extra = do
           fsTooltip = Nothing,
           fsId = Just "myattr",
           fsName = Just "myattr",
-          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
     versionFs :: FieldSettings App
     versionFs =
@@ -225,7 +234,7 @@ vEditDemocForm maybeDemoc extra = do
 getDeleteDemocFormR :: DemocId -> Handler Html
 getDeleteDemocFormR democId = do
   (formWidget, _) <- generateFormPost $ vDeleteDemocForm
-  formLayout $ do
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgDemocDeleteDemoc}
@@ -239,8 +248,17 @@ getDeleteDemocFormR democId = do
 -- gen post delete - start
 postDeleteDemocR :: DemocId -> Handler Value
 postDeleteDemocR democId = do
+  curTime <- liftIO getCurrentTime
+  Entity _ authUser <- requireAuth
   democ <- runDB $ get404 democId
-  runDB $ delete democId
+  runDB $ do
+    -- trick to record the user deleting the entity
+    updateWhere
+      [DemocId ==. democId]
+      [ DemocUpdatedAt =. curTime,
+        DemocUpdatedBy =. userIdent authUser
+      ]
+    delete democId
   urlRenderer <- getUrlRender
   returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ}
 

@@ -80,6 +80,7 @@ demobListPageNumDataR pageNum = do
                 jDataHistoryStateTitle = msgDemobs
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
+        jDataCsrfParamName = defaultCsrfParamName,
         jDataCsrfToken = reqToken req,
         jDataBreadcrumbItems =
           [ JDataBreadcrumbItem
@@ -180,6 +181,7 @@ getDemobDetailDataR demobId = do
                 jDataHistoryStateTitle = msgDemob
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
+        jDataCsrfParamName = defaultCsrfParamName,
         jDataCsrfToken = reqToken req,
         jDataBreadcrumbItems =
           [ JDataBreadcrumbItem
@@ -207,7 +209,7 @@ democJDatas demobId = do
   democTuples <- runDB loadDemocTuples
   return $
     map
-      ( \(democEnt@(Entity democId _)) ->
+      ( \democEnt@(Entity democId _) ->
           JDataDemoc
             { jDataDemocEnt = democEnt,
               jDataDemocEditFormUrl = urlRenderer $ MyprojectR $ EditDemocFormR democId,
@@ -237,8 +239,8 @@ data VAddDemob = VAddDemob
 -- gen get add form - start
 getAddDemobFormR :: Handler Html
 getAddDemobFormR = do
-  (formWidget, _) <- generateFormPost $ vAddDemobForm Nothing
-  formLayout $ do
+  (formWidget, _) <- generateFormPost $ vAddDemobForm Nothing Nothing
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgDemobAddDemob}
@@ -252,7 +254,7 @@ getAddDemobFormR = do
 -- gen post add - start
 postAddDemobR :: Handler Value
 postAddDemobR = do
-  ((result, formWidget), _) <- runFormPost $ vAddDemobForm Nothing
+  ((result, formWidget), _) <- runFormPost $ vAddDemobForm Nothing Nothing
   case result of
     FormSuccess vAddDemob -> do
       curTime <- liftIO getCurrentTime
@@ -281,8 +283,8 @@ postAddDemobR = do
 -- gen post add - end
 
 -- gen add form - start
-vAddDemobForm :: Maybe Demob -> Html -> MForm Handler (FormResult VAddDemob, Widget)
-vAddDemobForm maybeDemob extra = do
+vAddDemobForm :: Maybe DemobId -> Maybe Demob -> Html -> MForm Handler (FormResult VAddDemob, Widget)
+vAddDemobForm maybeDemobId maybeDemob extra = do
   (myattrResult, myattrView) <-
     mreq
       textField
@@ -293,12 +295,16 @@ vAddDemobForm maybeDemob extra = do
         toWidget
           [whamlet|
     #{extra}
-    <div .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors myattrView:.uk-text-danger for=#{fvId myattrView}>#{fvLabel myattrView}
+    <div #myattrInputWidget .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
+      <label #myattrInputLabel .uk-form-label :not $ null $ fvErrors myattrView:.uk-text-danger for=#{fvId myattrView}>#{fvLabel myattrView}
       <div .uk-form-controls>
         ^{fvInput myattrView}
+        <span #myattrInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgDemobMyattrInputInfo}
         $maybe err <- fvErrors myattrView
-          &nbsp;#{err}
+          <br>
+          <span #myattrInputError .uk-text-small .input-error>
+            &nbsp;#{err}
     |]
   return (vAddDemobResult, formWidget)
   where
@@ -309,7 +315,7 @@ vAddDemobForm maybeDemob extra = do
           fsTooltip = Nothing,
           fsId = Just "myattr",
           fsName = Just "myattr",
-          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
 
 -- gen add form - end
@@ -330,8 +336,8 @@ data VEditDemob = VEditDemob
 getEditDemobFormR :: DemobId -> Handler Html
 getEditDemobFormR demobId = do
   demob <- runDB $ get404 demobId
-  (formWidget, _) <- generateFormPost $ vEditDemobForm (Just demob)
-  formLayout $ do
+  (formWidget, _) <- generateFormPost $ vEditDemobForm (Just demobId) (Just demob)
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgDemobEditDemob}
@@ -345,7 +351,7 @@ getEditDemobFormR demobId = do
 -- gen post edit - start
 postEditDemobR :: DemobId -> Handler Value
 postEditDemobR demobId = do
-  ((result, formWidget), _) <- runFormPost $ vEditDemobForm Nothing
+  ((result, formWidget), _) <- runFormPost $ vEditDemobForm (Just demobId) Nothing
   case result of
     FormSuccess vEditDemob -> do
       curTime <- liftIO getCurrentTime
@@ -378,8 +384,8 @@ postEditDemobR demobId = do
 -- gen post edit - end
 
 -- gen edit form - start
-vEditDemobForm :: Maybe Demob -> Html -> MForm Handler (FormResult VEditDemob, Widget)
-vEditDemobForm maybeDemob extra = do
+vEditDemobForm :: Maybe DemobId -> Maybe Demob -> Html -> MForm Handler (FormResult VEditDemob, Widget)
+vEditDemobForm maybeDemobId maybeDemob extra = do
   (myattrResult, myattrView) <-
     mreq
       textField
@@ -396,12 +402,16 @@ vEditDemobForm maybeDemob extra = do
           [whamlet|
     #{extra}
     ^{fvInput versionView}
-    <div .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors myattrView:.uk-text-danger for=#{fvId myattrView}>#{fvLabel myattrView}
+    <div #myattrInputWidget .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
+      <label #myattrInputLabel .uk-form-label :not $ null $ fvErrors myattrView:.uk-text-danger for=#{fvId myattrView}>#{fvLabel myattrView}
       <div .uk-form-controls>
         ^{fvInput myattrView}
+        <span #myattrInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgDemobMyattrInputInfo}
         $maybe err <- fvErrors myattrView
-          &nbsp;#{err}
+          <br>
+          <span #myattrInputError .uk-text-small .input-error>
+            &nbsp;#{err}
     |]
   return (vEditDemobResult, formWidget)
   where
@@ -412,7 +422,7 @@ vEditDemobForm maybeDemob extra = do
           fsTooltip = Nothing,
           fsId = Just "myattr",
           fsName = Just "myattr",
-          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
     versionFs :: FieldSettings App
     versionFs =
@@ -434,7 +444,7 @@ vEditDemobForm maybeDemob extra = do
 getDeleteDemobFormR :: DemobId -> Handler Html
 getDeleteDemobFormR demobId = do
   (formWidget, _) <- generateFormPost $ vDeleteDemobForm
-  formLayout $ do
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgDemobDeleteDemob}
@@ -448,7 +458,16 @@ getDeleteDemobFormR demobId = do
 -- gen post delete - start
 postDeleteDemobR :: DemobId -> Handler Value
 postDeleteDemobR demobId = do
-  runDB $ delete demobId
+  curTime <- liftIO getCurrentTime
+  Entity _ authUser <- requireAuth
+  runDB $ do
+    -- trick to record the user deleting the entity
+    updateWhere
+      [DemobId ==. demobId]
+      [ DemobUpdatedAt =. curTime,
+        DemobUpdatedBy =. userIdent authUser
+      ]
+    delete demobId
   urlRenderer <- getUrlRender
   returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemobListDataR}
 

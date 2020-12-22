@@ -87,6 +87,7 @@ data JData = JData
     jDataHistoryState :: Maybe JDataHistoryState,
     jDataCsrfToken :: Maybe Text,
     jDataCsrfHeaderName :: Text,
+    jDataCsrfParamName :: Text,
     jDataBreadcrumbItems :: [JDataBreadcrumbItem],
     jDataCurrentLanguage :: Language,
     jDataTranslation :: Translation,
@@ -104,6 +105,7 @@ instance ToJSON JData where
         "pages" .= jDataPages o,
         "historyState" .= jDataHistoryState o,
         "csrfHeaderName" .= jDataCsrfHeaderName o,
+        "csrfParamName" .= jDataCsrfParamName o,
         "csrfToken" .= jDataCsrfToken o,
         "breadcrumbItems" .= jDataBreadcrumbItems o,
         "currentLanguage" .= jDataCurrentLanguage o,
@@ -540,6 +542,18 @@ getPaginationJDatas allCount pageSize curPageNum visibleNumsCount' routeFunc = d
 -- form helpers
 --------------------------------------------------------------------------------
 
+strippedTextField :: Field (HandlerFor App) Text
+strippedTextField = checkM strippedText textField
+  where
+    strippedText :: Text -> Handler (Either AppMessage Text)
+    strippedText text = return $ Right $ T.strip text
+
+strippedTextareaField :: Field (HandlerFor App) Textarea
+strippedTextareaField = checkM strippedText textareaField
+  where
+    strippedText :: Textarea -> Handler (Either AppMessage Textarea)
+    strippedText (Textarea text) = return $ Right $ Textarea $ T.strip text
+
 verticalCheckboxesField ::
   (YesodPersist site, RenderMessage site FormMessage, YesodPersistBackend site ~ SqlBackend, Eq a) =>
   HandlerFor site (OptionList a) ->
@@ -547,16 +561,16 @@ verticalCheckboxesField ::
 verticalCheckboxesField ioptlist =
   (multiSelectField ioptlist)
     { fieldView = \theId name attrs val _isReq -> do
-        opts <- fmap olOptions $ handlerToWidget ioptlist
+        opts <- olOptions <$> handlerToWidget ioptlist
         let optselected (Left _) _ = False
             optselected (Right vals) opt = (optionInternalValue opt) `elem` vals
         [whamlet|
-                <span ##{theId}>
-                    $forall opt <- opts
-                        <label style="display: block;">
-                            <input type=checkbox name=#{name} value=#{optionExternalValue opt} *{attrs} :optselected val opt:checked>
-                            #{optionDisplay opt}
-                |]
+              <span ##{theId}>
+                $forall opt <- opts
+                  <label style="display: block;">
+                    <input type=checkbox name=#{name} value=#{optionExternalValue opt} *{attrs} :optselected val opt:checked>
+                    #{optionDisplay opt}
+              |]
     }
 
 --------------------------------------------------------------------------------

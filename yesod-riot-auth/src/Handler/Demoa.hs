@@ -57,6 +57,7 @@ demoaListPageNumDataR pageNum = do
               Just $
                 JDataPageDemoaList
                   { jDataPageDemoaListDemoas = jDataDemoas,
+                    jDataPageDemoaListAddFormUrl = urlRenderer $ CrmR AddDemoaFormR,
                     jDataPageDemoaListPaginationItems = jDataPaginationItems
                   }
           }
@@ -140,8 +141,8 @@ data VAddDemoa = VAddDemoa
 -- gen get add form - start
 getAddDemoaFormR :: Handler Html
 getAddDemoaFormR = do
-  (formWidget, _) <- generateFormPost $ vAddDemoaForm Nothing
-  formLayout $ do
+  (formWidget, _) <- generateFormPost $ vAddDemoaForm Nothing Nothing
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgDemoaAddDemoa}
@@ -155,7 +156,7 @@ getAddDemoaFormR = do
 -- gen post add - start
 postAddDemoaR :: Handler Value
 postAddDemoaR = do
-  ((result, formWidget), _) <- runFormPost $ vAddDemoaForm Nothing
+  ((result, formWidget), _) <- runFormPost $ vAddDemoaForm Nothing Nothing
   case result of
     FormSuccess vAddDemoa -> do
       curTime <- liftIO getCurrentTime
@@ -184,8 +185,8 @@ postAddDemoaR = do
 -- gen post add - end
 
 -- gen add form - start
-vAddDemoaForm :: Maybe Demoa -> Html -> MForm Handler (FormResult VAddDemoa, Widget)
-vAddDemoaForm maybeDemoa extra = do
+vAddDemoaForm :: Maybe DemoaId -> Maybe Demoa -> Html -> MForm Handler (FormResult VAddDemoa, Widget)
+vAddDemoaForm maybeDemoaId maybeDemoa extra = do
   (myattrResult, myattrView) <-
     mreq
       textField
@@ -196,12 +197,16 @@ vAddDemoaForm maybeDemoa extra = do
         toWidget
           [whamlet|
     #{extra}
-    <div .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors myattrView:.uk-text-danger for=#{fvId myattrView}>#{fvLabel myattrView}
+    <div #myattrInputWidget .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
+      <label #myattrInputLabel .uk-form-label :not $ null $ fvErrors myattrView:.uk-text-danger for=#{fvId myattrView}>#{fvLabel myattrView}
       <div .uk-form-controls>
         ^{fvInput myattrView}
+        <span #myattrInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgDemoaMyattrInputInfo}
         $maybe err <- fvErrors myattrView
-          &nbsp;#{err}
+          <br>
+          <span #myattrInputError .uk-text-small .input-error>
+            &nbsp;#{err}
     |]
   return (vAddDemoaResult, formWidget)
   where
@@ -212,7 +217,7 @@ vAddDemoaForm maybeDemoa extra = do
           fsTooltip = Nothing,
           fsId = Just "myattr",
           fsName = Just "myattr",
-          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
 
 -- gen add form - end
@@ -233,8 +238,8 @@ data VEditDemoa = VEditDemoa
 getEditDemoaFormR :: DemoaId -> Handler Html
 getEditDemoaFormR demoaId = do
   demoa <- runDB $ get404 demoaId
-  (formWidget, _) <- generateFormPost $ vEditDemoaForm (Just demoa)
-  formLayout $ do
+  (formWidget, _) <- generateFormPost $ vEditDemoaForm (Just demoaId) (Just demoa)
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgDemoaEditDemoa}
@@ -248,7 +253,7 @@ getEditDemoaFormR demoaId = do
 -- gen post edit - start
 postEditDemoaR :: DemoaId -> Handler Value
 postEditDemoaR demoaId = do
-  ((result, formWidget), _) <- runFormPost $ vEditDemoaForm Nothing
+  ((result, formWidget), _) <- runFormPost $ vEditDemoaForm (Just demoaId) Nothing
   case result of
     FormSuccess vEditDemoa -> do
       curTime <- liftIO getCurrentTime
@@ -281,8 +286,8 @@ postEditDemoaR demoaId = do
 -- gen post edit - end
 
 -- gen edit form - start
-vEditDemoaForm :: Maybe Demoa -> Html -> MForm Handler (FormResult VEditDemoa, Widget)
-vEditDemoaForm maybeDemoa extra = do
+vEditDemoaForm :: Maybe DemoaId -> Maybe Demoa -> Html -> MForm Handler (FormResult VEditDemoa, Widget)
+vEditDemoaForm maybeDemoaId maybeDemoa extra = do
   (myattrResult, myattrView) <-
     mreq
       textField
@@ -299,12 +304,16 @@ vEditDemoaForm maybeDemoa extra = do
           [whamlet|
     #{extra}
     ^{fvInput versionView}
-    <div .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors myattrView:.uk-text-danger for=#{fvId myattrView}>#{fvLabel myattrView}
+    <div #myattrInputWidget .uk-margin-small :not $ null $ fvErrors myattrView:.uk-form-danger>
+      <label #myattrInputLabel .uk-form-label :not $ null $ fvErrors myattrView:.uk-text-danger for=#{fvId myattrView}>#{fvLabel myattrView}
       <div .uk-form-controls>
         ^{fvInput myattrView}
+        <span #myattrInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgDemoaMyattrInputInfo}
         $maybe err <- fvErrors myattrView
-          &nbsp;#{err}
+          <br>
+          <span #myattrInputError .uk-text-small .input-error>
+            &nbsp;#{err}
     |]
   return (vEditDemoaResult, formWidget)
   where
@@ -315,7 +324,7 @@ vEditDemoaForm maybeDemoa extra = do
           fsTooltip = Nothing,
           fsId = Just "myattr",
           fsName = Just "myattr",
-          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
     versionFs :: FieldSettings App
     versionFs =
@@ -337,7 +346,7 @@ vEditDemoaForm maybeDemoa extra = do
 getDeleteDemoaFormR :: DemoaId -> Handler Html
 getDeleteDemoaFormR demoaId = do
   (formWidget, _) <- generateFormPost $ vDeleteDemoaForm
-  formLayout $ do
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgDemoaDeleteDemoa}
@@ -351,7 +360,16 @@ getDeleteDemoaFormR demoaId = do
 -- gen post delete - start
 postDeleteDemoaR :: DemoaId -> Handler Value
 postDeleteDemoaR demoaId = do
-  runDB $ delete demoaId
+  curTime <- liftIO getCurrentTime
+  Entity _ authUser <- requireAuth
+  runDB $ do
+    -- trick to record the user deleting the entity
+    updateWhere
+      [DemoaId ==. demoaId]
+      [ DemoaUpdatedAt =. curTime,
+        DemoaUpdatedBy =. userIdent authUser
+      ]
+    delete demoaId
   urlRenderer <- getUrlRender
   returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemoaListDataR}
 

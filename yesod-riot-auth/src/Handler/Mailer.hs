@@ -1,6 +1,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
@@ -8,20 +9,80 @@ module Handler.Mailer where
 
 import Control.Concurrent (forkIO)
 import qualified Data.ByteString.Lazy.Internal as LBS
+import qualified Data.List as L
+import qualified Data.Text as T
 import Handler.Common
 import Import
 import Network.Mail.Mime
 import Text.Blaze.Html.Renderer.Utf8 (renderHtml)
 import Text.Shakespeare.Text (stext)
 
+sendMail' :: Text -> Text -> LBS.ByteString -> LBS.ByteString -> Handler ()
+sendMail' toEmail subject textPartContent htmlPartContent = do
+  fromEmail <- runDB configEmailFrom
+  appName <- runDB configAppName
+  sendMail''
+    (Just appName, fromEmail)
+    [(Nothing, toEmail)]
+    []
+    []
+    [ ("Reply-To", fromEmail)
+    ]
+    subject
+    textPartContent
+    htmlPartContent
+
+sendMail'' ::
+  (Maybe Text, Text) ->
+  [(Maybe Text, Text)] ->
+  [(Maybe Text, Text)] ->
+  [(Maybe Text, Text)] ->
+  Headers ->
+  Text ->
+  LBS.ByteString ->
+  LBS.ByteString ->
+  Handler ()
+sendMail'' (fromName, fromEmail) recipients ccs bccs headers subject textPartContent htmlPartContent = do
+  let mail =
+        Mail
+          { mailFrom = Address fromName fromEmail,
+            mailTo = map (\(toName, toEmail) -> Address toName toEmail) recipients,
+            mailCc = map (\(ccName, ccEmail) -> Address ccName ccEmail) ccs,
+            mailBcc =
+              map
+                (\(bccName, bccEmail) -> Address bccName bccEmail)
+                bccs,
+            mailHeaders = ("Subject", subject) : headers,
+            mailParts = [[htmlPart', textPart']]
+          }
+  _ <- liftIO $ forkIO $ renderSendMailCustom "/run/wrappers/bin/sendmail" ["-t"] mail
+  return ()
+  where
+    textPart' =
+      Part
+        { partType = "text/plain; charset=utf-8",
+          partEncoding = None,
+          partDisposition = DefaultDisposition,
+          partHeaders = [],
+          partContent = PartContent textPartContent
+        }
+    htmlPart' =
+      Part
+        { partType = "text/html; charset=utf-8",
+          partEncoding = Base64,
+          partDisposition = DefaultDisposition,
+          partHeaders = [],
+          partContent = PartContent htmlPartContent
+        }
+
 sendTestMail :: Text -> Handler ()
-sendTestMail email = do
+sendTestMail toEmail = do
   appName <- runDB configAppName
   sendMail'
-    email
+    toEmail
     ("[" ++ appName ++ "] Test-Mail")
-    (textPartContent)
-    (htmlPartContent)
+    textPartContent
+    htmlPartContent
   where
     textPartContent = encodeUtf8 [stext| Test-Mail |]
     htmlPartContent = renderHtml [shamlet| Test-Mail |]
@@ -105,39 +166,3 @@ Ihr #{appName} Team
   <br>
   Ihr #{appName} Team
       |]
-
-sendMail' :: Text -> Text -> LBS.ByteString -> LBS.ByteString -> Handler ()
-sendMail' to subject textPartContent htmlPartContent = do
-  from <- runDB $ configEmailFrom
-  appName <- runDB $ configAppName
-  let mail =
-        Mail
-          { mailFrom = Address (Just appName) from,
-            mailTo = [Address Nothing to],
-            mailCc = [],
-            mailBcc = [],
-            mailHeaders =
-              [ ("Subject", subject),
-                ("Reply-To", from)
-              ],
-            mailParts = [[htmlPart', textPart']]
-          }
-  _ <- liftIO $ forkIO $ renderSendMailCustom "/run/wrappers/bin/sendmail" ["-t"] mail
-  return ()
-  where
-    textPart' =
-      Part
-        { partType = "text/plain; charset=utf-8",
-          partEncoding = None,
-          partDisposition = DefaultDisposition,
-          partHeaders = [],
-          partContent = PartContent textPartContent
-        }
-    htmlPart' =
-      Part
-        { partType = "text/html; charset=utf-8",
-          partEncoding = None,
-          partDisposition = DefaultDisposition,
-          partHeaders = [],
-          partContent = PartContent htmlPartContent
-        }

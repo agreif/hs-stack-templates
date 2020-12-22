@@ -10,6 +10,7 @@ module Handler.Admin where
 import qualified Data.CaseInsensitive as CI
 import qualified Data.Text.Encoding as TE
 import qualified Database.Esqueleto as E
+import GitHash
 import Handler.Common
 import Import
 import Text.Hamlet (hamletFile)
@@ -31,13 +32,18 @@ getAdminDataR = do
   mainNavItems <- mainNavData user MainNavAdmin
   jDataUsers <- userListJDataEnts
   jDataConfigs <- configListJDataEnts
+  let (gitCommitDate, gitCommitMessage, gitCommitHash, gitCommitBranch) = gitInfo
   let pages =
         defaultDataPages
           { jDataPageAdmin =
               Just $
                 JDataPageAdmin
                   { jDataPageAdminUsers = jDataUsers,
-                    jDataPageAdminConfigs = jDataConfigs
+                    jDataPageAdminConfigs = jDataConfigs,
+                    jDataPageAdminGitCommitDate = gitCommitDate,
+                    jDataPageAdminGitCommitMessage = gitCommitMessage,
+                    jDataPageAdminGitCommitHash = gitCommitHash,
+                    jDataPageAdminGitCommitBranch = gitCommitBranch
                   }
           }
   msgHome <- localizedMsg MsgGlobalHome
@@ -75,6 +81,11 @@ getAdminDataR = do
         jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl,
         jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
       }
+  where
+    gitInfo :: (String, String, String, String)
+    gitInfo = case $$tGitInfoCwdTry of
+      Left _ -> ("", "", "", "")
+      Right gi -> (giCommitDate gi, giCommitMessage gi, giHash gi, giBranch gi)
 
 userListJDataEnts :: Handler [JDataUser]
 userListJDataEnts = do
