@@ -438,6 +438,7 @@ UserHistory
     createdBy Text
     updatedAt UTCTime
     updatedBy Text
+    dbAction Text default='UPDATE' MigrationOnly
 
 Config json
     code Text
@@ -466,7 +467,7 @@ ConfigHistory
     createdBy Text
     updatedAt UTCTime
     updatedBy Text
-
+    dbAction Text default='UPDATE' MigrationOnly
 
 Demoa json
     myattr Text
@@ -486,6 +487,7 @@ DemoaHistory
     createdBy Text
     updatedAt UTCTime
     updatedBy Text
+    dbAction Text default='UPDATE' MigrationOnly
 
 Demob json
     myattr Text
@@ -505,6 +507,7 @@ DemobHistory
     createdBy Text
     updatedAt UTCTime
     updatedBy Text
+    dbAction Text default='UPDATE' MigrationOnly
 
 Democ json
     demobId DemobId
@@ -526,6 +529,7 @@ DemocHistory
     createdBy Text
     updatedAt UTCTime
     updatedBy Text
+    dbAction Text default='UPDATE' MigrationOnly
 
 -- gen models - end
 
@@ -673,7 +677,7 @@ nixpkgs.pkgs.haskell.packages.${compiler}.callPackage ./my-project.nix { }
 
 {-# START_FILE format.sh #-}
 ormolu -m inplace \
-       $(find src hs-generator \
+       $(find src hs-generator/src \
 	      -type f \
 	      -name "*.hs" \
 	      ! -path "src/Settings.hs" \
@@ -957,6 +961,8 @@ context =
                 bCrudModelDeletePostLoadsModel = False,
                 bCrudModelAddPostExtraStoreFunc = Nothing,
                 bCrudModelEditPostExtraStoreFunc = Nothing,
+                bCrudModelAddPostNeedsCurRoute = False,
+                bCrudModelEditPostNeedsCurRoute = False,
                 bCrudModelAddFormTitleMsg = Nothing,
                 bCrudModelEditFormTitleMsg = Just "MsgConfigEditConfig",
                 bCrudModelDeleteFormTitleMsg = Nothing,
@@ -1685,17 +1691,23 @@ as $function$
        if to_regclass('user_history') is not null then
            if (TG_OP = 'UPDATE' or TG_OP = 'INSERT') then
                 insert into user_history
-                       (id, ident, password, email, is_admin, version, created_at, created_by, updated_at, updated_by)
+                       (id, ident, password, email, is_admin, version, created_at, created_by, updated_at, updated_by, db_action)
                        values
-                       (new.id, new.ident, new.password, new.email, new.is_admin, new.version, new.created_at, new.created_by, new.updated_at, new.updated_by);
+                       (new.id, new.ident, new.password, new.email, new.is_admin, new.version, new.created_at, new.created_by, new.updated_at, new.updated_by, TG_OP);
                 return new;
-            end if;
+           elsif (TG_OP = 'DELETE') then
+                insert into user_history
+                       (id, ident, password, email, is_admin, version, created_at, created_by, updated_at, updated_by, db_action)
+                       values
+                       (old.id, old.ident, old.password, old.email, old.is_admin, old.version, old.created_at, old.created_by, old.updated_at, old.updated_by, TG_OP);
+               return old;
+           end if;
        end if;
        return null; -- result is ignored since this is an after trigger
     end;
 $function$;
 
-create trigger audit_user after insert or update on public.user for each row execute procedure public.process_audit_user();
+create trigger audit_user after insert or update or delete on public.user for each row execute procedure public.process_audit_user();
 
 
 
@@ -1708,18 +1720,23 @@ as $function$
        if to_regclass('config_history') is not null then
            if (TG_OP = 'UPDATE' or TG_OP = 'INSERT') then
                 insert into config_history
-                       (id, code, string_value, int_value, double_value, bool_value, version, created_at, created_by, updated_at, updated_by)
+                       (id, code, string_value, int_value, double_value, bool_value, version, created_at, created_by, updated_at, updated_by, db_action)
                        values
-                       (new.id, new.code, new.string_value, new.int_value, new.double_value, new.bool_value, new.version, new.created_at, new.created_by, new.updated_at, new.updated_by);
+                       (new.id, new.code, new.string_value, new.int_value, new.double_value, new.bool_value, new.version, new.created_at, new.created_by, new.updated_at, new.updated_by, TG_OP);
                 return new;
-            end if;
+           elsif (TG_OP = 'DELETE') then
+                insert into config_history
+                       (id, code, string_value, int_value, double_value, bool_value, version, created_at, created_by, updated_at, updated_by, db_action)
+                       values
+                       (old.id, old.code, old.string_value, old.int_value, old.double_value, old.bool_value, old.version, old.created_at, old.created_by, old.updated_at, old.updated_by, TG_OP);
+               return old;
+           end if;
        end if;
        return null; -- result is ignored since this is an after trigger
     end;
 $function$;
 
-create trigger audit_config after insert or update on public.config for each row execute procedure public.process_audit_config();
-
+create trigger audit_config after insert or update or delete on public.config for each row execute procedure public.process_audit_config();
 
 
 
@@ -1732,17 +1749,23 @@ as $function$
        if to_regclass('demoa_history') is not null then
            if (TG_OP = 'UPDATE' or TG_OP = 'INSERT') then
                 insert into demoa_history
-                       (id, myattr, version, created_at, created_by, updated_at, updated_by)
+                       (id, myattr, version, created_at, created_by, updated_at, updated_by, db_action)
                        values
-                       (new.id, new.myattr, new.version, new.created_at, new.created_by, new.updated_at, new.updated_by);
+                       (new.id, new.myattr, new.version, new.created_at, new.created_by, new.updated_at, new.updated_by, TG_OP);
                 return new;
-            end if;
+           elsif (TG_OP = 'DELETE') then
+                insert into demoa_history
+                       (id, myattr, version, created_at, created_by, updated_at, updated_by, db_action)
+                       values
+                       (old.id, old.myattr, old.version, old.created_at, old.created_by, old.updated_at, old.updated_by, TG_OP);
+               return old;
+           end if;
        end if;
        return null; -- result is ignored since this is an after trigger
     end;
 $function$;
 
-create trigger audit_demoa after insert or update on public.demoa for each row execute procedure public.process_audit_demoa();
+create trigger audit_demoa after insert or update or delete on public.demoa for each row execute procedure public.process_audit_demoa();
 
 
 
@@ -1755,17 +1778,23 @@ as $function$
        if to_regclass('demob_history') is not null then
            if (TG_OP = 'UPDATE' or TG_OP = 'INSERT') then
                 insert into demob_history
-                       (id, myattr, version, created_at, created_by, updated_at, updated_by)
+                       (id, myattr, version, created_at, created_by, updated_at, updated_by, db_action)
                        values
-                       (new.id, new.myattr, new.version, new.created_at, new.created_by, new.updated_at, new.updated_by);
+                       (new.id, new.myattr, new.version, new.created_at, new.created_by, new.updated_at, new.updated_by, TG_OP);
                 return new;
-            end if;
+           elsif (TG_OP = 'DELETE') then
+                insert into demob_history
+                       (id, myattr, version, created_at, created_by, updated_at, updated_by, db_action)
+                       values
+                       (old.id, old.myattr, old.version, old.created_at, old.created_by, old.updated_at, old.updated_by, TG_OP);
+               return old;
+           end if;
        end if;
        return null; -- result is ignored since this is an after trigger
     end;
 $function$;
 
-create trigger audit_demob after insert or update on public.demob for each row execute procedure public.process_audit_demob();
+create trigger audit_demob after insert or update or delete on public.demob for each row execute procedure public.process_audit_demob();
 
 
 
@@ -1778,17 +1807,23 @@ as $function$
        if to_regclass('democ_history') is not null then
            if (TG_OP = 'UPDATE' or TG_OP = 'INSERT') then
                 insert into democ_history
-                       (id, demob_id, myattr, version, created_at, created_by, updated_at, updated_by)
+                       (id, demob_id, myattr, version, created_at, created_by, updated_at, updated_by, db_action)
                        values
-                       (new.id, new.demob_id, new.myattr, new.version, new.created_at, new.created_by, new.updated_at, new.updated_by);
+                       (new.id, new.demob_id, new.myattr, new.version, new.created_at, new.created_by, new.updated_at, new.updated_by, TG_OP);
                 return new;
-            end if;
+           elsif (TG_OP = 'DELETE') then
+                insert into democ_history
+                       (id, demob_id, myattr, version, created_at, created_by, updated_at, updated_by, db_action)
+                       values
+                       (old.id, old.demob_id, old.myattr, old.version, old.created_at, old.created_by, old.updated_at, old.updated_by, TG_OP);
+               return old;
+           end if;
        end if;
        return null; -- result is ignored since this is an after trigger
     end;
 $function$;
 
-create trigger audit_democ after insert or update on public.democ for each row execute procedure public.process_audit_democ();
+create trigger audit_democ after insert or update or delete on public.democ for each row execute procedure public.process_audit_democ();
 
 -- gen triggers - end
 
@@ -3644,8 +3679,8 @@ data VEditConfig = VEditConfig
 getEditConfigFormR :: ConfigId -> Handler Html
 getEditConfigFormR configId = do
   config <- runDB $ get404 configId
-  (formWidget, _) <- generateFormPost $ vEditConfigForm (Just config)
-  formLayout $ do
+  (formWidget, _) <- generateFormPost $ vEditConfigForm (Just configId) (Just config)
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgConfigEditConfig}
@@ -3659,7 +3694,7 @@ getEditConfigFormR configId = do
 -- gen post edit form - start
 postEditConfigR :: ConfigId -> Handler Value
 postEditConfigR configId = do
-  ((result, formWidget), _) <- runFormPost $ vEditConfigForm Nothing
+  ((result, formWidget), _) <- runFormPost $ vEditConfigForm (Just configId) Nothing
   case result of
     FormSuccess vEditConfig -> do
       curTime <- liftIO getCurrentTime
@@ -3695,8 +3730,8 @@ postEditConfigR configId = do
 -- gen post edit form - end
 
 -- gen edit form - start
-vEditConfigForm :: Maybe Config -> Html -> MForm Handler (FormResult VEditConfig, Widget)
-vEditConfigForm maybeConfig extra = do
+vEditConfigForm :: Maybe ConfigId -> Maybe Config -> Html -> MForm Handler (FormResult VEditConfig, Widget)
+vEditConfigForm maybeConfigId maybeConfig extra = do
   (codeResult, codeView) <-
     mopt
       textField
@@ -3733,36 +3768,56 @@ vEditConfigForm maybeConfig extra = do
           [whamlet|
     #{extra}
     ^{fvInput versionView}
-    <div .uk-margin-small :not $ null $ fvErrors codeView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors codeView:.uk-text-danger for=#{fvId codeView}>#{fvLabel codeView}
+    <div #codeInputWidget .uk-margin-small :not $ null $ fvErrors codeView:.uk-form-danger>
+      <label #codeInputLabel .uk-form-label :not $ null $ fvErrors codeView:.uk-text-danger for=#{fvId codeView}>#{fvLabel codeView}
       <div .uk-form-controls>
         ^{fvInput codeView}
+        <span #codeInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgConfigCodeInputInfo}
         $maybe err <- fvErrors codeView
-          &nbsp;#{err}
-    <div .uk-margin-small :not $ null $ fvErrors stringValueView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors stringValueView:.uk-text-danger for=#{fvId stringValueView}>#{fvLabel stringValueView}
+          <br>
+          <span #codeInputError .uk-text-small .input-error>
+            &nbsp;#{err}
+    <div #stringValueInputWidget .uk-margin-small :not $ null $ fvErrors stringValueView:.uk-form-danger>
+      <label #stringValueInputLabel .uk-form-label :not $ null $ fvErrors stringValueView:.uk-text-danger for=#{fvId stringValueView}>#{fvLabel stringValueView}
       <div .uk-form-controls>
         ^{fvInput stringValueView}
+        <span #stringValueInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgConfigStringValueInputInfo}
         $maybe err <- fvErrors stringValueView
-          &nbsp;#{err}
-    <div .uk-margin-small :not $ null $ fvErrors intValueView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors intValueView:.uk-text-danger for=#{fvId intValueView}>#{fvLabel intValueView}
+          <br>
+          <span #stringValueInputError .uk-text-small .input-error>
+            &nbsp;#{err}
+    <div #intValueInputWidget .uk-margin-small :not $ null $ fvErrors intValueView:.uk-form-danger>
+      <label #intValueInputLabel .uk-form-label :not $ null $ fvErrors intValueView:.uk-text-danger for=#{fvId intValueView}>#{fvLabel intValueView}
       <div .uk-form-controls>
         ^{fvInput intValueView}
+        <span #intValueInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgConfigIntValueInputInfo}
         $maybe err <- fvErrors intValueView
-          &nbsp;#{err}
-    <div .uk-margin-small :not $ null $ fvErrors doubleValueView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors doubleValueView:.uk-text-danger for=#{fvId doubleValueView}>#{fvLabel doubleValueView}
+          <br>
+          <span #intValueInputError .uk-text-small .input-error>
+            &nbsp;#{err}
+    <div #doubleValueInputWidget .uk-margin-small :not $ null $ fvErrors doubleValueView:.uk-form-danger>
+      <label #doubleValueInputLabel .uk-form-label :not $ null $ fvErrors doubleValueView:.uk-text-danger for=#{fvId doubleValueView}>#{fvLabel doubleValueView}
       <div .uk-form-controls>
         ^{fvInput doubleValueView}
+        <span #doubleValueInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgConfigDoubleValueInputInfo}
         $maybe err <- fvErrors doubleValueView
-          &nbsp;#{err}
-    <div .uk-margin-small :not $ null $ fvErrors boolValueView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors boolValueView:.uk-text-danger for=#{fvId boolValueView}>#{fvLabel boolValueView}
+          <br>
+          <span #doubleValueInputError .uk-text-small .input-error>
+            &nbsp;#{err}
+    <div #boolValueInputWidget .uk-margin-small :not $ null $ fvErrors boolValueView:.uk-form-danger>
+      <label #boolValueInputLabel .uk-form-label :not $ null $ fvErrors boolValueView:.uk-text-danger for=#{fvId boolValueView}>#{fvLabel boolValueView}
       <div .uk-form-controls>
         ^{fvInput boolValueView}
+        <span #boolValueInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgConfigBoolValueInputInfo}
         $maybe err <- fvErrors boolValueView
-          &nbsp;#{err}
+          <br>
+          <span #boolValueInputError .uk-text-small .input-error>
+            &nbsp;#{err}
     |]
   return (vEditConfigResult, formWidget)
   where
@@ -3773,7 +3828,7 @@ vEditConfigForm maybeConfig extra = do
           fsTooltip = Nothing,
           fsId = Just "code",
           fsName = Just "code",
-          fsAttrs = [("disabled", ""), ("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("disabled", ""), ("class", "uk-input uk-form-small uk-form-width-large")]
         }
     stringValueFs :: FieldSettings App
     stringValueFs =
@@ -3782,7 +3837,7 @@ vEditConfigForm maybeConfig extra = do
           fsTooltip = Nothing,
           fsId = Just "stringValue",
           fsName = Just "stringValue",
-          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
     intValueFs :: FieldSettings App
     intValueFs =
@@ -3791,7 +3846,7 @@ vEditConfigForm maybeConfig extra = do
           fsTooltip = Nothing,
           fsId = Just "intValue",
           fsName = Just "intValue",
-          fsAttrs = [("class", "uk-form-width-medium uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-medium")]
         }
     doubleValueFs :: FieldSettings App
     doubleValueFs =
@@ -3800,7 +3855,7 @@ vEditConfigForm maybeConfig extra = do
           fsTooltip = Nothing,
           fsId = Just "doubleValue",
           fsName = Just "doubleValue",
-          fsAttrs = [("class", "uk-form-width-medium uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-medium")]
         }
     boolValueFs :: FieldSettings App
     boolValueFs =
@@ -4100,8 +4155,8 @@ postEditDemoaR demoaId = do
             persistFields
         return uc
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemoaListDataR}
-        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ MyprojectR DemoaListDataR}
+        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListDataR}
+        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListDataR}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $
@@ -4197,7 +4252,7 @@ postDeleteDemoaR demoaId = do
       ]
     delete demoaId
   urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemoaListDataR}
+  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListDataR}
 
 -- gen post delete - end
 
@@ -4458,7 +4513,7 @@ getAddDemobFormR = do
     toWidget
       [whamlet|
       <h1>_{MsgDemobAddDemob}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR AddDemobR}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ AddDemobR}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -4683,7 +4738,7 @@ postDeleteDemobR demobId = do
       ]
     delete demobId
   urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemobListDataR}
+  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobListDataR}
 
 -- gen post delete - end
 
@@ -5522,7 +5577,7 @@ getSendTestmailFormR = do
     toWidget
       [whamlet|
       <h1>_{MsgTestmailSendTestMail}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ SendTestmailR}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{AdminR $ SendTestmailR }>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -5542,12 +5597,16 @@ vSendTestmailForm maybeTestmail extra = do
         toWidget
           [whamlet|
     #{extra}
-    <div .uk-margin-small :not $ null $ fvErrors emailView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors emailView:.uk-text-danger for=#{fvId emailView}>#{fvLabel emailView}
+    <div #emailInputWidget .uk-margin-small :not $ null $ fvErrors emailView:.uk-form-danger>
+      <label #emailInputLabel .uk-form-label :not $ null $ fvErrors emailView:.uk-text-danger for=#{fvId emailView}>#{fvLabel emailView}
       <div .uk-form-controls>
         ^{fvInput emailView}
+        <span #emailInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgTestmailEmailInputInfo}
         $maybe err <- fvErrors emailView
-          &nbsp;#{err}
+          <br>
+          <span #emailInputError .uk-text-small .input-error>
+            &nbsp;#{err}
     |]
   return (vSendTestmailResult, formWidget)
   where
@@ -5558,7 +5617,7 @@ vSendTestmailForm maybeTestmail extra = do
           fsTooltip = Nothing,
           fsId = Just "email",
           fsName = Just "email",
-          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
 -- gen action form - end
 
@@ -5594,8 +5653,8 @@ data VAddUser = VAddUser
 -- gen get add form - start
 getAddUserFormR :: Handler Html
 getAddUserFormR = do
-  (formWidget, _) <- generateFormPost $ vAddUserForm Nothing
-  formLayout $ do
+  (formWidget, _) <- generateFormPost $ vAddUserForm Nothing Nothing
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgUserAddUser}
@@ -5638,8 +5697,8 @@ postAddUserR = do
           }
 
 -- gen add form - start
-vAddUserForm :: Maybe User -> Html -> MForm Handler (FormResult VAddUser, Widget)
-vAddUserForm maybeUser extra = do
+vAddUserForm :: Maybe UserId -> Maybe User -> Html -> MForm Handler (FormResult VAddUser, Widget)
+vAddUserForm maybeUserId maybeUser extra = do
   (identResult, identView) <-
     mreq
       textField
@@ -5660,24 +5719,36 @@ vAddUserForm maybeUser extra = do
         toWidget
           [whamlet|
     #{extra}
-    <div .uk-margin-small :not $ null $ fvErrors identView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors identView:.uk-text-danger for=#{fvId identView}>#{fvLabel identView}
+    <div #identInputWidget .uk-margin-small :not $ null $ fvErrors identView:.uk-form-danger>
+      <label #identInputLabel .uk-form-label :not $ null $ fvErrors identView:.uk-text-danger for=#{fvId identView}>#{fvLabel identView}
       <div .uk-form-controls>
         ^{fvInput identView}
+        <span #identInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgUserIdentInputInfo}
         $maybe err <- fvErrors identView
-          &nbsp;#{err}
-    <div .uk-margin-small :not $ null $ fvErrors emailView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors emailView:.uk-text-danger for=#{fvId emailView}>#{fvLabel emailView}
+          <br>
+          <span #identInputError .uk-text-small .input-error>
+            &nbsp;#{err}
+    <div #emailInputWidget .uk-margin-small :not $ null $ fvErrors emailView:.uk-form-danger>
+      <label #emailInputLabel .uk-form-label :not $ null $ fvErrors emailView:.uk-text-danger for=#{fvId emailView}>#{fvLabel emailView}
       <div .uk-form-controls>
         ^{fvInput emailView}
+        <span #emailInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgUserEmailInputInfo}
         $maybe err <- fvErrors emailView
-          &nbsp;#{err}
-    <div .uk-margin-small :not $ null $ fvErrors isAdminView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors isAdminView:.uk-text-danger for=#{fvId isAdminView}>#{fvLabel isAdminView}
+          <br>
+          <span #emailInputError .uk-text-small .input-error>
+            &nbsp;#{err}
+    <div #isAdminInputWidget .uk-margin-small :not $ null $ fvErrors isAdminView:.uk-form-danger>
+      <label #isAdminInputLabel .uk-form-label :not $ null $ fvErrors isAdminView:.uk-text-danger for=#{fvId isAdminView}>#{fvLabel isAdminView}
       <div .uk-form-controls>
         ^{fvInput isAdminView}
+        <span #isAdminInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgUserIsAdminInputInfo}
         $maybe err <- fvErrors isAdminView
-          &nbsp;#{err}
+          <br>
+          <span #isAdminInputError .uk-text-small .input-error>
+            &nbsp;#{err}
     |]
   return (vAddUserResult, formWidget)
   where
@@ -5688,7 +5759,7 @@ vAddUserForm maybeUser extra = do
           fsTooltip = Nothing,
           fsId = Just "ident",
           fsName = Just "ident",
-          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
     emailFs :: FieldSettings App
     emailFs =
@@ -5697,7 +5768,7 @@ vAddUserForm maybeUser extra = do
           fsTooltip = Nothing,
           fsId = Just "email",
           fsName = Just "email",
-          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
     isAdminFs :: FieldSettings App
     isAdminFs =
@@ -5730,8 +5801,8 @@ data VEditUser = VEditUser
 getEditUserFormR :: UserId -> Handler Html
 getEditUserFormR userId = do
   user <- runDB $ get404 userId
-  (formWidget, _) <- generateFormPost $ vEditUserForm (Just user)
-  formLayout $ do
+  (formWidget, _) <- generateFormPost $ vEditUserForm (Just userId) (Just user)
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgUserEditUser}
@@ -5785,8 +5856,8 @@ postEditUserR userId = do
           }
 
 -- gen edit form - start
-vEditUserForm :: Maybe User -> Html -> MForm Handler (FormResult VEditUser, Widget)
-vEditUserForm maybeUser extra = do
+vEditUserForm :: Maybe UserId -> Maybe User -> Html -> MForm Handler (FormResult VEditUser, Widget)
+vEditUserForm maybeUserId maybeUser extra = do
   (identResult, identView) <-
     mreq
       textField
@@ -5818,30 +5889,46 @@ vEditUserForm maybeUser extra = do
           [whamlet|
     #{extra}
     ^{fvInput versionView}
-    <div .uk-margin-small :not $ null $ fvErrors identView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors identView:.uk-text-danger for=#{fvId identView}>#{fvLabel identView}
+    <div #identInputWidget .uk-margin-small :not $ null $ fvErrors identView:.uk-form-danger>
+      <label #identInputLabel .uk-form-label :not $ null $ fvErrors identView:.uk-text-danger for=#{fvId identView}>#{fvLabel identView}
       <div .uk-form-controls>
         ^{fvInput identView}
+        <span #identInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgUserIdentInputInfo}
         $maybe err <- fvErrors identView
-          &nbsp;#{err}
-    <div .uk-margin-small :not $ null $ fvErrors emailView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors emailView:.uk-text-danger for=#{fvId emailView}>#{fvLabel emailView}
+          <br>
+          <span #identInputError .uk-text-small .input-error>
+            &nbsp;#{err}
+    <div #emailInputWidget .uk-margin-small :not $ null $ fvErrors emailView:.uk-form-danger>
+      <label #emailInputLabel .uk-form-label :not $ null $ fvErrors emailView:.uk-text-danger for=#{fvId emailView}>#{fvLabel emailView}
       <div .uk-form-controls>
         ^{fvInput emailView}
+        <span #emailInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgUserEmailInputInfo}
         $maybe err <- fvErrors emailView
-          &nbsp;#{err}
-    <div .uk-margin-small :not $ null $ fvErrors isAdminView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors isAdminView:.uk-text-danger for=#{fvId isAdminView}>#{fvLabel isAdminView}
+          <br>
+          <span #emailInputError .uk-text-small .input-error>
+            &nbsp;#{err}
+    <div #isAdminInputWidget .uk-margin-small :not $ null $ fvErrors isAdminView:.uk-form-danger>
+      <label #isAdminInputLabel .uk-form-label :not $ null $ fvErrors isAdminView:.uk-text-danger for=#{fvId isAdminView}>#{fvLabel isAdminView}
       <div .uk-form-controls>
         ^{fvInput isAdminView}
+        <span #isAdminInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgUserIsAdminInputInfo}
         $maybe err <- fvErrors isAdminView
-          &nbsp;#{err}
-    <div .uk-margin-small :not $ null $ fvErrors isResetPasswordView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors isResetPasswordView:.uk-text-danger for=#{fvId isResetPasswordView}>#{fvLabel isResetPasswordView}
+          <br>
+          <span #isAdminInputError .uk-text-small .input-error>
+            &nbsp;#{err}
+    <div #isResetPasswordInputWidget .uk-margin-small :not $ null $ fvErrors isResetPasswordView:.uk-form-danger>
+      <label #isResetPasswordInputLabel .uk-form-label :not $ null $ fvErrors isResetPasswordView:.uk-text-danger for=#{fvId isResetPasswordView}>#{fvLabel isResetPasswordView}
       <div .uk-form-controls>
         ^{fvInput isResetPasswordView}
+        <span #isResetPasswordInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgUserIsResetPasswordInputInfo}
         $maybe err <- fvErrors isResetPasswordView
-          &nbsp;#{err}
+          <br>
+          <span #isResetPasswordInputError .uk-text-small .input-error>
+            &nbsp;#{err}
     |]
   return (vEditUserResult, formWidget)
   where
@@ -5852,7 +5939,7 @@ vEditUserForm maybeUser extra = do
           fsTooltip = Nothing,
           fsId = Just "ident",
           fsName = Just "ident",
-          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
     emailFs :: FieldSettings App
     emailFs =
@@ -5861,7 +5948,7 @@ vEditUserForm maybeUser extra = do
           fsTooltip = Nothing,
           fsId = Just "email",
           fsName = Just "email",
-          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
     isAdminFs :: FieldSettings App
     isAdminFs =
@@ -5909,7 +5996,16 @@ vDeleteUserForm extra = do
 -- gen post delete - start
 postDeleteUserR :: UserId -> Handler Value
 postDeleteUserR userId = do
-  runDB $ delete userId
+  curTime <- liftIO getCurrentTime
+  Entity _ authUser <- requireAuth
+  runDB $ do
+    -- trick to record the user deleting the entity
+    updateWhere
+      [UserId ==. userId]
+      [ UserUpdatedAt =. curTime,
+        UserUpdatedBy =. userIdent authUser
+      ]
+    delete userId
   urlRenderer <- getUrlRender
   returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR}
 
@@ -5919,7 +6015,7 @@ postDeleteUserR userId = do
 getDeleteUserFormR :: UserId -> Handler Html
 getDeleteUserFormR userId = do
   (formWidget, _) <- generateFormPost $ vDeleteUserForm
-  formLayout $ do
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgUserDeleteUser}
@@ -5958,19 +6054,30 @@ data AppMessage
   | MsgConfigIntValue
   | MsgConfigDoubleValue
   | MsgConfigBoolValue
-  | MsgTestmailEmail
   | MsgDemoaMyattr
   | MsgDemobMyattr
   | MsgDemocDemobId
   | MsgDemocMyattr
+  | MsgUserIdentInputInfo
+  | MsgUserPasswordInputInfo
+  | MsgUserEmailInputInfo
+  | MsgUserIsAdminInputInfo
+  | MsgUserIsResetPasswordInputInfo
+  | MsgConfigCodeInputInfo
+  | MsgConfigStringValueInputInfo
+  | MsgConfigIntValueInputInfo
+  | MsgConfigDoubleValueInputInfo
+  | MsgConfigBoolValueInputInfo
+  | MsgDemoaMyattrInputInfo
+  | MsgDemobMyattrInputInfo
+  | MsgDemocDemobIdInputInfo
+  | MsgDemocMyattrInputInfo
   | MsgUserUsers
   | MsgUserAddUser
   | MsgUserEditUser
   | MsgUserDeleteUser
   | MsgConfigConfigurations
   | MsgConfigEditConfig
-  | MsgTestmailTestMail
-  | MsgTestmailSendTestMail
   | MsgDemoaDemoa
   | MsgDemoaDemoas
   | MsgDemoaAddDemoa
@@ -5986,6 +6093,10 @@ data AppMessage
   | MsgDemocAddDemoc
   | MsgDemocEditDemoc
   | MsgDemocDeleteDemoc
+  | MsgTestmailEmail
+  | MsgTestmailEmailInputInfo
+  | MsgTestmailTestMail
+  | MsgTestmailSendTestMail
 
 renderMessageGerman :: AppMessage -> Text
 renderMessageGerman MsgGlobalHome = "Home"
@@ -6007,19 +6118,30 @@ renderMessageGerman MsgConfigStringValue = "String-Wert"
 renderMessageGerman MsgConfigIntValue = "Integer-Wert"
 renderMessageGerman MsgConfigDoubleValue = "Double-Wert"
 renderMessageGerman MsgConfigBoolValue = "Boolean-Wert"
-renderMessageGerman MsgTestmailEmail = "Email"
 renderMessageGerman MsgDemoaMyattr = "My attribute"
 renderMessageGerman MsgDemobMyattr = "My attribute"
 renderMessageGerman MsgDemocDemobId = ""
 renderMessageGerman MsgDemocMyattr = "My attribute"
+renderMessageGerman MsgUserIdentInputInfo = ""
+renderMessageGerman MsgUserPasswordInputInfo = ""
+renderMessageGerman MsgUserEmailInputInfo = ""
+renderMessageGerman MsgUserIsAdminInputInfo = ""
+renderMessageGerman MsgUserIsResetPasswordInputInfo = ""
+renderMessageGerman MsgConfigCodeInputInfo = ""
+renderMessageGerman MsgConfigStringValueInputInfo = ""
+renderMessageGerman MsgConfigIntValueInputInfo = ""
+renderMessageGerman MsgConfigDoubleValueInputInfo = ""
+renderMessageGerman MsgConfigBoolValueInputInfo = ""
+renderMessageGerman MsgDemoaMyattrInputInfo = ""
+renderMessageGerman MsgDemobMyattrInputInfo = ""
+renderMessageGerman MsgDemocDemobIdInputInfo = ""
+renderMessageGerman MsgDemocMyattrInputInfo = ""
 renderMessageGerman MsgUserUsers = "Nutzer"
 renderMessageGerman MsgUserAddUser = "Nutzer hinzufügen"
 renderMessageGerman MsgUserEditUser = "Nutzer bearbeiten"
 renderMessageGerman MsgUserDeleteUser = "Nutzer löschen"
 renderMessageGerman MsgConfigConfigurations = "Konfigurationen"
 renderMessageGerman MsgConfigEditConfig = "Konfiguration bearbeiten"
-renderMessageGerman MsgTestmailTestMail = "Test-Mail"
-renderMessageGerman MsgTestmailSendTestMail = "Test-Mail senden..."
 renderMessageGerman MsgDemoaDemoa = "Demoa"
 renderMessageGerman MsgDemoaDemoas = "Demoas"
 renderMessageGerman MsgDemoaAddDemoa = "Demoa hinzufügen"
@@ -6035,6 +6157,10 @@ renderMessageGerman MsgDemocDemocs = "Democs"
 renderMessageGerman MsgDemocAddDemoc = "Democ hinzufügen"
 renderMessageGerman MsgDemocEditDemoc = "Democ bearbeiten"
 renderMessageGerman MsgDemocDeleteDemoc = "Democ löschen"
+renderMessageGerman MsgTestmailEmail = "Email"
+renderMessageGerman MsgTestmailEmailInputInfo = ""
+renderMessageGerman MsgTestmailTestMail = "Test-Mail"
+renderMessageGerman MsgTestmailSendTestMail = "Test-Mail senden..."
 
 renderMessageEnglish :: AppMessage -> Text
 renderMessageEnglish MsgGlobalHome = "Home"
@@ -6056,19 +6182,30 @@ renderMessageEnglish MsgConfigStringValue = "String-Value"
 renderMessageEnglish MsgConfigIntValue = "Integer-Value"
 renderMessageEnglish MsgConfigDoubleValue = "Double-Value"
 renderMessageEnglish MsgConfigBoolValue = "Boolean-Value"
-renderMessageEnglish MsgTestmailEmail = "Email"
 renderMessageEnglish MsgDemoaMyattr = "Mein Attribut"
 renderMessageEnglish MsgDemobMyattr = "Mein Attribut"
 renderMessageEnglish MsgDemocDemobId = ""
 renderMessageEnglish MsgDemocMyattr = "Mein Attribut"
+renderMessageEnglish MsgUserIdentInputInfo = ""
+renderMessageEnglish MsgUserPasswordInputInfo = ""
+renderMessageEnglish MsgUserEmailInputInfo = ""
+renderMessageEnglish MsgUserIsAdminInputInfo = ""
+renderMessageEnglish MsgUserIsResetPasswordInputInfo = ""
+renderMessageEnglish MsgConfigCodeInputInfo = ""
+renderMessageEnglish MsgConfigStringValueInputInfo = ""
+renderMessageEnglish MsgConfigIntValueInputInfo = ""
+renderMessageEnglish MsgConfigDoubleValueInputInfo = ""
+renderMessageEnglish MsgConfigBoolValueInputInfo = ""
+renderMessageEnglish MsgDemoaMyattrInputInfo = ""
+renderMessageEnglish MsgDemobMyattrInputInfo = ""
+renderMessageEnglish MsgDemocDemobIdInputInfo = ""
+renderMessageEnglish MsgDemocMyattrInputInfo = ""
 renderMessageEnglish MsgUserUsers = "Users"
 renderMessageEnglish MsgUserAddUser = "Add user"
 renderMessageEnglish MsgUserEditUser = "Edit user"
 renderMessageEnglish MsgUserDeleteUser = "Delete user"
 renderMessageEnglish MsgConfigConfigurations = "Configurations"
 renderMessageEnglish MsgConfigEditConfig = "Edit config"
-renderMessageEnglish MsgTestmailTestMail = "Test-Mail"
-renderMessageEnglish MsgTestmailSendTestMail = "Send Test-Mail..."
 renderMessageEnglish MsgDemoaDemoa = "Demoa"
 renderMessageEnglish MsgDemoaDemoas = "Demoas"
 renderMessageEnglish MsgDemoaAddDemoa = "Add demoa"
@@ -6084,6 +6221,10 @@ renderMessageEnglish MsgDemocDemocs = "Democs"
 renderMessageEnglish MsgDemocAddDemoc = "Add democ"
 renderMessageEnglish MsgDemocEditDemoc = "Edit democ"
 renderMessageEnglish MsgDemocDeleteDemoc = "Delete democ"
+renderMessageEnglish MsgTestmailEmail = "Email"
+renderMessageEnglish MsgTestmailEmailInputInfo = ""
+renderMessageEnglish MsgTestmailTestMail = "Test-Mail"
+renderMessageEnglish MsgTestmailSendTestMail = "Send Test-Mail..."
 
 data Translation = Translation
   { msgGlobalHome :: Text,
@@ -6105,19 +6246,30 @@ data Translation = Translation
     msgConfigIntValue :: Text,
     msgConfigDoubleValue :: Text,
     msgConfigBoolValue :: Text,
-    msgTestmailEmail :: Text,
     msgDemoaMyattr :: Text,
     msgDemobMyattr :: Text,
     msgDemocDemobId :: Text,
     msgDemocMyattr :: Text,
+    msgUserIdentInputInfo :: Text,
+    msgUserPasswordInputInfo :: Text,
+    msgUserEmailInputInfo :: Text,
+    msgUserIsAdminInputInfo :: Text,
+    msgUserIsResetPasswordInputInfo :: Text,
+    msgConfigCodeInputInfo :: Text,
+    msgConfigStringValueInputInfo :: Text,
+    msgConfigIntValueInputInfo :: Text,
+    msgConfigDoubleValueInputInfo :: Text,
+    msgConfigBoolValueInputInfo :: Text,
+    msgDemoaMyattrInputInfo :: Text,
+    msgDemobMyattrInputInfo :: Text,
+    msgDemocDemobIdInputInfo :: Text,
+    msgDemocMyattrInputInfo :: Text,
     msgUserUsers :: Text,
     msgUserAddUser :: Text,
     msgUserEditUser :: Text,
     msgUserDeleteUser :: Text,
     msgConfigConfigurations :: Text,
     msgConfigEditConfig :: Text,
-    msgTestmailTestMail :: Text,
-    msgTestmailSendTestMail :: Text,
     msgDemoaDemoa :: Text,
     msgDemoaDemoas :: Text,
     msgDemoaAddDemoa :: Text,
@@ -6132,7 +6284,11 @@ data Translation = Translation
     msgDemocDemocs :: Text,
     msgDemocAddDemoc :: Text,
     msgDemocEditDemoc :: Text,
-    msgDemocDeleteDemoc :: Text
+    msgDemocDeleteDemoc :: Text,
+    msgTestmailEmail :: Text,
+    msgTestmailEmailInputInfo :: Text,
+    msgTestmailTestMail :: Text,
+    msgTestmailSendTestMail :: Text
   }
   deriving (Generic)
 
@@ -6160,19 +6316,30 @@ translationDe =
       msgConfigIntValue = "Integer-Wert",
       msgConfigDoubleValue = "Double-Wert",
       msgConfigBoolValue = "Boolean-Wert",
-      msgTestmailEmail = "Email",
       msgDemoaMyattr = "My attribute",
       msgDemobMyattr = "My attribute",
       msgDemocDemobId = "",
       msgDemocMyattr = "My attribute",
+      msgUserIdentInputInfo = "",
+      msgUserPasswordInputInfo = "",
+      msgUserEmailInputInfo = "",
+      msgUserIsAdminInputInfo = "",
+      msgUserIsResetPasswordInputInfo = "",
+      msgConfigCodeInputInfo = "",
+      msgConfigStringValueInputInfo = "",
+      msgConfigIntValueInputInfo = "",
+      msgConfigDoubleValueInputInfo = "",
+      msgConfigBoolValueInputInfo = "",
+      msgDemoaMyattrInputInfo = "",
+      msgDemobMyattrInputInfo = "",
+      msgDemocDemobIdInputInfo = "",
+      msgDemocMyattrInputInfo = "",
       msgUserUsers = "Nutzer",
       msgUserAddUser = "Nutzer hinzufügen",
       msgUserEditUser = "Nutzer bearbeiten",
       msgUserDeleteUser = "Nutzer löschen",
       msgConfigConfigurations = "Konfigurationen",
       msgConfigEditConfig = "Konfiguration bearbeiten",
-      msgTestmailTestMail = "Test-Mail",
-      msgTestmailSendTestMail = "Test-Mail senden...",
       msgDemoaDemoa = "Demoa",
       msgDemoaDemoas = "Demoas",
       msgDemoaAddDemoa = "Demoa hinzufügen",
@@ -6187,7 +6354,11 @@ translationDe =
       msgDemocDemocs = "Democs",
       msgDemocAddDemoc = "Democ hinzufügen",
       msgDemocEditDemoc = "Democ bearbeiten",
-      msgDemocDeleteDemoc = "Democ löschen"
+      msgDemocDeleteDemoc = "Democ löschen",
+      msgTestmailEmail = "Email",
+      msgTestmailEmailInputInfo = "",
+      msgTestmailTestMail = "Test-Mail",
+      msgTestmailSendTestMail = "Test-Mail senden..."
     }
 
 translationEn :: Translation
@@ -6212,19 +6383,30 @@ translationEn =
       msgConfigIntValue = "Integer-Value",
       msgConfigDoubleValue = "Double-Value",
       msgConfigBoolValue = "Boolean-Value",
-      msgTestmailEmail = "Email",
       msgDemoaMyattr = "Mein Attribut",
       msgDemobMyattr = "Mein Attribut",
       msgDemocDemobId = "",
       msgDemocMyattr = "Mein Attribut",
+      msgUserIdentInputInfo = "",
+      msgUserPasswordInputInfo = "",
+      msgUserEmailInputInfo = "",
+      msgUserIsAdminInputInfo = "",
+      msgUserIsResetPasswordInputInfo = "",
+      msgConfigCodeInputInfo = "",
+      msgConfigStringValueInputInfo = "",
+      msgConfigIntValueInputInfo = "",
+      msgConfigDoubleValueInputInfo = "",
+      msgConfigBoolValueInputInfo = "",
+      msgDemoaMyattrInputInfo = "",
+      msgDemobMyattrInputInfo = "",
+      msgDemocDemobIdInputInfo = "",
+      msgDemocMyattrInputInfo = "",
       msgUserUsers = "Users",
       msgUserAddUser = "Add user",
       msgUserEditUser = "Edit user",
       msgUserDeleteUser = "Delete user",
       msgConfigConfigurations = "Configurations",
       msgConfigEditConfig = "Edit config",
-      msgTestmailTestMail = "Test-Mail",
-      msgTestmailSendTestMail = "Send Test-Mail...",
       msgDemoaDemoa = "Demoa",
       msgDemoaDemoas = "Demoas",
       msgDemoaAddDemoa = "Add demoa",
@@ -6239,7 +6421,11 @@ translationEn =
       msgDemocDemocs = "Democs",
       msgDemocAddDemoc = "Add democ",
       msgDemocEditDemoc = "Edit democ",
-      msgDemocDeleteDemoc = "Delete democ"
+      msgDemocDeleteDemoc = "Delete democ",
+      msgTestmailEmail = "Email",
+      msgTestmailEmailInputInfo = "",
+      msgTestmailTestMail = "Test-Mail",
+      msgTestmailSendTestMail = "Send Test-Mail..."
     }
 -- gen i18n - end
 
@@ -6255,8 +6441,6 @@ import Import.NoFoundation as Import
 import ModelNomigrate as Import
 
 {-# START_FILE src/Import/NoFoundation.hs #-}
-{-# LANGUAGE CPP #-}
-
 module Import.NoFoundation
   ( module Import,
   )
