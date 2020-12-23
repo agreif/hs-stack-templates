@@ -274,6 +274,7 @@ instance ToJSON JDataConfig where
 
 data JDataPageDemoaList = JDataPageDemoaList
   { jDataPageDemoaListDemoas :: [JDataDemoa],
+    jDataPageDemoaListAddFormUrl :: Text,
     jDataPageDemoaListPaginationItems :: Maybe [JDataPaginationItem]
   }
 
@@ -281,6 +282,7 @@ instance ToJSON JDataPageDemoaList where
   toJSON o =
     object
       [ "demoas" .= jDataPageDemoaListDemoas o,
+        "addFormUrl" .= jDataPageDemoaListAddFormUrl o,
         "paginationItems" .= jDataPageDemoaListPaginationItems o
       ]
 
