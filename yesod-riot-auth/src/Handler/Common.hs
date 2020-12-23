@@ -556,6 +556,25 @@ strippedTextareaField = checkM strippedText textareaField
     strippedText :: Textarea -> Handler (Either AppMessage Textarea)
     strippedText (Textarea text) = return $ Right $ Textarea $ T.strip text
 
+verticalScrollingCheckboxesField ::
+  (YesodPersist site, RenderMessage site FormMessage, YesodPersistBackend site ~ SqlBackend, Eq a) =>
+  HandlerFor site (OptionList a) ->
+  Field (HandlerFor site) [a]
+verticalScrollingCheckboxesField ioptlist =
+  (multiSelectField ioptlist)
+    { fieldView = \theId name attrs val _isReq -> do
+        opts <- olOptions <$> handlerToWidget ioptlist
+        let optselected (Left _) _ = False
+            optselected (Right vals) opt = optionInternalValue opt `elem` vals
+        [whamlet|
+                <div ##{theId} style="border:1px solid #ccc; height: 450px; overflow-y: scroll;">
+                  $forall opt <- opts
+                    <label style="display: block;">
+                      <input type=checkbox name=#{name} value=#{optionExternalValue opt} *{attrs} :optselected val opt:checked>
+                      #{optionDisplay opt}
+                |]
+    }
+
 verticalCheckboxesField ::
   (YesodPersist site, RenderMessage site FormMessage, YesodPersistBackend site ~ SqlBackend, Eq a) =>
   HandlerFor site (OptionList a) ->
@@ -671,9 +690,18 @@ humanReadableBytes size
 getCurrentDay :: IO Day
 getCurrentDay = utctDay <$> getCurrentTime
 
+getCurrentYear :: IO Integer
+getCurrentYear = do
+  d <- getCurrentDay
+  let (year, _, _) = toGregorian d
+  return year
+
 maybeTextToText :: Maybe Text -> Text
 maybeTextToText Nothing = ""
 maybeTextToText (Just t) = t
+
+typeCsv :: ContentType
+typeCsv = "text/csv"
 
 --------------------------------------------------------------------------------
 -- format helpers
@@ -736,6 +764,18 @@ formatMinuteValue minVal = pack $ h1 : h2 : ':' : m1 : m2
   where
     (h1 : h2 : m1 : m2) = formatInt4Digits minVal
 
+maybePhone :: Maybe Int -> Maybe Int -> Maybe Int -> Maybe Int -> Maybe Text
+maybePhone Nothing Nothing Nothing Nothing = Nothing
+maybePhone Nothing a n Nothing = Just $ formatMaybeInt a <> "/" <> formatMaybeInt n
+maybePhone c a n Nothing = Just $ "+" <> formatMaybeInt c <> " " <> formatMaybeInt a <> "/" <> formatMaybeInt n
+maybePhone Nothing a n s = Just $ formatMaybeInt a <> "/" <> formatMaybeInt n <> "-" <> formatMaybeInt s
+maybePhone c a n s = Just $ "+" <> formatMaybeInt c <> " " <> formatMaybeInt a <> "/" <> formatMaybeInt n <> "-" <> formatMaybeInt s
+
+maybeMobile :: Maybe Int -> Maybe Int -> Maybe Int -> Maybe Text
+maybeMobile Nothing Nothing Nothing = Nothing
+maybeMobile Nothing a n = Just $ formatMaybeInt a <> "/" <> formatMaybeInt n
+maybeMobile c a n = Just $ "+" <> formatMaybeInt c <> " " <> formatMaybeInt a <> "/" <> formatMaybeInt n
+
 data Language = DE | EN
   deriving (Generic)
 
@@ -769,12 +809,6 @@ getTranslation = do
   return $ case lang of
     EN -> translationEn
     DE -> translationDe
-
--- localizedMsg :: MsgGlobal -> Handler Text
--- localizedMsg message = do
---   master <- getYesod
---   langs <- languages
---   return $ renderMessage master langs message
 
 localizedMsg :: AppMessage -> Handler Text
 localizedMsg message = do

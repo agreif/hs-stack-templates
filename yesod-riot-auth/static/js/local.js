@@ -119,6 +119,11 @@ function formatDateStr(dateStr, langs) {
     return formatDate(new Date(dateStr), langs);
 }
 
+function formatTimeStr(dateStr, langs) {
+    if (typeof langs == "undefined") console.log("formatTimeStr: languages missing (" + dateStr + ")")
+    return new Date(dateStr).toLocaleTimeString(langs);
+}
+
 function formatMonthStr(dateStr, langs) {
     if (typeof langs == "undefined") console.log("formatMonthStr: languages missing (" + dateStr + ")")
     return new Date(dateStr).toLocaleDateString(langs,
@@ -135,7 +140,7 @@ function fileSize(b, langs) {
     return (u
             ? b.toLocaleString(langs,
                                {minimumFractionDigits: 0, maximumFractionDigits: 1}) + ' '
-            : formatDouble(b)
+            : formatDouble(b, langs)
            ) + ' KMGTPEZY'[u] + 'B';
 }
 
@@ -155,18 +160,4 @@ function classNames(classes) {
 	if (value) return [...acc, key]
 	return acc
     }, []).join(' ')
-}
-
-function copyTextToClipboard(text) {
-    var textArea = document.createElement("textarea");
-    textArea.value = text;
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    try {
-        document.execCommand("copy");
-    } catch (err) {
-        console.error("Fallback: Oops, unable to copy", err);
-    }
-    document.body.removeChild(textArea);
 }
