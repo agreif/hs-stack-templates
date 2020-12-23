@@ -57,7 +57,7 @@ demoaListPageNumDataR pageNum = do
               Just $
                 JDataPageDemoaList
                   { jDataPageDemoaListDemoas = jDataDemoas,
-                    jDataPageDemoaListAddFormUrl = urlRenderer $ CrmR AddDemoaFormR,
+                    jDataPageDemoaListAddFormUrl = urlRenderer $ MyprojectR AddDemoaFormR,
                     jDataPageDemoaListPaginationItems = jDataPaginationItems
                   }
           }

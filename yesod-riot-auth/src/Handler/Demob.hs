@@ -81,7 +81,6 @@ demobListPageNumDataR pageNum = do
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
         jDataCsrfParamName = defaultCsrfParamName,
-        jDataCsrfParamName = defaultCsrfParamName,
         jDataCsrfToken = reqToken req,
         jDataBreadcrumbItems =
           [ JDataBreadcrumbItem
@@ -182,7 +181,6 @@ getDemobDetailDataR demobId = do
                 jDataHistoryStateTitle = msgDemob
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
-        jDataCsrfParamName = defaultCsrfParamName,
         jDataCsrfParamName = defaultCsrfParamName,
         jDataCsrfToken = reqToken req,
         jDataBreadcrumbItems =

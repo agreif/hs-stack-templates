@@ -43,7 +43,7 @@ getAddUserFormR = do
 
 postAddUserR :: Handler Value
 postAddUserR = do
-  ((result, formWidget), _) <- runFormPost $ vAddUserForm Nothing
+  ((result, formWidget), _) <- runFormPost $ vAddUserForm Nothing Nothing
   case result of
     FormSuccess vAddUser -> do
       curTime <- liftIO getCurrentTime
@@ -191,7 +191,7 @@ getEditUserFormR userId = do
 
 postEditUserR :: UserId -> Handler Value
 postEditUserR userId = do
-  ((result, formWidget), _) <- runFormPost $ vEditUserForm Nothing
+  ((result, formWidget), _) <- runFormPost $ vEditUserForm (Just userId) Nothing
   case result of
     FormSuccess vEditUser -> do
       curTime <- liftIO getCurrentTime
