@@ -26,19 +26,30 @@ data AppMessage
   | MsgConfigIntValue
   | MsgConfigDoubleValue
   | MsgConfigBoolValue
-  | MsgTestmailEmail
   | MsgDemoaMyattr
   | MsgDemobMyattr
   | MsgDemocDemobId
   | MsgDemocMyattr
+  | MsgUserIdentInputInfo
+  | MsgUserPasswordInputInfo
+  | MsgUserEmailInputInfo
+  | MsgUserIsAdminInputInfo
+  | MsgUserIsResetPasswordInputInfo
+  | MsgConfigCodeInputInfo
+  | MsgConfigStringValueInputInfo
+  | MsgConfigIntValueInputInfo
+  | MsgConfigDoubleValueInputInfo
+  | MsgConfigBoolValueInputInfo
+  | MsgDemoaMyattrInputInfo
+  | MsgDemobMyattrInputInfo
+  | MsgDemocDemobIdInputInfo
+  | MsgDemocMyattrInputInfo
   | MsgUserUsers
   | MsgUserAddUser
   | MsgUserEditUser
   | MsgUserDeleteUser
   | MsgConfigConfigurations
   | MsgConfigEditConfig
-  | MsgTestmailTestMail
-  | MsgTestmailSendTestMail
   | MsgDemoaDemoa
   | MsgDemoaDemoas
   | MsgDemoaAddDemoa
@@ -54,6 +65,10 @@ data AppMessage
   | MsgDemocAddDemoc
   | MsgDemocEditDemoc
   | MsgDemocDeleteDemoc
+  | MsgTestmailEmail
+  | MsgTestmailEmailInputInfo
+  | MsgTestmailTestMail
+  | MsgTestmailSendTestMail
 
 renderMessageGerman :: AppMessage -> Text
 renderMessageGerman MsgGlobalHome = "Home"
@@ -75,19 +90,30 @@ renderMessageGerman MsgConfigStringValue = "String-Wert"
 renderMessageGerman MsgConfigIntValue = "Integer-Wert"
 renderMessageGerman MsgConfigDoubleValue = "Double-Wert"
 renderMessageGerman MsgConfigBoolValue = "Boolean-Wert"
-renderMessageGerman MsgTestmailEmail = "Email"
 renderMessageGerman MsgDemoaMyattr = "My attribute"
 renderMessageGerman MsgDemobMyattr = "My attribute"
 renderMessageGerman MsgDemocDemobId = ""
 renderMessageGerman MsgDemocMyattr = "My attribute"
+renderMessageGerman MsgUserIdentInputInfo = ""
+renderMessageGerman MsgUserPasswordInputInfo = ""
+renderMessageGerman MsgUserEmailInputInfo = ""
+renderMessageGerman MsgUserIsAdminInputInfo = ""
+renderMessageGerman MsgUserIsResetPasswordInputInfo = ""
+renderMessageGerman MsgConfigCodeInputInfo = ""
+renderMessageGerman MsgConfigStringValueInputInfo = ""
+renderMessageGerman MsgConfigIntValueInputInfo = ""
+renderMessageGerman MsgConfigDoubleValueInputInfo = ""
+renderMessageGerman MsgConfigBoolValueInputInfo = ""
+renderMessageGerman MsgDemoaMyattrInputInfo = ""
+renderMessageGerman MsgDemobMyattrInputInfo = ""
+renderMessageGerman MsgDemocDemobIdInputInfo = ""
+renderMessageGerman MsgDemocMyattrInputInfo = ""
 renderMessageGerman MsgUserUsers = "Nutzer"
 renderMessageGerman MsgUserAddUser = "Nutzer hinzufügen"
 renderMessageGerman MsgUserEditUser = "Nutzer bearbeiten"
 renderMessageGerman MsgUserDeleteUser = "Nutzer löschen"
 renderMessageGerman MsgConfigConfigurations = "Konfigurationen"
 renderMessageGerman MsgConfigEditConfig = "Konfiguration bearbeiten"
-renderMessageGerman MsgTestmailTestMail = "Test-Mail"
-renderMessageGerman MsgTestmailSendTestMail = "Test-Mail senden..."
 renderMessageGerman MsgDemoaDemoa = "Demoa"
 renderMessageGerman MsgDemoaDemoas = "Demoas"
 renderMessageGerman MsgDemoaAddDemoa = "Demoa hinzufügen"
@@ -103,6 +129,10 @@ renderMessageGerman MsgDemocDemocs = "Democs"
 renderMessageGerman MsgDemocAddDemoc = "Democ hinzufügen"
 renderMessageGerman MsgDemocEditDemoc = "Democ bearbeiten"
 renderMessageGerman MsgDemocDeleteDemoc = "Democ löschen"
+renderMessageGerman MsgTestmailEmail = "Email"
+renderMessageGerman MsgTestmailEmailInputInfo = ""
+renderMessageGerman MsgTestmailTestMail = "Test-Mail"
+renderMessageGerman MsgTestmailSendTestMail = "Test-Mail senden..."
 
 renderMessageEnglish :: AppMessage -> Text
 renderMessageEnglish MsgGlobalHome = "Home"
@@ -124,19 +154,30 @@ renderMessageEnglish MsgConfigStringValue = "String-Value"
 renderMessageEnglish MsgConfigIntValue = "Integer-Value"
 renderMessageEnglish MsgConfigDoubleValue = "Double-Value"
 renderMessageEnglish MsgConfigBoolValue = "Boolean-Value"
-renderMessageEnglish MsgTestmailEmail = "Email"
 renderMessageEnglish MsgDemoaMyattr = "Mein Attribut"
 renderMessageEnglish MsgDemobMyattr = "Mein Attribut"
 renderMessageEnglish MsgDemocDemobId = ""
 renderMessageEnglish MsgDemocMyattr = "Mein Attribut"
+renderMessageEnglish MsgUserIdentInputInfo = ""
+renderMessageEnglish MsgUserPasswordInputInfo = ""
+renderMessageEnglish MsgUserEmailInputInfo = ""
+renderMessageEnglish MsgUserIsAdminInputInfo = ""
+renderMessageEnglish MsgUserIsResetPasswordInputInfo = ""
+renderMessageEnglish MsgConfigCodeInputInfo = ""
+renderMessageEnglish MsgConfigStringValueInputInfo = ""
+renderMessageEnglish MsgConfigIntValueInputInfo = ""
+renderMessageEnglish MsgConfigDoubleValueInputInfo = ""
+renderMessageEnglish MsgConfigBoolValueInputInfo = ""
+renderMessageEnglish MsgDemoaMyattrInputInfo = ""
+renderMessageEnglish MsgDemobMyattrInputInfo = ""
+renderMessageEnglish MsgDemocDemobIdInputInfo = ""
+renderMessageEnglish MsgDemocMyattrInputInfo = ""
 renderMessageEnglish MsgUserUsers = "Users"
 renderMessageEnglish MsgUserAddUser = "Add user"
 renderMessageEnglish MsgUserEditUser = "Edit user"
 renderMessageEnglish MsgUserDeleteUser = "Delete user"
 renderMessageEnglish MsgConfigConfigurations = "Configurations"
 renderMessageEnglish MsgConfigEditConfig = "Edit config"
-renderMessageEnglish MsgTestmailTestMail = "Test-Mail"
-renderMessageEnglish MsgTestmailSendTestMail = "Send Test-Mail..."
 renderMessageEnglish MsgDemoaDemoa = "Demoa"
 renderMessageEnglish MsgDemoaDemoas = "Demoas"
 renderMessageEnglish MsgDemoaAddDemoa = "Add demoa"
@@ -152,6 +193,10 @@ renderMessageEnglish MsgDemocDemocs = "Democs"
 renderMessageEnglish MsgDemocAddDemoc = "Add democ"
 renderMessageEnglish MsgDemocEditDemoc = "Edit democ"
 renderMessageEnglish MsgDemocDeleteDemoc = "Delete democ"
+renderMessageEnglish MsgTestmailEmail = "Email"
+renderMessageEnglish MsgTestmailEmailInputInfo = ""
+renderMessageEnglish MsgTestmailTestMail = "Test-Mail"
+renderMessageEnglish MsgTestmailSendTestMail = "Send Test-Mail..."
 
 data Translation = Translation
   { msgGlobalHome :: Text,
@@ -173,19 +218,30 @@ data Translation = Translation
     msgConfigIntValue :: Text,
     msgConfigDoubleValue :: Text,
     msgConfigBoolValue :: Text,
-    msgTestmailEmail :: Text,
     msgDemoaMyattr :: Text,
     msgDemobMyattr :: Text,
     msgDemocDemobId :: Text,
     msgDemocMyattr :: Text,
+    msgUserIdentInputInfo :: Text,
+    msgUserPasswordInputInfo :: Text,
+    msgUserEmailInputInfo :: Text,
+    msgUserIsAdminInputInfo :: Text,
+    msgUserIsResetPasswordInputInfo :: Text,
+    msgConfigCodeInputInfo :: Text,
+    msgConfigStringValueInputInfo :: Text,
+    msgConfigIntValueInputInfo :: Text,
+    msgConfigDoubleValueInputInfo :: Text,
+    msgConfigBoolValueInputInfo :: Text,
+    msgDemoaMyattrInputInfo :: Text,
+    msgDemobMyattrInputInfo :: Text,
+    msgDemocDemobIdInputInfo :: Text,
+    msgDemocMyattrInputInfo :: Text,
     msgUserUsers :: Text,
     msgUserAddUser :: Text,
     msgUserEditUser :: Text,
     msgUserDeleteUser :: Text,
     msgConfigConfigurations :: Text,
     msgConfigEditConfig :: Text,
-    msgTestmailTestMail :: Text,
-    msgTestmailSendTestMail :: Text,
     msgDemoaDemoa :: Text,
     msgDemoaDemoas :: Text,
     msgDemoaAddDemoa :: Text,
@@ -200,7 +256,11 @@ data Translation = Translation
     msgDemocDemocs :: Text,
     msgDemocAddDemoc :: Text,
     msgDemocEditDemoc :: Text,
-    msgDemocDeleteDemoc :: Text
+    msgDemocDeleteDemoc :: Text,
+    msgTestmailEmail :: Text,
+    msgTestmailEmailInputInfo :: Text,
+    msgTestmailTestMail :: Text,
+    msgTestmailSendTestMail :: Text
   }
   deriving (Generic)
 
@@ -228,19 +288,30 @@ translationDe =
       msgConfigIntValue = "Integer-Wert",
       msgConfigDoubleValue = "Double-Wert",
       msgConfigBoolValue = "Boolean-Wert",
-      msgTestmailEmail = "Email",
       msgDemoaMyattr = "My attribute",
       msgDemobMyattr = "My attribute",
       msgDemocDemobId = "",
       msgDemocMyattr = "My attribute",
+      msgUserIdentInputInfo = "",
+      msgUserPasswordInputInfo = "",
+      msgUserEmailInputInfo = "",
+      msgUserIsAdminInputInfo = "",
+      msgUserIsResetPasswordInputInfo = "",
+      msgConfigCodeInputInfo = "",
+      msgConfigStringValueInputInfo = "",
+      msgConfigIntValueInputInfo = "",
+      msgConfigDoubleValueInputInfo = "",
+      msgConfigBoolValueInputInfo = "",
+      msgDemoaMyattrInputInfo = "",
+      msgDemobMyattrInputInfo = "",
+      msgDemocDemobIdInputInfo = "",
+      msgDemocMyattrInputInfo = "",
       msgUserUsers = "Nutzer",
       msgUserAddUser = "Nutzer hinzufügen",
       msgUserEditUser = "Nutzer bearbeiten",
       msgUserDeleteUser = "Nutzer löschen",
       msgConfigConfigurations = "Konfigurationen",
       msgConfigEditConfig = "Konfiguration bearbeiten",
-      msgTestmailTestMail = "Test-Mail",
-      msgTestmailSendTestMail = "Test-Mail senden...",
       msgDemoaDemoa = "Demoa",
       msgDemoaDemoas = "Demoas",
       msgDemoaAddDemoa = "Demoa hinzufügen",
@@ -255,7 +326,11 @@ translationDe =
       msgDemocDemocs = "Democs",
       msgDemocAddDemoc = "Democ hinzufügen",
       msgDemocEditDemoc = "Democ bearbeiten",
-      msgDemocDeleteDemoc = "Democ löschen"
+      msgDemocDeleteDemoc = "Democ löschen",
+      msgTestmailEmail = "Email",
+      msgTestmailEmailInputInfo = "",
+      msgTestmailTestMail = "Test-Mail",
+      msgTestmailSendTestMail = "Test-Mail senden..."
     }
 
 translationEn :: Translation
@@ -280,19 +355,30 @@ translationEn =
       msgConfigIntValue = "Integer-Value",
       msgConfigDoubleValue = "Double-Value",
       msgConfigBoolValue = "Boolean-Value",
-      msgTestmailEmail = "Email",
       msgDemoaMyattr = "Mein Attribut",
       msgDemobMyattr = "Mein Attribut",
       msgDemocDemobId = "",
       msgDemocMyattr = "Mein Attribut",
+      msgUserIdentInputInfo = "",
+      msgUserPasswordInputInfo = "",
+      msgUserEmailInputInfo = "",
+      msgUserIsAdminInputInfo = "",
+      msgUserIsResetPasswordInputInfo = "",
+      msgConfigCodeInputInfo = "",
+      msgConfigStringValueInputInfo = "",
+      msgConfigIntValueInputInfo = "",
+      msgConfigDoubleValueInputInfo = "",
+      msgConfigBoolValueInputInfo = "",
+      msgDemoaMyattrInputInfo = "",
+      msgDemobMyattrInputInfo = "",
+      msgDemocDemobIdInputInfo = "",
+      msgDemocMyattrInputInfo = "",
       msgUserUsers = "Users",
       msgUserAddUser = "Add user",
       msgUserEditUser = "Edit user",
       msgUserDeleteUser = "Delete user",
       msgConfigConfigurations = "Configurations",
       msgConfigEditConfig = "Edit config",
-      msgTestmailTestMail = "Test-Mail",
-      msgTestmailSendTestMail = "Send Test-Mail...",
       msgDemoaDemoa = "Demoa",
       msgDemoaDemoas = "Demoas",
       msgDemoaAddDemoa = "Add demoa",
@@ -307,6 +393,10 @@ translationEn =
       msgDemocDemocs = "Democs",
       msgDemocAddDemoc = "Add democ",
       msgDemocEditDemoc = "Edit democ",
-      msgDemocDeleteDemoc = "Delete democ"
+      msgDemocDeleteDemoc = "Delete democ",
+      msgTestmailEmail = "Email",
+      msgTestmailEmailInputInfo = "",
+      msgTestmailTestMail = "Test-Mail",
+      msgTestmailSendTestMail = "Send Test-Mail..."
     }
 -- gen i18n - end

@@ -29,8 +29,8 @@ data VAddUser = VAddUser
 -- gen get add form - start
 getAddUserFormR :: Handler Html
 getAddUserFormR = do
-  (formWidget, _) <- generateFormPost $ vAddUserForm Nothing
-  formLayout $ do
+  (formWidget, _) <- generateFormPost $ vAddUserForm Nothing Nothing
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgUserAddUser}
@@ -73,8 +73,8 @@ postAddUserR = do
           }
 
 -- gen add form - start
-vAddUserForm :: Maybe User -> Html -> MForm Handler (FormResult VAddUser, Widget)
-vAddUserForm maybeUser extra = do
+vAddUserForm :: Maybe UserId -> Maybe User -> Html -> MForm Handler (FormResult VAddUser, Widget)
+vAddUserForm maybeUserId maybeUser extra = do
   (identResult, identView) <-
     mreq
       textField
@@ -95,24 +95,36 @@ vAddUserForm maybeUser extra = do
         toWidget
           [whamlet|
     #{extra}
-    <div .uk-margin-small :not $ null $ fvErrors identView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors identView:.uk-text-danger for=#{fvId identView}>#{fvLabel identView}
+    <div #identInputWidget .uk-margin-small :not $ null $ fvErrors identView:.uk-form-danger>
+      <label #identInputLabel .uk-form-label :not $ null $ fvErrors identView:.uk-text-danger for=#{fvId identView}>#{fvLabel identView}
       <div .uk-form-controls>
         ^{fvInput identView}
+        <span #identInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgUserIdentInputInfo}
         $maybe err <- fvErrors identView
-          &nbsp;#{err}
-    <div .uk-margin-small :not $ null $ fvErrors emailView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors emailView:.uk-text-danger for=#{fvId emailView}>#{fvLabel emailView}
+          <br>
+          <span #identInputError .uk-text-small .input-error>
+            &nbsp;#{err}
+    <div #emailInputWidget .uk-margin-small :not $ null $ fvErrors emailView:.uk-form-danger>
+      <label #emailInputLabel .uk-form-label :not $ null $ fvErrors emailView:.uk-text-danger for=#{fvId emailView}>#{fvLabel emailView}
       <div .uk-form-controls>
         ^{fvInput emailView}
+        <span #emailInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgUserEmailInputInfo}
         $maybe err <- fvErrors emailView
-          &nbsp;#{err}
-    <div .uk-margin-small :not $ null $ fvErrors isAdminView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors isAdminView:.uk-text-danger for=#{fvId isAdminView}>#{fvLabel isAdminView}
+          <br>
+          <span #emailInputError .uk-text-small .input-error>
+            &nbsp;#{err}
+    <div #isAdminInputWidget .uk-margin-small :not $ null $ fvErrors isAdminView:.uk-form-danger>
+      <label #isAdminInputLabel .uk-form-label :not $ null $ fvErrors isAdminView:.uk-text-danger for=#{fvId isAdminView}>#{fvLabel isAdminView}
       <div .uk-form-controls>
         ^{fvInput isAdminView}
+        <span #isAdminInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgUserIsAdminInputInfo}
         $maybe err <- fvErrors isAdminView
-          &nbsp;#{err}
+          <br>
+          <span #isAdminInputError .uk-text-small .input-error>
+            &nbsp;#{err}
     |]
   return (vAddUserResult, formWidget)
   where
@@ -123,7 +135,7 @@ vAddUserForm maybeUser extra = do
           fsTooltip = Nothing,
           fsId = Just "ident",
           fsName = Just "ident",
-          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
     emailFs :: FieldSettings App
     emailFs =
@@ -132,7 +144,7 @@ vAddUserForm maybeUser extra = do
           fsTooltip = Nothing,
           fsId = Just "email",
           fsName = Just "email",
-          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
     isAdminFs :: FieldSettings App
     isAdminFs =
@@ -165,8 +177,8 @@ data VEditUser = VEditUser
 getEditUserFormR :: UserId -> Handler Html
 getEditUserFormR userId = do
   user <- runDB $ get404 userId
-  (formWidget, _) <- generateFormPost $ vEditUserForm (Just user)
-  formLayout $ do
+  (formWidget, _) <- generateFormPost $ vEditUserForm (Just userId) (Just user)
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgUserEditUser}
@@ -220,8 +232,8 @@ postEditUserR userId = do
           }
 
 -- gen edit form - start
-vEditUserForm :: Maybe User -> Html -> MForm Handler (FormResult VEditUser, Widget)
-vEditUserForm maybeUser extra = do
+vEditUserForm :: Maybe UserId -> Maybe User -> Html -> MForm Handler (FormResult VEditUser, Widget)
+vEditUserForm maybeUserId maybeUser extra = do
   (identResult, identView) <-
     mreq
       textField
@@ -253,30 +265,46 @@ vEditUserForm maybeUser extra = do
           [whamlet|
     #{extra}
     ^{fvInput versionView}
-    <div .uk-margin-small :not $ null $ fvErrors identView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors identView:.uk-text-danger for=#{fvId identView}>#{fvLabel identView}
+    <div #identInputWidget .uk-margin-small :not $ null $ fvErrors identView:.uk-form-danger>
+      <label #identInputLabel .uk-form-label :not $ null $ fvErrors identView:.uk-text-danger for=#{fvId identView}>#{fvLabel identView}
       <div .uk-form-controls>
         ^{fvInput identView}
+        <span #identInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgUserIdentInputInfo}
         $maybe err <- fvErrors identView
-          &nbsp;#{err}
-    <div .uk-margin-small :not $ null $ fvErrors emailView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors emailView:.uk-text-danger for=#{fvId emailView}>#{fvLabel emailView}
+          <br>
+          <span #identInputError .uk-text-small .input-error>
+            &nbsp;#{err}
+    <div #emailInputWidget .uk-margin-small :not $ null $ fvErrors emailView:.uk-form-danger>
+      <label #emailInputLabel .uk-form-label :not $ null $ fvErrors emailView:.uk-text-danger for=#{fvId emailView}>#{fvLabel emailView}
       <div .uk-form-controls>
         ^{fvInput emailView}
+        <span #emailInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgUserEmailInputInfo}
         $maybe err <- fvErrors emailView
-          &nbsp;#{err}
-    <div .uk-margin-small :not $ null $ fvErrors isAdminView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors isAdminView:.uk-text-danger for=#{fvId isAdminView}>#{fvLabel isAdminView}
+          <br>
+          <span #emailInputError .uk-text-small .input-error>
+            &nbsp;#{err}
+    <div #isAdminInputWidget .uk-margin-small :not $ null $ fvErrors isAdminView:.uk-form-danger>
+      <label #isAdminInputLabel .uk-form-label :not $ null $ fvErrors isAdminView:.uk-text-danger for=#{fvId isAdminView}>#{fvLabel isAdminView}
       <div .uk-form-controls>
         ^{fvInput isAdminView}
+        <span #isAdminInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgUserIsAdminInputInfo}
         $maybe err <- fvErrors isAdminView
-          &nbsp;#{err}
-    <div .uk-margin-small :not $ null $ fvErrors isResetPasswordView:.uk-form-danger>
-      <label .uk-form-label :not $ null $ fvErrors isResetPasswordView:.uk-text-danger for=#{fvId isResetPasswordView}>#{fvLabel isResetPasswordView}
+          <br>
+          <span #isAdminInputError .uk-text-small .input-error>
+            &nbsp;#{err}
+    <div #isResetPasswordInputWidget .uk-margin-small :not $ null $ fvErrors isResetPasswordView:.uk-form-danger>
+      <label #isResetPasswordInputLabel .uk-form-label :not $ null $ fvErrors isResetPasswordView:.uk-text-danger for=#{fvId isResetPasswordView}>#{fvLabel isResetPasswordView}
       <div .uk-form-controls>
         ^{fvInput isResetPasswordView}
+        <span #isResetPasswordInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgUserIsResetPasswordInputInfo}
         $maybe err <- fvErrors isResetPasswordView
-          &nbsp;#{err}
+          <br>
+          <span #isResetPasswordInputError .uk-text-small .input-error>
+            &nbsp;#{err}
     |]
   return (vEditUserResult, formWidget)
   where
@@ -287,7 +315,7 @@ vEditUserForm maybeUser extra = do
           fsTooltip = Nothing,
           fsId = Just "ident",
           fsName = Just "ident",
-          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
     emailFs :: FieldSettings App
     emailFs =
@@ -296,7 +324,7 @@ vEditUserForm maybeUser extra = do
           fsTooltip = Nothing,
           fsId = Just "email",
           fsName = Just "email",
-          fsAttrs = [("class", "uk-form-width-large uk-input uk-form-small")]
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
     isAdminFs :: FieldSettings App
     isAdminFs =
@@ -344,7 +372,16 @@ vDeleteUserForm extra = do
 -- gen post delete - start
 postDeleteUserR :: UserId -> Handler Value
 postDeleteUserR userId = do
-  runDB $ delete userId
+  curTime <- liftIO getCurrentTime
+  Entity _ authUser <- requireAuth
+  runDB $ do
+    -- trick to record the user deleting the entity
+    updateWhere
+      [UserId ==. userId]
+      [ UserUpdatedAt =. curTime,
+        UserUpdatedBy =. userIdent authUser
+      ]
+    delete userId
   urlRenderer <- getUrlRender
   returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ AdminR AdminDataR}
 
@@ -354,7 +391,7 @@ postDeleteUserR userId = do
 getDeleteUserFormR :: UserId -> Handler Html
 getDeleteUserFormR userId = do
   (formWidget, _) <- generateFormPost $ vDeleteUserForm
-  formLayout $ do
+  formLayout $
     toWidget
       [whamlet|
       <h1>_{MsgUserDeleteUser}

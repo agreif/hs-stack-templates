@@ -1,4 +1,5 @@
 resolver: lts-14.27
+
 packages:
 - .
 - hs-generator
@@ -6,10 +7,8 @@ packages:
 
 extra-deps:
 - git: https://github.com/agreif/hs-yesod-model-generator.git
-  commit: fb2b4d3503c03be5c5a090570d3d1d4ec2cba4fc
+  commit: 9e6b03ab791d64450d8b38913570bd6959e304ef
 - pwstore-fast-2.4.4@sha256:9b6a37510d8b9f37f409a8ab3babac9181afcaaa3fce8ba1c131a7ed3de30698,1351
-
-allow-newer: true
 
 nix:
   enable: true

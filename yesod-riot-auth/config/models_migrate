@@ -26,6 +26,7 @@ UserHistory
     createdBy Text
     updatedAt UTCTime
     updatedBy Text
+    dbAction Text default='UPDATE' MigrationOnly
 
 Config json
     code Text
@@ -54,7 +55,7 @@ ConfigHistory
     createdBy Text
     updatedAt UTCTime
     updatedBy Text
-
+    dbAction Text default='UPDATE' MigrationOnly
 
 Demoa json
     myattr Text
@@ -74,6 +75,7 @@ DemoaHistory
     createdBy Text
     updatedAt UTCTime
     updatedBy Text
+    dbAction Text default='UPDATE' MigrationOnly
 
 Demob json
     myattr Text
@@ -93,6 +95,7 @@ DemobHistory
     createdBy Text
     updatedAt UTCTime
     updatedBy Text
+    dbAction Text default='UPDATE' MigrationOnly
 
 Democ json
     demobId DemobId
@@ -114,5 +117,6 @@ DemocHistory
     createdBy Text
     updatedAt UTCTime
     updatedBy Text
+    dbAction Text default='UPDATE' MigrationOnly
 
 -- gen models - end
