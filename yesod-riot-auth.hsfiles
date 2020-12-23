@@ -1442,6 +1442,7 @@ context =
           [ BActionModel
               { bActionModelName = "testmail",
                 bActionModelAction = "send",
+                bActionModelHandlerArgs = Nothing,
                 bActionModelFormArgs = Nothing,
                 bActionModelFormEntityLoader = Nothing,
                 bActionModelFormDataJsonUrl = Nothing,
@@ -1454,6 +1455,8 @@ context =
                       { bActionFieldName = "email",
                         bActionFieldLabelDe = Just "Email",
                         bActionFieldLabelEn = Just "Email",
+                        bActionFieldInfoDe = Nothing,
+                        bActionFieldInfoEn = Nothing,
                         bActionFieldHsType = "Text",
                         bActionFieldFormFieldType = Just "textField",
                         bActionFieldView =
@@ -1661,6 +1664,10 @@ flags:
   dev:
     description: Turn on development settings, like auto-reload templates.
     manual: false
+    default: false
+  static:
+    description: Pass -static/-pthread to ghc when linking the stack binary.
+    manual: true
     default: false
 
 {-# START_FILE postgresql_setup.sql #-}
@@ -2714,6 +2721,7 @@ getAdminDataR = do
                 jDataHistoryStateTitle = msgAdmin
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
+        jDataCsrfParamName = defaultCsrfParamName,
         jDataCsrfToken = reqToken req,
         jDataBreadcrumbItems =
           [ JDataBreadcrumbItem
@@ -3863,6 +3871,7 @@ demoaListPageNumDataR pageNum = do
                 jDataHistoryStateTitle = msgDemoa
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
+        jDataCsrfParamName = defaultCsrfParamName,
         jDataCsrfToken = reqToken req,
         jDataBreadcrumbItems =
           [ JDataBreadcrumbItem
@@ -4250,6 +4259,7 @@ demobListPageNumDataR pageNum = do
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
         jDataCsrfParamName = defaultCsrfParamName,
+        jDataCsrfParamName = defaultCsrfParamName,
         jDataCsrfToken = reqToken req,
         jDataBreadcrumbItems =
           [ JDataBreadcrumbItem
@@ -4350,6 +4360,7 @@ getDemobDetailDataR demobId = do
                 jDataHistoryStateTitle = msgDemob
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
+        jDataCsrfParamName = defaultCsrfParamName,
         jDataCsrfParamName = defaultCsrfParamName,
         jDataCsrfToken = reqToken req,
         jDataBreadcrumbItems =
@@ -4981,6 +4992,7 @@ getHomeDataR = do
                 jDataHistoryStateTitle = msgHome
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
+        jDataCsrfParamName = defaultCsrfParamName,
         jDataCsrfToken = reqToken req,
         jDataBreadcrumbItems =
           [ JDataBreadcrumbItem
