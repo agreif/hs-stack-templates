@@ -80,6 +80,7 @@ demoaListPageNumDataR pageNum = do
                 jDataHistoryStateTitle = msgDemoa
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
+        jDataCsrfParamName = defaultCsrfParamName,
         jDataCsrfToken = reqToken req,
         jDataBreadcrumbItems =
           [ JDataBreadcrumbItem

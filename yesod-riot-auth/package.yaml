@@ -106,3 +106,7 @@ flags:
     description: Turn on development settings, like auto-reload templates.
     manual: false
     default: false
+  static:
+    description: Pass -static/-pthread to ghc when linking the stack binary.
+    manual: true
+    default: false

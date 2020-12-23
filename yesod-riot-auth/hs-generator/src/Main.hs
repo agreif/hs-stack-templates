@@ -729,6 +729,7 @@ context =
           [ BActionModel
               { bActionModelName = "testmail",
                 bActionModelAction = "send",
+                bActionModelHandlerArgs = Nothing,
                 bActionModelFormArgs = Nothing,
                 bActionModelFormEntityLoader = Nothing,
                 bActionModelFormDataJsonUrl = Nothing,
@@ -741,6 +742,8 @@ context =
                       { bActionFieldName = "email",
                         bActionFieldLabelDe = Just "Email",
                         bActionFieldLabelEn = Just "Email",
+                        bActionFieldInfoDe = Nothing,
+                        bActionFieldInfoEn = Nothing,
                         bActionFieldHsType = "Text",
                         bActionFieldFormFieldType = Just "textField",
                         bActionFieldView =
