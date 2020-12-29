@@ -278,7 +278,9 @@ data JDataPageDemoaList = JDataPageDemoaList
     jDataPageDemoaListAddFormUrl :: Text,
     jDataPageDemoaListPaginationItems :: Maybe [JDataPaginationItem],
     jDataPageDemoaListMyattrToggleSortUrl :: Text,
-    jDataPageDemoaListOtherattrToggleSortUrl :: Text
+    jDataPageDemoaListOtherattrToggleSortUrl :: Text,
+    jDataPageDemoaListSortColumn :: Maybe Text,
+    jDataPageDemoaListSortValue :: Maybe Text
   }
 
 instance ToJSON JDataPageDemoaList where
@@ -288,7 +290,9 @@ instance ToJSON JDataPageDemoaList where
         "addFormUrl" .= jDataPageDemoaListAddFormUrl o,
         "paginationItems" .= jDataPageDemoaListPaginationItems o,
         "myattrToggleSortUrl" .= jDataPageDemoaListMyattrToggleSortUrl o,
-        "otherattrToggleSortUrl" .= jDataPageDemoaListOtherattrToggleSortUrl o
+        "otherattrToggleSortUrl" .= jDataPageDemoaListOtherattrToggleSortUrl o,
+        "sortColumn" .= jDataPageDemoaListSortColumn o,
+        "sortValue" .= jDataPageDemoaListSortValue o
       ]
 
 data JDataDemoa = JDataDemoa

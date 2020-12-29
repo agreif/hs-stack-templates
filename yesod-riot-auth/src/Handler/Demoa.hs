@@ -16,7 +16,6 @@ import Handler.Common
 import Import
 import qualified Text.Blaze.Html.Renderer.Text as Blaze
 import Text.Hamlet (hamletFile)
-import Prelude (read)
 
 -------------------------------------------------------
 -- list
@@ -115,6 +114,8 @@ demoaListPageNumDataR pageNum = do
   urlRenderer <- getUrlRender
   mainNavItems <- mainNavData user MainNavDemoa
   (jDataDemoas, jDataPaginationItems) <- demoaListJDatas pageNum
+  maybeSortCol <- lookupSession sortColKey
+  maybeSortVal <- lookupSession sortValKey
   let pages =
         defaultDataPages
           { jDataPageDemoaList =
@@ -124,7 +125,9 @@ demoaListPageNumDataR pageNum = do
                     jDataPageDemoaListAddFormUrl = urlRenderer $ MyprojectR AddDemoaFormR,
                     jDataPageDemoaListPaginationItems = jDataPaginationItems,
                     jDataPageDemoaListMyattrToggleSortUrl = urlRenderer $ MyprojectR $ ToggleSortDemoaMyattrR pageNum,
-                    jDataPageDemoaListOtherattrToggleSortUrl = urlRenderer $ MyprojectR $ ToggleSortDemoaOtherattrR pageNum
+                    jDataPageDemoaListOtherattrToggleSortUrl = urlRenderer $ MyprojectR $ ToggleSortDemoaOtherattrR pageNum,
+                    jDataPageDemoaListSortColumn = maybeSortCol,
+                    jDataPageDemoaListSortValue = maybeSortVal
                   }
           }
   msgHome <- localizedMsg MsgGlobalHome
