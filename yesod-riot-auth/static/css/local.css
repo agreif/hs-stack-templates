@@ -77,6 +77,14 @@ div.uk-form-danger input {
     color: white;
 }
 
+.table-header {
+  cursor: default;
+}
+
+
+
+
+
 /* Tingle Modals
  ========================================================================== */
 .tingle-modal {

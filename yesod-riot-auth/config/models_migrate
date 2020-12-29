@@ -59,6 +59,7 @@ ConfigHistory
 
 Demoa json
     myattr Text
+    otherattr Text Maybe
     version Int
     createdAt UTCTime
     createdBy Text
@@ -70,6 +71,7 @@ DemoaHistory
     Id sql=vid
     id Int MigrationOnly
     myattr Text
+    otherattr Text Maybe
     version Int
     createdAt UTCTime
     createdBy Text

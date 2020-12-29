@@ -471,6 +471,7 @@ ConfigHistory
 
 Demoa json
     myattr Text
+    otherattr Text Maybe
     version Int
     createdAt UTCTime
     createdBy Text
@@ -482,6 +483,7 @@ DemoaHistory
     Id sql=vid
     id Int MigrationOnly
     myattr Text
+    otherattr Text Maybe
     version Int
     createdAt UTCTime
     createdBy Text
@@ -595,6 +597,8 @@ User-agent: *
   editDemoa/#DemoaId EditDemoaR POST
   deleteDemoaForm/#DemoaId DeleteDemoaFormR GET
   deleteDemoa/#DemoaId DeleteDemoaR POST
+  toggleSortDemoaMyattr/#Int ToggleSortDemoaMyattrR POST
+  toggleSortDemoaOtherattr/#Int ToggleSortDemoaOtherattrR POST
 
   demobList DemobListR GET
   demobListData DemobListDataR GET
@@ -1248,6 +1252,50 @@ context =
                                   ],
                                 bFieldViewDefault = Nothing
                               }
+                      },
+                    BCrudField
+                      { bCrudFieldName = "otherattr",
+                        bCrudFieldLabelDe = Just "Other attribute",
+                        bCrudFieldLabelEn = Just "Anderes Attribut",
+                        bCrudFieldInfoDe = Nothing,
+                        bCrudFieldInfoEn = Nothing,
+                        bCrudFieldHsType = "Text",
+                        bCrudFieldDb =
+                          Just $
+                            BCrudFieldDb
+                              { bCrudFieldDbIsNullable = True,
+                                bCrudFieldDbDefault = Nothing,
+                                bCrudFieldDbCanUpdate = True
+                              },
+                        bCrudFieldFormFieldType = Just "textField",
+                        bCrudFieldAddView =
+                          Just $
+                            BFieldView
+                              { bFieldViewIsRequired = False,
+                                bFieldViewIsDisabled = False,
+                                bFieldViewAttrs =
+                                  [ BFieldAttr
+                                      { bFieldAttrKey = "class",
+                                        bFieldAttrValue =
+                                          "uk-input uk-form-small uk-form-width-large"
+                                      }
+                                  ],
+                                bFieldViewDefault = Nothing
+                              },
+                        bCrudFieldEditView =
+                          Just $
+                            BFieldView
+                              { bFieldViewIsRequired = False,
+                                bFieldViewIsDisabled = False,
+                                bFieldViewAttrs =
+                                  [ BFieldAttr
+                                      { bFieldAttrKey = "class",
+                                        bFieldAttrValue =
+                                          "uk-input uk-form-small uk-form-width-large"
+                                      }
+                                  ],
+                                bFieldViewDefault = Nothing
+                              }
                       }
                   ],
                 bCrudModelTranslations =
@@ -1749,15 +1797,15 @@ as $function$
        if to_regclass('demoa_history') is not null then
            if (TG_OP = 'UPDATE' or TG_OP = 'INSERT') then
                 insert into demoa_history
-                       (id, myattr, version, created_at, created_by, updated_at, updated_by, db_action)
+                       (id, myattr, otherattr, version, created_at, created_by, updated_at, updated_by, db_action)
                        values
-                       (new.id, new.myattr, new.version, new.created_at, new.created_by, new.updated_at, new.updated_by, TG_OP);
+                       (new.id, new.myattr, new.otherattr, new.version, new.created_at, new.created_by, new.updated_at, new.updated_by, TG_OP);
                 return new;
            elsif (TG_OP = 'DELETE') then
                 insert into demoa_history
-                       (id, myattr, version, created_at, created_by, updated_at, updated_by, db_action)
+                       (id, myattr, otherattr, version, created_at, created_by, updated_at, updated_by, db_action)
                        values
-                       (old.id, old.myattr, old.version, old.created_at, old.created_by, old.updated_at, old.updated_by, TG_OP);
+                       (old.id, old.myattr, old.otherattr, old.version, old.created_at, old.created_by, old.updated_at, old.updated_by, TG_OP);
                return old;
            end if;
        end if;
@@ -2824,6 +2872,7 @@ loadConfigListTuples =
 
 {-# START_FILE src/Handler/Common.hs #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -3100,7 +3149,9 @@ instance ToJSON JDataConfig where
 data JDataPageDemoaList = JDataPageDemoaList
   { jDataPageDemoaListDemoas :: [JDataDemoa],
     jDataPageDemoaListAddFormUrl :: Text,
-    jDataPageDemoaListPaginationItems :: Maybe [JDataPaginationItem]
+    jDataPageDemoaListPaginationItems :: Maybe [JDataPaginationItem],
+    jDataPageDemoaListMyattrToggleSortUrl :: Text,
+    jDataPageDemoaListOtherattrToggleSortUrl :: Text
   }
 
 instance ToJSON JDataPageDemoaList where
@@ -3108,7 +3159,9 @@ instance ToJSON JDataPageDemoaList where
     object
       [ "demoas" .= jDataPageDemoaListDemoas o,
         "addFormUrl" .= jDataPageDemoaListAddFormUrl o,
-        "paginationItems" .= jDataPageDemoaListPaginationItems o
+        "paginationItems" .= jDataPageDemoaListPaginationItems o,
+        "myattrToggleSortUrl" .= jDataPageDemoaListMyattrToggleSortUrl o,
+        "otherattrToggleSortUrl" .= jDataPageDemoaListOtherattrToggleSortUrl o
       ]
 
 data JDataDemoa = JDataDemoa
@@ -3601,6 +3654,10 @@ maybeMobile Nothing Nothing Nothing = Nothing
 maybeMobile Nothing a n = Just $ formatMaybeInt a <> "/" <> formatMaybeInt n
 maybeMobile c a n = Just $ "+" <> formatMaybeInt c <> " " <> formatMaybeInt a <> "/" <> formatMaybeInt n
 
+data SortOpt record
+  = forall typ. PersistField typ => SortAsc (EntityField record typ)
+  | forall typ. PersistField typ => SortDesc (EntityField record typ)
+
 data Language = DE | EN
   deriving (Generic)
 
@@ -3896,6 +3953,7 @@ import Handler.Common
 import Import
 import qualified Text.Blaze.Html.Renderer.Text as Blaze
 import Text.Hamlet (hamletFile)
+import Prelude (read)
 
 -------------------------------------------------------
 -- list
@@ -3911,6 +3969,69 @@ getDemoaListR = do
 
 getDemoaListDataR :: Handler Value
 getDemoaListDataR = demoaListPageNumDataR 1
+
+sortColKey :: Text
+sortColKey = "sortDemoaCol"
+
+sortValKey :: Text
+sortValKey = "sortDemoaVal"
+
+curDemoaListSortOpt :: Handler (Maybe (SortOpt Demoa))
+curDemoaListSortOpt = do
+  maybeSortCol <- lookupSession sortColKey
+  maybeSortVal <- lookupSession sortValKey
+  return $ case (maybeSortCol, maybeSortVal) of
+    (Just sortCol, Just sortVal) -> case (sortCol, sortVal) of
+      ("myattr", "asc") -> Just $ SortAsc DemoaMyattr
+      ("myattr", "desc") -> Just $ SortDesc DemoaMyattr
+      ("otherattr", "asc") -> Just $ SortAsc DemoaOtherattr
+      ("otherattr", "desc") -> Just $ SortDesc DemoaOtherattr
+      _ -> Nothing
+    _ -> Nothing
+
+postToggleSortDemoaMyattrR :: Int -> Handler Value
+postToggleSortDemoaMyattrR pageNum = do
+  maybeOldSortOpt <- curDemoaListSortOpt
+  let newSortOpt = case maybeOldSortOpt of
+        Just (SortAsc col@DemoaMyattr) -> Just $ SortDesc col
+        Just (SortDesc DemoaMyattr) -> Nothing
+        _ -> Just $ SortAsc DemoaMyattr
+  case newSortOpt of
+    Just sortOpt -> do
+      setSession sortColKey "myattr"
+      setSession sortValKey $ case sortOpt of
+        SortAsc _ -> "asc"
+        SortDesc _ -> "desc"
+    _ -> do
+      deleteSession sortColKey
+      deleteSession sortValKey
+  urlRenderer <- getUrlRender
+  returnJson $
+    VFormSubmitSuccess
+      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
+      }
+
+postToggleSortDemoaOtherattrR :: Int -> Handler Value
+postToggleSortDemoaOtherattrR pageNum = do
+  maybeOldSortOpt <- curDemoaListSortOpt
+  let newSortOpt = case maybeOldSortOpt of
+        Just (SortAsc col@DemoaOtherattr) -> Just $ SortDesc col
+        Just (SortDesc DemoaOtherattr) -> Nothing
+        _ -> Just $ SortAsc DemoaOtherattr
+  case newSortOpt of
+    Just sortOpt -> do
+      setSession sortColKey "otherattr"
+      setSession sortValKey $ case sortOpt of
+        SortAsc _ -> "asc"
+        SortDesc _ -> "desc"
+    _ -> do
+      deleteSession sortColKey
+      deleteSession sortValKey
+  urlRenderer <- getUrlRender
+  returnJson $
+    VFormSubmitSuccess
+      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
+      }
 
 postDemoaListPageNumDataR :: Int -> Handler Value
 postDemoaListPageNumDataR pageNum = do
@@ -3938,7 +4059,9 @@ demoaListPageNumDataR pageNum = do
                 JDataPageDemoaList
                   { jDataPageDemoaListDemoas = jDataDemoas,
                     jDataPageDemoaListAddFormUrl = urlRenderer $ MyprojectR AddDemoaFormR,
-                    jDataPageDemoaListPaginationItems = jDataPaginationItems
+                    jDataPageDemoaListPaginationItems = jDataPaginationItems,
+                    jDataPageDemoaListMyattrToggleSortUrl = urlRenderer $ MyprojectR $ ToggleSortDemoaMyattrR pageNum,
+                    jDataPageDemoaListOtherattrToggleSortUrl = urlRenderer $ MyprojectR $ ToggleSortDemoaOtherattrR pageNum
                   }
           }
   msgHome <- localizedMsg MsgGlobalHome
@@ -3980,10 +4103,11 @@ demoaListPageNumDataR pageNum = do
 
 demoaListJDatas :: Int -> Handler ([JDataDemoa], Maybe [JDataPaginationItem])
 demoaListJDatas pageNum = do
+  maybeSortOpt <- curDemoaListSortOpt
   urlRenderer <- getUrlRender
   rowCount <- runDB $ count ([] :: [Filter Demoa])
   paginationJDatas <- getPaginationJDatas rowCount demoaListPageSize pageNum 11 (MyprojectR . DemoaListPageNumDataR)
-  demoaEnts <- runDB loadDemoaTuples
+  demoaEnts <- runDB $ loadDemoaTuples maybeSortOpt
   let demoaJDatas =
         map
           ( \demoaEnt@(Entity demoaId _) ->
@@ -3996,11 +4120,16 @@ demoaListJDatas pageNum = do
           demoaEnts
   return (demoaJDatas, paginationJDatas)
   where
-    loadDemoaTuples :: YesodDB App [(Entity Demoa)]
-    loadDemoaTuples = do
+    sortOpt :: E.SqlExpr (Entity Demoa) -> Maybe (SortOpt Demoa) -> E.SqlExpr E.OrderBy
+    sortOpt da maybeSortOpt = case maybeSortOpt of
+      Just (SortAsc col) -> E.asc $ da E.^. col
+      Just (SortDesc col) -> E.desc $ da E.^. col
+      _ -> E.asc $ da E.^. DemoaId
+    loadDemoaTuples :: Maybe (SortOpt Demoa) -> YesodDB App [(Entity Demoa)]
+    loadDemoaTuples maybeSortOpt = do
       let pageSize = fromIntegral demoaListPageSize
       E.select $ E.from $ \(da) -> do
-        E.orderBy [E.desc (da E.^. DemoaId)]
+        E.orderBy [sortOpt da maybeSortOpt]
         E.offset ((fromIntegral pageNum - 1) * pageSize)
         E.limit pageSize
         return (da)
@@ -4014,7 +4143,8 @@ demoaListPageSize = 5
 
 -- gen data add - start
 data VAddDemoa = VAddDemoa
-  { vAddDemoaMyattr :: Text
+  { vAddDemoaMyattr :: Text,
+    vAddDemoaOtherattr :: Maybe Text
   }
 
 -- gen data add - end
@@ -4046,6 +4176,7 @@ postAddDemoaR = do
       let demoa =
             Demoa
               { demoaMyattr = vAddDemoaMyattr vAddDemoa,
+                demoaOtherattr = vAddDemoaOtherattr vAddDemoa,
                 demoaVersion = 1,
                 demoaCreatedAt = curTime,
                 demoaCreatedBy = userIdent authUser,
@@ -4073,7 +4204,12 @@ vAddDemoaForm maybeDemoaId maybeDemoa extra = do
       textField
       myattrFs
       (demoaMyattr <$> maybeDemoa)
-  let vAddDemoaResult = VAddDemoa <$> myattrResult
+  (otherattrResult, otherattrView) <-
+    mopt
+      textField
+      otherattrFs
+      (demoaOtherattr <$> maybeDemoa)
+  let vAddDemoaResult = VAddDemoa <$> myattrResult <*> otherattrResult
   let formWidget =
         toWidget
           [whamlet|
@@ -4088,6 +4224,16 @@ vAddDemoaForm maybeDemoaId maybeDemoa extra = do
           <br>
           <span #myattrInputError .uk-text-small .input-error>
             &nbsp;#{err}
+    <div #otherattrInputWidget .uk-margin-small :not $ null $ fvErrors otherattrView:.uk-form-danger>
+      <label #otherattrInputLabel .uk-form-label :not $ null $ fvErrors otherattrView:.uk-text-danger for=#{fvId otherattrView}>#{fvLabel otherattrView}
+      <div .uk-form-controls>
+        ^{fvInput otherattrView}
+        <span #otherattrInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgDemoaOtherattrInputInfo}
+        $maybe err <- fvErrors otherattrView
+          <br>
+          <span #otherattrInputError .uk-text-small .input-error>
+            &nbsp;#{err}
     |]
   return (vAddDemoaResult, formWidget)
   where
@@ -4100,6 +4246,15 @@ vAddDemoaForm maybeDemoaId maybeDemoa extra = do
           fsName = Just "myattr",
           fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
+    otherattrFs :: FieldSettings App
+    otherattrFs =
+      FieldSettings
+        { fsLabel = SomeMessage MsgDemoaOtherattr,
+          fsTooltip = Nothing,
+          fsId = Just "otherattr",
+          fsName = Just "otherattr",
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
+        }
 
 -- gen add form - end
 
@@ -4110,6 +4265,7 @@ vAddDemoaForm maybeDemoaId maybeDemoa extra = do
 -- gen data edit - start
 data VEditDemoa = VEditDemoa
   { vEditDemoaMyattr :: Text,
+    vEditDemoaOtherattr :: Maybe Text,
     vEditDemoaVersion :: Int
   }
 
@@ -4142,6 +4298,7 @@ postEditDemoaR demoaId = do
       urlRenderer <- getUrlRender
       let persistFields =
             [ DemoaMyattr =. vEditDemoaMyattr vEditDemoa,
+              DemoaOtherattr =. vEditDemoaOtherattr vEditDemoa,
               DemoaVersion =. vEditDemoaVersion vEditDemoa + 1,
               DemoaUpdatedAt =. curTime,
               DemoaUpdatedBy =. userIdent authUser
@@ -4174,12 +4331,17 @@ vEditDemoaForm maybeDemoaId maybeDemoa extra = do
       textField
       myattrFs
       (demoaMyattr <$> maybeDemoa)
+  (otherattrResult, otherattrView) <-
+    mopt
+      textField
+      otherattrFs
+      (demoaOtherattr <$> maybeDemoa)
   (versionResult, versionView) <-
     mreq
       hiddenField
       versionFs
       (demoaVersion <$> maybeDemoa)
-  let vEditDemoaResult = VEditDemoa <$> myattrResult <*> versionResult
+  let vEditDemoaResult = VEditDemoa <$> myattrResult <*> otherattrResult <*> versionResult
   let formWidget =
         toWidget
           [whamlet|
@@ -4195,6 +4357,16 @@ vEditDemoaForm maybeDemoaId maybeDemoa extra = do
           <br>
           <span #myattrInputError .uk-text-small .input-error>
             &nbsp;#{err}
+    <div #otherattrInputWidget .uk-margin-small :not $ null $ fvErrors otherattrView:.uk-form-danger>
+      <label #otherattrInputLabel .uk-form-label :not $ null $ fvErrors otherattrView:.uk-text-danger for=#{fvId otherattrView}>#{fvLabel otherattrView}
+      <div .uk-form-controls>
+        ^{fvInput otherattrView}
+        <span #otherattrInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgDemoaOtherattrInputInfo}
+        $maybe err <- fvErrors otherattrView
+          <br>
+          <span #otherattrInputError .uk-text-small .input-error>
+            &nbsp;#{err}
     |]
   return (vEditDemoaResult, formWidget)
   where
@@ -4205,6 +4377,15 @@ vEditDemoaForm maybeDemoaId maybeDemoa extra = do
           fsTooltip = Nothing,
           fsId = Just "myattr",
           fsName = Just "myattr",
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
+        }
+    otherattrFs :: FieldSettings App
+    otherattrFs =
+      FieldSettings
+        { fsLabel = SomeMessage MsgDemoaOtherattr,
+          fsTooltip = Nothing,
+          fsId = Just "otherattr",
+          fsName = Just "otherattr",
           fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
     versionFs :: FieldSettings App
@@ -6053,6 +6234,7 @@ data AppMessage
   | MsgConfigDoubleValue
   | MsgConfigBoolValue
   | MsgDemoaMyattr
+  | MsgDemoaOtherattr
   | MsgDemobMyattr
   | MsgDemocDemobId
   | MsgDemocMyattr
@@ -6067,6 +6249,7 @@ data AppMessage
   | MsgConfigDoubleValueInputInfo
   | MsgConfigBoolValueInputInfo
   | MsgDemoaMyattrInputInfo
+  | MsgDemoaOtherattrInputInfo
   | MsgDemobMyattrInputInfo
   | MsgDemocDemobIdInputInfo
   | MsgDemocMyattrInputInfo
@@ -6117,6 +6300,7 @@ renderMessageGerman MsgConfigIntValue = "Integer-Wert"
 renderMessageGerman MsgConfigDoubleValue = "Double-Wert"
 renderMessageGerman MsgConfigBoolValue = "Boolean-Wert"
 renderMessageGerman MsgDemoaMyattr = "My attribute"
+renderMessageGerman MsgDemoaOtherattr = "Other attribute"
 renderMessageGerman MsgDemobMyattr = "My attribute"
 renderMessageGerman MsgDemocDemobId = ""
 renderMessageGerman MsgDemocMyattr = "My attribute"
@@ -6131,6 +6315,7 @@ renderMessageGerman MsgConfigIntValueInputInfo = ""
 renderMessageGerman MsgConfigDoubleValueInputInfo = ""
 renderMessageGerman MsgConfigBoolValueInputInfo = ""
 renderMessageGerman MsgDemoaMyattrInputInfo = ""
+renderMessageGerman MsgDemoaOtherattrInputInfo = ""
 renderMessageGerman MsgDemobMyattrInputInfo = ""
 renderMessageGerman MsgDemocDemobIdInputInfo = ""
 renderMessageGerman MsgDemocMyattrInputInfo = ""
@@ -6181,6 +6366,7 @@ renderMessageEnglish MsgConfigIntValue = "Integer-Value"
 renderMessageEnglish MsgConfigDoubleValue = "Double-Value"
 renderMessageEnglish MsgConfigBoolValue = "Boolean-Value"
 renderMessageEnglish MsgDemoaMyattr = "Mein Attribut"
+renderMessageEnglish MsgDemoaOtherattr = "Anderes Attribut"
 renderMessageEnglish MsgDemobMyattr = "Mein Attribut"
 renderMessageEnglish MsgDemocDemobId = ""
 renderMessageEnglish MsgDemocMyattr = "Mein Attribut"
@@ -6195,6 +6381,7 @@ renderMessageEnglish MsgConfigIntValueInputInfo = ""
 renderMessageEnglish MsgConfigDoubleValueInputInfo = ""
 renderMessageEnglish MsgConfigBoolValueInputInfo = ""
 renderMessageEnglish MsgDemoaMyattrInputInfo = ""
+renderMessageEnglish MsgDemoaOtherattrInputInfo = ""
 renderMessageEnglish MsgDemobMyattrInputInfo = ""
 renderMessageEnglish MsgDemocDemobIdInputInfo = ""
 renderMessageEnglish MsgDemocMyattrInputInfo = ""
@@ -6245,6 +6432,7 @@ data Translation = Translation
     msgConfigDoubleValue :: Text,
     msgConfigBoolValue :: Text,
     msgDemoaMyattr :: Text,
+    msgDemoaOtherattr :: Text,
     msgDemobMyattr :: Text,
     msgDemocDemobId :: Text,
     msgDemocMyattr :: Text,
@@ -6259,6 +6447,7 @@ data Translation = Translation
     msgConfigDoubleValueInputInfo :: Text,
     msgConfigBoolValueInputInfo :: Text,
     msgDemoaMyattrInputInfo :: Text,
+    msgDemoaOtherattrInputInfo :: Text,
     msgDemobMyattrInputInfo :: Text,
     msgDemocDemobIdInputInfo :: Text,
     msgDemocMyattrInputInfo :: Text,
@@ -6315,6 +6504,7 @@ translationDe =
       msgConfigDoubleValue = "Double-Wert",
       msgConfigBoolValue = "Boolean-Wert",
       msgDemoaMyattr = "My attribute",
+      msgDemoaOtherattr = "Other attribute",
       msgDemobMyattr = "My attribute",
       msgDemocDemobId = "",
       msgDemocMyattr = "My attribute",
@@ -6329,6 +6519,7 @@ translationDe =
       msgConfigDoubleValueInputInfo = "",
       msgConfigBoolValueInputInfo = "",
       msgDemoaMyattrInputInfo = "",
+      msgDemoaOtherattrInputInfo = "",
       msgDemobMyattrInputInfo = "",
       msgDemocDemobIdInputInfo = "",
       msgDemocMyattrInputInfo = "",
@@ -6382,6 +6573,7 @@ translationEn =
       msgConfigDoubleValue = "Double-Value",
       msgConfigBoolValue = "Boolean-Value",
       msgDemoaMyattr = "Mein Attribut",
+      msgDemoaOtherattr = "Anderes Attribut",
       msgDemobMyattr = "Mein Attribut",
       msgDemocDemobId = "",
       msgDemocMyattr = "Mein Attribut",
@@ -6396,6 +6588,7 @@ translationEn =
       msgConfigDoubleValueInputInfo = "",
       msgConfigBoolValueInputInfo = "",
       msgDemoaMyattrInputInfo = "",
+      msgDemoaOtherattrInputInfo = "",
       msgDemobMyattrInputInfo = "",
       msgDemocDemobIdInputInfo = "",
       msgDemocMyattrInputInfo = "",
@@ -6757,6 +6950,14 @@ div.uk-form-danger input {
     background-color: #555;
     color: white;
 }
+
+.table-header {
+  cursor: default;
+}
+
+
+
+
 
 /* Tingle Modals
  ========================================================================== */
@@ -44817,7 +45018,11 @@ var t,e;t=this,e=function(t){"use strict";function e(t){return t.replace(/-(\w)/
       <thead>
         <tr>
           <th>
-            {context.data.translation.msgDemoaMyattr}
+            <span .table-header onclick="{toggleSortDemoaMyattr}">
+              {context.data.translation.msgDemoaMyattr}
+          <th>
+            <span .table-header onclick="{toggleSortDemoaOtherattr}">
+              {context.data.translation.msgDemoaOtherattr}
           <th .uk-align-right>
             <button .uk-background-primary .uk-light .uk-padding-small .modal-form-link .uk-button .uk-button-link title="{context.data.translation.msgDemoaAddDemoa}" uk-tooltip onclick="{addDemoa}">
               <span uk-icon="icon: plus">
@@ -44826,6 +45031,9 @@ var t,e;t=this,e=function(t){"use strict";function e(t){return t.replace(/-(\w)/
           <td .uk-table-link>
             <a onclick="{(e)=>editDemoa(e,demoa)}" .uk-link-reset>
               {demoa.entity.myattr}
+          <td .uk-table-link>
+            <a onclick="{(e)=>editDemoa(e,demoa)}" .uk-link-reset>
+              {demoa.entity.otherattr}
           <td .uk-width-small>
             <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgDemoaDeleteDemoa}" uk-tooltip onclick="{(e)=>deleteDemoa(e,demoa)}">
               <span uk-icon="icon: trash">
@@ -44852,6 +45060,16 @@ var t,e;t=this,e=function(t){"use strict";function e(t){return t.replace(/-(\w)/
     \   deleteDemoa(event, item) {
     \     event.preventDefault()
     \     this.context.showModalForm(item.deleteFormUrl)
+    \     event.currentTarget.blur()
+    \   },
+    \   toggleSortDemoaMyattr(event) {
+    \     event.preventDefault()
+    \     this.context.postRequest(this.context.data.pages.demoaList.myattrToggleSortUrl)
+    \     event.currentTarget.blur()
+    \   },
+    \   toggleSortDemoaOtherattr(event) {
+    \     event.preventDefault()
+    \     this.context.postRequest(this.context.data.pages.demoaList.otherattrToggleSortUrl)
     \     event.currentTarget.blur()
     \   }
     \ }

@@ -27,6 +27,7 @@ data AppMessage
   | MsgConfigDoubleValue
   | MsgConfigBoolValue
   | MsgDemoaMyattr
+  | MsgDemoaOtherattr
   | MsgDemobMyattr
   | MsgDemocDemobId
   | MsgDemocMyattr
@@ -41,6 +42,7 @@ data AppMessage
   | MsgConfigDoubleValueInputInfo
   | MsgConfigBoolValueInputInfo
   | MsgDemoaMyattrInputInfo
+  | MsgDemoaOtherattrInputInfo
   | MsgDemobMyattrInputInfo
   | MsgDemocDemobIdInputInfo
   | MsgDemocMyattrInputInfo
@@ -91,6 +93,7 @@ renderMessageGerman MsgConfigIntValue = "Integer-Wert"
 renderMessageGerman MsgConfigDoubleValue = "Double-Wert"
 renderMessageGerman MsgConfigBoolValue = "Boolean-Wert"
 renderMessageGerman MsgDemoaMyattr = "My attribute"
+renderMessageGerman MsgDemoaOtherattr = "Other attribute"
 renderMessageGerman MsgDemobMyattr = "My attribute"
 renderMessageGerman MsgDemocDemobId = ""
 renderMessageGerman MsgDemocMyattr = "My attribute"
@@ -105,6 +108,7 @@ renderMessageGerman MsgConfigIntValueInputInfo = ""
 renderMessageGerman MsgConfigDoubleValueInputInfo = ""
 renderMessageGerman MsgConfigBoolValueInputInfo = ""
 renderMessageGerman MsgDemoaMyattrInputInfo = ""
+renderMessageGerman MsgDemoaOtherattrInputInfo = ""
 renderMessageGerman MsgDemobMyattrInputInfo = ""
 renderMessageGerman MsgDemocDemobIdInputInfo = ""
 renderMessageGerman MsgDemocMyattrInputInfo = ""
@@ -155,6 +159,7 @@ renderMessageEnglish MsgConfigIntValue = "Integer-Value"
 renderMessageEnglish MsgConfigDoubleValue = "Double-Value"
 renderMessageEnglish MsgConfigBoolValue = "Boolean-Value"
 renderMessageEnglish MsgDemoaMyattr = "Mein Attribut"
+renderMessageEnglish MsgDemoaOtherattr = "Anderes Attribut"
 renderMessageEnglish MsgDemobMyattr = "Mein Attribut"
 renderMessageEnglish MsgDemocDemobId = ""
 renderMessageEnglish MsgDemocMyattr = "Mein Attribut"
@@ -169,6 +174,7 @@ renderMessageEnglish MsgConfigIntValueInputInfo = ""
 renderMessageEnglish MsgConfigDoubleValueInputInfo = ""
 renderMessageEnglish MsgConfigBoolValueInputInfo = ""
 renderMessageEnglish MsgDemoaMyattrInputInfo = ""
+renderMessageEnglish MsgDemoaOtherattrInputInfo = ""
 renderMessageEnglish MsgDemobMyattrInputInfo = ""
 renderMessageEnglish MsgDemocDemobIdInputInfo = ""
 renderMessageEnglish MsgDemocMyattrInputInfo = ""
@@ -219,6 +225,7 @@ data Translation = Translation
     msgConfigDoubleValue :: Text,
     msgConfigBoolValue :: Text,
     msgDemoaMyattr :: Text,
+    msgDemoaOtherattr :: Text,
     msgDemobMyattr :: Text,
     msgDemocDemobId :: Text,
     msgDemocMyattr :: Text,
@@ -233,6 +240,7 @@ data Translation = Translation
     msgConfigDoubleValueInputInfo :: Text,
     msgConfigBoolValueInputInfo :: Text,
     msgDemoaMyattrInputInfo :: Text,
+    msgDemoaOtherattrInputInfo :: Text,
     msgDemobMyattrInputInfo :: Text,
     msgDemocDemobIdInputInfo :: Text,
     msgDemocMyattrInputInfo :: Text,
@@ -289,6 +297,7 @@ translationDe =
       msgConfigDoubleValue = "Double-Wert",
       msgConfigBoolValue = "Boolean-Wert",
       msgDemoaMyattr = "My attribute",
+      msgDemoaOtherattr = "Other attribute",
       msgDemobMyattr = "My attribute",
       msgDemocDemobId = "",
       msgDemocMyattr = "My attribute",
@@ -303,6 +312,7 @@ translationDe =
       msgConfigDoubleValueInputInfo = "",
       msgConfigBoolValueInputInfo = "",
       msgDemoaMyattrInputInfo = "",
+      msgDemoaOtherattrInputInfo = "",
       msgDemobMyattrInputInfo = "",
       msgDemocDemobIdInputInfo = "",
       msgDemocMyattrInputInfo = "",
@@ -356,6 +366,7 @@ translationEn =
       msgConfigDoubleValue = "Double-Value",
       msgConfigBoolValue = "Boolean-Value",
       msgDemoaMyattr = "Mein Attribut",
+      msgDemoaOtherattr = "Anderes Attribut",
       msgDemobMyattr = "Mein Attribut",
       msgDemocDemobId = "",
       msgDemocMyattr = "Mein Attribut",
@@ -370,6 +381,7 @@ translationEn =
       msgConfigDoubleValueInputInfo = "",
       msgConfigBoolValueInputInfo = "",
       msgDemoaMyattrInputInfo = "",
+      msgDemoaOtherattrInputInfo = "",
       msgDemobMyattrInputInfo = "",
       msgDemocDemobIdInputInfo = "",
       msgDemocMyattrInputInfo = "",

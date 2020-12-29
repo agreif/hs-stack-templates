@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -275,7 +276,9 @@ instance ToJSON JDataConfig where
 data JDataPageDemoaList = JDataPageDemoaList
   { jDataPageDemoaListDemoas :: [JDataDemoa],
     jDataPageDemoaListAddFormUrl :: Text,
-    jDataPageDemoaListPaginationItems :: Maybe [JDataPaginationItem]
+    jDataPageDemoaListPaginationItems :: Maybe [JDataPaginationItem],
+    jDataPageDemoaListMyattrToggleSortUrl :: Text,
+    jDataPageDemoaListOtherattrToggleSortUrl :: Text
   }
 
 instance ToJSON JDataPageDemoaList where
@@ -283,7 +286,9 @@ instance ToJSON JDataPageDemoaList where
     object
       [ "demoas" .= jDataPageDemoaListDemoas o,
         "addFormUrl" .= jDataPageDemoaListAddFormUrl o,
-        "paginationItems" .= jDataPageDemoaListPaginationItems o
+        "paginationItems" .= jDataPageDemoaListPaginationItems o,
+        "myattrToggleSortUrl" .= jDataPageDemoaListMyattrToggleSortUrl o,
+        "otherattrToggleSortUrl" .= jDataPageDemoaListOtherattrToggleSortUrl o
       ]
 
 data JDataDemoa = JDataDemoa
@@ -775,6 +780,10 @@ maybeMobile :: Maybe Int -> Maybe Int -> Maybe Int -> Maybe Text
 maybeMobile Nothing Nothing Nothing = Nothing
 maybeMobile Nothing a n = Just $ formatMaybeInt a <> "/" <> formatMaybeInt n
 maybeMobile c a n = Just $ "+" <> formatMaybeInt c <> " " <> formatMaybeInt a <> "/" <> formatMaybeInt n
+
+data SortOpt record
+  = forall typ. PersistField typ => SortAsc (EntityField record typ)
+  | forall typ. PersistField typ => SortDesc (EntityField record typ)
 
 data Language = DE | EN
   deriving (Generic)

@@ -16,6 +16,7 @@ import Handler.Common
 import Import
 import qualified Text.Blaze.Html.Renderer.Text as Blaze
 import Text.Hamlet (hamletFile)
+import Prelude (read)
 
 -------------------------------------------------------
 -- list
@@ -31,6 +32,69 @@ getDemoaListR = do
 
 getDemoaListDataR :: Handler Value
 getDemoaListDataR = demoaListPageNumDataR 1
+
+sortColKey :: Text
+sortColKey = "sortDemoaCol"
+
+sortValKey :: Text
+sortValKey = "sortDemoaVal"
+
+curDemoaListSortOpt :: Handler (Maybe (SortOpt Demoa))
+curDemoaListSortOpt = do
+  maybeSortCol <- lookupSession sortColKey
+  maybeSortVal <- lookupSession sortValKey
+  return $ case (maybeSortCol, maybeSortVal) of
+    (Just sortCol, Just sortVal) -> case (sortCol, sortVal) of
+      ("myattr", "asc") -> Just $ SortAsc DemoaMyattr
+      ("myattr", "desc") -> Just $ SortDesc DemoaMyattr
+      ("otherattr", "asc") -> Just $ SortAsc DemoaOtherattr
+      ("otherattr", "desc") -> Just $ SortDesc DemoaOtherattr
+      _ -> Nothing
+    _ -> Nothing
+
+postToggleSortDemoaMyattrR :: Int -> Handler Value
+postToggleSortDemoaMyattrR pageNum = do
+  maybeOldSortOpt <- curDemoaListSortOpt
+  let newSortOpt = case maybeOldSortOpt of
+        Just (SortAsc col@DemoaMyattr) -> Just $ SortDesc col
+        Just (SortDesc DemoaMyattr) -> Nothing
+        _ -> Just $ SortAsc DemoaMyattr
+  case newSortOpt of
+    Just sortOpt -> do
+      setSession sortColKey "myattr"
+      setSession sortValKey $ case sortOpt of
+        SortAsc _ -> "asc"
+        SortDesc _ -> "desc"
+    _ -> do
+      deleteSession sortColKey
+      deleteSession sortValKey
+  urlRenderer <- getUrlRender
+  returnJson $
+    VFormSubmitSuccess
+      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
+      }
+
+postToggleSortDemoaOtherattrR :: Int -> Handler Value
+postToggleSortDemoaOtherattrR pageNum = do
+  maybeOldSortOpt <- curDemoaListSortOpt
+  let newSortOpt = case maybeOldSortOpt of
+        Just (SortAsc col@DemoaOtherattr) -> Just $ SortDesc col
+        Just (SortDesc DemoaOtherattr) -> Nothing
+        _ -> Just $ SortAsc DemoaOtherattr
+  case newSortOpt of
+    Just sortOpt -> do
+      setSession sortColKey "otherattr"
+      setSession sortValKey $ case sortOpt of
+        SortAsc _ -> "asc"
+        SortDesc _ -> "desc"
+    _ -> do
+      deleteSession sortColKey
+      deleteSession sortValKey
+  urlRenderer <- getUrlRender
+  returnJson $
+    VFormSubmitSuccess
+      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
+      }
 
 postDemoaListPageNumDataR :: Int -> Handler Value
 postDemoaListPageNumDataR pageNum = do
@@ -58,7 +122,9 @@ demoaListPageNumDataR pageNum = do
                 JDataPageDemoaList
                   { jDataPageDemoaListDemoas = jDataDemoas,
                     jDataPageDemoaListAddFormUrl = urlRenderer $ MyprojectR AddDemoaFormR,
-                    jDataPageDemoaListPaginationItems = jDataPaginationItems
+                    jDataPageDemoaListPaginationItems = jDataPaginationItems,
+                    jDataPageDemoaListMyattrToggleSortUrl = urlRenderer $ MyprojectR $ ToggleSortDemoaMyattrR pageNum,
+                    jDataPageDemoaListOtherattrToggleSortUrl = urlRenderer $ MyprojectR $ ToggleSortDemoaOtherattrR pageNum
                   }
           }
   msgHome <- localizedMsg MsgGlobalHome
@@ -100,10 +166,11 @@ demoaListPageNumDataR pageNum = do
 
 demoaListJDatas :: Int -> Handler ([JDataDemoa], Maybe [JDataPaginationItem])
 demoaListJDatas pageNum = do
+  maybeSortOpt <- curDemoaListSortOpt
   urlRenderer <- getUrlRender
   rowCount <- runDB $ count ([] :: [Filter Demoa])
   paginationJDatas <- getPaginationJDatas rowCount demoaListPageSize pageNum 11 (MyprojectR . DemoaListPageNumDataR)
-  demoaEnts <- runDB loadDemoaTuples
+  demoaEnts <- runDB $ loadDemoaTuples maybeSortOpt
   let demoaJDatas =
         map
           ( \demoaEnt@(Entity demoaId _) ->
@@ -116,11 +183,16 @@ demoaListJDatas pageNum = do
           demoaEnts
   return (demoaJDatas, paginationJDatas)
   where
-    loadDemoaTuples :: YesodDB App [(Entity Demoa)]
-    loadDemoaTuples = do
+    sortOpt :: E.SqlExpr (Entity Demoa) -> Maybe (SortOpt Demoa) -> E.SqlExpr E.OrderBy
+    sortOpt da maybeSortOpt = case maybeSortOpt of
+      Just (SortAsc col) -> E.asc $ da E.^. col
+      Just (SortDesc col) -> E.desc $ da E.^. col
+      _ -> E.asc $ da E.^. DemoaId
+    loadDemoaTuples :: Maybe (SortOpt Demoa) -> YesodDB App [(Entity Demoa)]
+    loadDemoaTuples maybeSortOpt = do
       let pageSize = fromIntegral demoaListPageSize
       E.select $ E.from $ \(da) -> do
-        E.orderBy [E.desc (da E.^. DemoaId)]
+        E.orderBy [sortOpt da maybeSortOpt]
         E.offset ((fromIntegral pageNum - 1) * pageSize)
         E.limit pageSize
         return (da)
@@ -134,7 +206,8 @@ demoaListPageSize = 5
 
 -- gen data add - start
 data VAddDemoa = VAddDemoa
-  { vAddDemoaMyattr :: Text
+  { vAddDemoaMyattr :: Text,
+    vAddDemoaOtherattr :: Maybe Text
   }
 
 -- gen data add - end
@@ -166,6 +239,7 @@ postAddDemoaR = do
       let demoa =
             Demoa
               { demoaMyattr = vAddDemoaMyattr vAddDemoa,
+                demoaOtherattr = vAddDemoaOtherattr vAddDemoa,
                 demoaVersion = 1,
                 demoaCreatedAt = curTime,
                 demoaCreatedBy = userIdent authUser,
@@ -193,7 +267,12 @@ vAddDemoaForm maybeDemoaId maybeDemoa extra = do
       textField
       myattrFs
       (demoaMyattr <$> maybeDemoa)
-  let vAddDemoaResult = VAddDemoa <$> myattrResult
+  (otherattrResult, otherattrView) <-
+    mopt
+      textField
+      otherattrFs
+      (demoaOtherattr <$> maybeDemoa)
+  let vAddDemoaResult = VAddDemoa <$> myattrResult <*> otherattrResult
   let formWidget =
         toWidget
           [whamlet|
@@ -208,6 +287,16 @@ vAddDemoaForm maybeDemoaId maybeDemoa extra = do
           <br>
           <span #myattrInputError .uk-text-small .input-error>
             &nbsp;#{err}
+    <div #otherattrInputWidget .uk-margin-small :not $ null $ fvErrors otherattrView:.uk-form-danger>
+      <label #otherattrInputLabel .uk-form-label :not $ null $ fvErrors otherattrView:.uk-text-danger for=#{fvId otherattrView}>#{fvLabel otherattrView}
+      <div .uk-form-controls>
+        ^{fvInput otherattrView}
+        <span #otherattrInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgDemoaOtherattrInputInfo}
+        $maybe err <- fvErrors otherattrView
+          <br>
+          <span #otherattrInputError .uk-text-small .input-error>
+            &nbsp;#{err}
     |]
   return (vAddDemoaResult, formWidget)
   where
@@ -220,6 +309,15 @@ vAddDemoaForm maybeDemoaId maybeDemoa extra = do
           fsName = Just "myattr",
           fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
+    otherattrFs :: FieldSettings App
+    otherattrFs =
+      FieldSettings
+        { fsLabel = SomeMessage MsgDemoaOtherattr,
+          fsTooltip = Nothing,
+          fsId = Just "otherattr",
+          fsName = Just "otherattr",
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
+        }
 
 -- gen add form - end
 
@@ -230,6 +328,7 @@ vAddDemoaForm maybeDemoaId maybeDemoa extra = do
 -- gen data edit - start
 data VEditDemoa = VEditDemoa
   { vEditDemoaMyattr :: Text,
+    vEditDemoaOtherattr :: Maybe Text,
     vEditDemoaVersion :: Int
   }
 
@@ -262,6 +361,7 @@ postEditDemoaR demoaId = do
       urlRenderer <- getUrlRender
       let persistFields =
             [ DemoaMyattr =. vEditDemoaMyattr vEditDemoa,
+              DemoaOtherattr =. vEditDemoaOtherattr vEditDemoa,
               DemoaVersion =. vEditDemoaVersion vEditDemoa + 1,
               DemoaUpdatedAt =. curTime,
               DemoaUpdatedBy =. userIdent authUser
@@ -294,12 +394,17 @@ vEditDemoaForm maybeDemoaId maybeDemoa extra = do
       textField
       myattrFs
       (demoaMyattr <$> maybeDemoa)
+  (otherattrResult, otherattrView) <-
+    mopt
+      textField
+      otherattrFs
+      (demoaOtherattr <$> maybeDemoa)
   (versionResult, versionView) <-
     mreq
       hiddenField
       versionFs
       (demoaVersion <$> maybeDemoa)
-  let vEditDemoaResult = VEditDemoa <$> myattrResult <*> versionResult
+  let vEditDemoaResult = VEditDemoa <$> myattrResult <*> otherattrResult <*> versionResult
   let formWidget =
         toWidget
           [whamlet|
@@ -315,6 +420,16 @@ vEditDemoaForm maybeDemoaId maybeDemoa extra = do
           <br>
           <span #myattrInputError .uk-text-small .input-error>
             &nbsp;#{err}
+    <div #otherattrInputWidget .uk-margin-small :not $ null $ fvErrors otherattrView:.uk-form-danger>
+      <label #otherattrInputLabel .uk-form-label :not $ null $ fvErrors otherattrView:.uk-text-danger for=#{fvId otherattrView}>#{fvLabel otherattrView}
+      <div .uk-form-controls>
+        ^{fvInput otherattrView}
+        <span #otherattrInputInfo .uk-margin-left .uk-text-small .input-info>
+          _{MsgDemoaOtherattrInputInfo}
+        $maybe err <- fvErrors otherattrView
+          <br>
+          <span #otherattrInputError .uk-text-small .input-error>
+            &nbsp;#{err}
     |]
   return (vEditDemoaResult, formWidget)
   where
@@ -325,6 +440,15 @@ vEditDemoaForm maybeDemoaId maybeDemoa extra = do
           fsTooltip = Nothing,
           fsId = Just "myattr",
           fsName = Just "myattr",
+          fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
+        }
+    otherattrFs :: FieldSettings App
+    otherattrFs =
+      FieldSettings
+        { fsLabel = SomeMessage MsgDemoaOtherattr,
+          fsTooltip = Nothing,
+          fsId = Just "otherattr",
+          fsName = Just "otherattr",
           fsAttrs = [("class", "uk-input uk-form-small uk-form-width-large")]
         }
     versionFs :: FieldSettings App

@@ -531,6 +531,50 @@ context =
                                   ],
                                 bFieldViewDefault = Nothing
                               }
+                      },
+                    BCrudField
+                      { bCrudFieldName = "otherattr",
+                        bCrudFieldLabelDe = Just "Other attribute",
+                        bCrudFieldLabelEn = Just "Anderes Attribut",
+                        bCrudFieldInfoDe = Nothing,
+                        bCrudFieldInfoEn = Nothing,
+                        bCrudFieldHsType = "Text",
+                        bCrudFieldDb =
+                          Just $
+                            BCrudFieldDb
+                              { bCrudFieldDbIsNullable = True,
+                                bCrudFieldDbDefault = Nothing,
+                                bCrudFieldDbCanUpdate = True
+                              },
+                        bCrudFieldFormFieldType = Just "textField",
+                        bCrudFieldAddView =
+                          Just $
+                            BFieldView
+                              { bFieldViewIsRequired = False,
+                                bFieldViewIsDisabled = False,
+                                bFieldViewAttrs =
+                                  [ BFieldAttr
+                                      { bFieldAttrKey = "class",
+                                        bFieldAttrValue =
+                                          "uk-input uk-form-small uk-form-width-large"
+                                      }
+                                  ],
+                                bFieldViewDefault = Nothing
+                              },
+                        bCrudFieldEditView =
+                          Just $
+                            BFieldView
+                              { bFieldViewIsRequired = False,
+                                bFieldViewIsDisabled = False,
+                                bFieldViewAttrs =
+                                  [ BFieldAttr
+                                      { bFieldAttrKey = "class",
+                                        bFieldAttrValue =
+                                          "uk-input uk-form-small uk-form-width-large"
+                                      }
+                                  ],
+                                bFieldViewDefault = Nothing
+                              }
                       }
                   ],
                 bCrudModelTranslations =
