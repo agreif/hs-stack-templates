@@ -32,69 +32,6 @@ getDemoaListR = do
 getDemoaListDataR :: Handler Value
 getDemoaListDataR = demoaListPageNumDataR 1
 
-sortColKey :: Text
-sortColKey = "sortDemoaCol"
-
-sortValKey :: Text
-sortValKey = "sortDemoaVal"
-
-curDemoaListSortOpt :: Handler (Maybe (SortOpt Demoa))
-curDemoaListSortOpt = do
-  maybeSortCol <- lookupSession sortColKey
-  maybeSortVal <- lookupSession sortValKey
-  return $ case (maybeSortCol, maybeSortVal) of
-    (Just sortCol, Just sortVal) -> case (sortCol, sortVal) of
-      ("myattr", "asc") -> Just $ SortAsc DemoaMyattr
-      ("myattr", "desc") -> Just $ SortDesc DemoaMyattr
-      ("otherattr", "asc") -> Just $ SortAsc DemoaOtherattr
-      ("otherattr", "desc") -> Just $ SortDesc DemoaOtherattr
-      _ -> Nothing
-    _ -> Nothing
-
-postToggleSortDemoaMyattrR :: Int -> Handler Value
-postToggleSortDemoaMyattrR pageNum = do
-  maybeOldSortOpt <- curDemoaListSortOpt
-  let newSortOpt = case maybeOldSortOpt of
-        Just (SortAsc col@DemoaMyattr) -> Just $ SortDesc col
-        Just (SortDesc DemoaMyattr) -> Nothing
-        _ -> Just $ SortAsc DemoaMyattr
-  case newSortOpt of
-    Just sortOpt -> do
-      setSession sortColKey "myattr"
-      setSession sortValKey $ case sortOpt of
-        SortAsc _ -> "asc"
-        SortDesc _ -> "desc"
-    _ -> do
-      deleteSession sortColKey
-      deleteSession sortValKey
-  urlRenderer <- getUrlRender
-  returnJson $
-    VFormSubmitSuccess
-      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
-      }
-
-postToggleSortDemoaOtherattrR :: Int -> Handler Value
-postToggleSortDemoaOtherattrR pageNum = do
-  maybeOldSortOpt <- curDemoaListSortOpt
-  let newSortOpt = case maybeOldSortOpt of
-        Just (SortAsc col@DemoaOtherattr) -> Just $ SortDesc col
-        Just (SortDesc DemoaOtherattr) -> Nothing
-        _ -> Just $ SortAsc DemoaOtherattr
-  case newSortOpt of
-    Just sortOpt -> do
-      setSession sortColKey "otherattr"
-      setSession sortValKey $ case sortOpt of
-        SortAsc _ -> "asc"
-        SortDesc _ -> "desc"
-    _ -> do
-      deleteSession sortColKey
-      deleteSession sortValKey
-  urlRenderer <- getUrlRender
-  returnJson $
-    VFormSubmitSuccess
-      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
-      }
-
 postDemoaListPageNumDataR :: Int -> Handler Value
 postDemoaListPageNumDataR pageNum = do
   urlRenderer <- getUrlRender
@@ -114,8 +51,8 @@ demoaListPageNumDataR pageNum = do
   urlRenderer <- getUrlRender
   mainNavItems <- mainNavData user MainNavDemoa
   (jDataDemoas, jDataPaginationItems) <- demoaListJDatas pageNum
-  maybeSortCol <- lookupSession sortColKey
-  maybeSortVal <- lookupSession sortValKey
+  maybeSortCol <- lookupSession sessionSortColKey
+  maybeSortVal <- lookupSession sessionSortValKey
   let pages =
         defaultDataPages
           { jDataPageDemoaList =
@@ -126,6 +63,7 @@ demoaListPageNumDataR pageNum = do
                     jDataPageDemoaListPaginationItems = jDataPaginationItems,
                     jDataPageDemoaListMyattrToggleSortUrl = urlRenderer $ MyprojectR $ ToggleSortDemoaMyattrR pageNum,
                     jDataPageDemoaListOtherattrToggleSortUrl = urlRenderer $ MyprojectR $ ToggleSortDemoaOtherattrR pageNum,
+                    jDataPageDemoaListDummytextToggleSortUrl = urlRenderer $ MyprojectR $ ToggleSortDemoaDummytextR pageNum,
                     jDataPageDemoaListSortColumn = maybeSortCol,
                     jDataPageDemoaListSortValue = maybeSortVal
                   }
@@ -176,9 +114,10 @@ demoaListJDatas pageNum = do
   demoaEnts <- runDB $ loadDemoaTuples maybeSortOpt
   let demoaJDatas =
         map
-          ( \demoaEnt@(Entity demoaId _) ->
+          ( \demoaEnt@(Entity demoaId demoa) ->
               JDataDemoa
                 { jDataDemoaEnt = demoaEnt,
+                  jDataDemoaDummytext = demoaMyattr demoa <> pack (show $ demoaOtherattr demoa),
                   jDataDemoaEditFormUrl = urlRenderer $ MyprojectR $ EditDemoaFormR demoaId,
                   jDataDemoaDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteDemoaFormR demoaId
                 }
@@ -190,6 +129,8 @@ demoaListJDatas pageNum = do
     sortOpt da maybeSortOpt = case maybeSortOpt of
       Just (SortAsc col) -> E.asc $ da E.^. col
       Just (SortDesc col) -> E.desc $ da E.^. col
+      Just (SortAsc' "dummytext") -> E.asc $ da E.^. DemoaMyattr
+      Just (SortDesc' "dummytext") -> E.desc $ da E.^. DemoaMyattr
       _ -> E.asc $ da E.^. DemoaId
     loadDemoaTuples :: Maybe (SortOpt Demoa) -> YesodDB App [(Entity Demoa)]
     loadDemoaTuples maybeSortOpt = do
@@ -202,6 +143,99 @@ demoaListJDatas pageNum = do
 
 demoaListPageSize :: Int
 demoaListPageSize = 5
+
+sessionSortColKey :: Text
+sessionSortColKey = "sortDemoaCol"
+
+sessionSortValKey :: Text
+sessionSortValKey = "sortDemoaVal"
+
+curDemoaListSortOpt :: Handler (Maybe (SortOpt Demoa))
+curDemoaListSortOpt = do
+  maybeSortCol <- lookupSession sessionSortColKey
+  maybeSortVal <- lookupSession sessionSortValKey
+  return $ case (maybeSortCol, maybeSortVal) of
+    (Just sortCol, Just sortVal) -> case (sortCol, sortVal) of
+      ("myattr", "asc") -> Just $ SortAsc DemoaMyattr
+      ("myattr", "desc") -> Just $ SortDesc DemoaMyattr
+      ("otherattr", "asc") -> Just $ SortAsc DemoaOtherattr
+      ("otherattr", "desc") -> Just $ SortDesc DemoaOtherattr
+      ("dummytext", "asc") -> Just $ SortAsc' "dummytext"
+      ("dummytext", "desc") -> Just $ SortDesc' "dummytext"
+      _ -> Nothing
+    _ -> Nothing
+
+postToggleSortDemoaMyattrR :: Int -> Handler Value
+postToggleSortDemoaMyattrR pageNum = do
+  maybeOldSortOpt <- curDemoaListSortOpt
+  let newSortOpt = case maybeOldSortOpt of
+        Just (SortAsc col@DemoaMyattr) -> Just $ SortDesc col
+        Just (SortDesc DemoaMyattr) -> Nothing
+        _ -> Just $ SortAsc DemoaMyattr
+  case newSortOpt of
+    Just sortOpt -> do
+      setSession sessionSortColKey "myattr"
+      setSession sessionSortValKey $ case sortOpt of
+        SortAsc _ -> "asc"
+        SortDesc _ -> "desc"
+        SortAsc' _ -> "asc"
+        SortDesc' _ -> "desc"
+    _ -> do
+      deleteSession sessionSortColKey
+      deleteSession sessionSortValKey
+  urlRenderer <- getUrlRender
+  returnJson $
+    VFormSubmitSuccess
+      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
+      }
+
+postToggleSortDemoaOtherattrR :: Int -> Handler Value
+postToggleSortDemoaOtherattrR pageNum = do
+  maybeOldSortOpt <- curDemoaListSortOpt
+  let newSortOpt = case maybeOldSortOpt of
+        Just (SortAsc col@DemoaOtherattr) -> Just $ SortDesc col
+        Just (SortDesc DemoaOtherattr) -> Nothing
+        _ -> Just $ SortAsc DemoaOtherattr
+  case newSortOpt of
+    Just sortOpt -> do
+      setSession sessionSortColKey "otherattr"
+      setSession sessionSortValKey $ case sortOpt of
+        SortAsc _ -> "asc"
+        SortDesc _ -> "desc"
+        SortAsc' _ -> "asc"
+        SortDesc' _ -> "desc"
+    _ -> do
+      deleteSession sessionSortColKey
+      deleteSession sessionSortValKey
+  urlRenderer <- getUrlRender
+  returnJson $
+    VFormSubmitSuccess
+      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
+      }
+
+postToggleSortDemoaDummytextR :: Int -> Handler Value
+postToggleSortDemoaDummytextR pageNum = do
+  maybeOldSortOpt <- curDemoaListSortOpt
+  let newSortOpt = case maybeOldSortOpt of
+        Just (SortAsc' col) -> Just $ SortDesc' col
+        Just (SortDesc' _) -> Nothing
+        _ -> Just $ SortAsc' "dummytext"
+  case newSortOpt of
+    Just sortOpt -> do
+      setSession sessionSortColKey "dummytext"
+      setSession sessionSortValKey $ case sortOpt of
+        SortAsc _ -> "asc"
+        SortDesc _ -> "desc"
+        SortAsc' _ -> "asc"
+        SortDesc' _ -> "desc"
+    _ -> do
+      deleteSession sessionSortColKey
+      deleteSession sessionSortValKey
+  urlRenderer <- getUrlRender
+  returnJson $
+    VFormSubmitSuccess
+      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
+      }
 
 -------------------------------------------------------
 -- add

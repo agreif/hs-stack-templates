@@ -279,6 +279,7 @@ data JDataPageDemoaList = JDataPageDemoaList
     jDataPageDemoaListPaginationItems :: Maybe [JDataPaginationItem],
     jDataPageDemoaListMyattrToggleSortUrl :: Text,
     jDataPageDemoaListOtherattrToggleSortUrl :: Text,
+    jDataPageDemoaListDummytextToggleSortUrl :: Text,
     jDataPageDemoaListSortColumn :: Maybe Text,
     jDataPageDemoaListSortValue :: Maybe Text
   }
@@ -291,12 +292,14 @@ instance ToJSON JDataPageDemoaList where
         "paginationItems" .= jDataPageDemoaListPaginationItems o,
         "myattrToggleSortUrl" .= jDataPageDemoaListMyattrToggleSortUrl o,
         "otherattrToggleSortUrl" .= jDataPageDemoaListOtherattrToggleSortUrl o,
+        "dummytextToggleSortUrl" .= jDataPageDemoaListDummytextToggleSortUrl o,
         "sortColumn" .= jDataPageDemoaListSortColumn o,
         "sortValue" .= jDataPageDemoaListSortValue o
       ]
 
 data JDataDemoa = JDataDemoa
   { jDataDemoaEnt :: Entity Demoa,
+    jDataDemoaDummytext :: Text,
     jDataDemoaEditFormUrl :: Text,
     jDataDemoaDeleteFormUrl :: Text
   }
@@ -305,6 +308,7 @@ instance ToJSON JDataDemoa where
   toJSON o =
     object
       [ "entity" .= entityIdToJSON (jDataDemoaEnt o),
+        "dummytext" .= jDataDemoaDummytext o,
         "editFormUrl" .= jDataDemoaEditFormUrl o,
         "deleteFormUrl" .= jDataDemoaDeleteFormUrl o
       ]
@@ -788,6 +792,8 @@ maybeMobile c a n = Just $ "+" <> formatMaybeInt c <> " " <> formatMaybeInt a <>
 data SortOpt record
   = forall typ. PersistField typ => SortAsc (EntityField record typ)
   | forall typ. PersistField typ => SortDesc (EntityField record typ)
+  | SortAsc' Text
+  | SortDesc' Text
 
 data Language = DE | EN
   deriving (Generic)

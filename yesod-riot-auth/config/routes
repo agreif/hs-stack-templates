@@ -56,6 +56,7 @@
   deleteDemoa/#DemoaId DeleteDemoaR POST
   toggleSortDemoaMyattr/#Int ToggleSortDemoaMyattrR POST
   toggleSortDemoaOtherattr/#Int ToggleSortDemoaOtherattrR POST
+  toggleSortDemoaDummytext/#Int ToggleSortDemoaDummytextR POST
 
   demobList DemobListR GET
   demobListData DemobListDataR GET

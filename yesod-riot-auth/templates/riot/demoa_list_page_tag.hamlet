@@ -6,14 +6,18 @@
     <table .uk-table .uk-table-small .uk-table-divider .uk-table-hover .uk-background-muted>
       <thead>
         <tr>
-          <th .uk-width-1-3>
+          <th .uk-width-1-4>
             <span .table-header onclick="{toggleSortDemoaMyattr}">
               {context.data.translation.msgDemoaMyattr}
               <span uk-icon="{sortIcon('myattr')}">
-          <th .uk-width-1-3>
+          <th .uk-width-1-4>
             <span .table-header onclick="{toggleSortDemoaOtherattr}">
               {context.data.translation.msgDemoaOtherattr}
               <span uk-icon="{sortIcon('otherattr')}">
+          <th .uk-width-1-4>
+            <span .table-header onclick="{toggleSortDemoaDummytext}">
+              dummytext
+              <span uk-icon="{sortIcon('dummytext')}">
           <th .uk-align-right>
             <button .uk-background-primary .uk-light .uk-padding-small .modal-form-link .uk-button .uk-button-link title="{context.data.translation.msgDemoaAddDemoa}" uk-tooltip onclick="{addDemoa}">
               <span uk-icon="icon: plus">
@@ -25,6 +29,9 @@
           <td .uk-table-link>
             <a onclick="{(e)=>editDemoa(e,demoa)}" .uk-link-reset>
               {demoa.entity.otherattr}
+          <td .uk-table-link>
+            <a onclick="{(e)=>editDemoa(e,demoa)}" .uk-link-reset>
+              {demoa.dummytext}
           <td .uk-width-small>
             <button .uk-float-right .uk-button .uk-button-link title="{context.data.translation.msgDemoaDeleteDemoa}" uk-tooltip onclick="{(e)=>deleteDemoa(e,demoa)}">
               <span uk-icon="icon: trash">
@@ -54,14 +61,13 @@
     \     event.currentTarget.blur()
     \   },
     \   toggleSortDemoaMyattr(event) {
-    \     event.preventDefault()
     \     this.context.postRequest(this.context.data.pages.demoaList.myattrToggleSortUrl)
-    \     event.currentTarget.blur()
     \   },
     \   toggleSortDemoaOtherattr(event) {
-    \     event.preventDefault()
     \     this.context.postRequest(this.context.data.pages.demoaList.otherattrToggleSortUrl)
-    \     event.currentTarget.blur()
+    \   },
+    \   toggleSortDemoaDummytext(event) {
+    \     this.context.postRequest(this.context.data.pages.demoaList.dummytextToggleSortUrl)
     \   },
     \   sortIcon(columnName) {
     \     if (this.context.data.pages.demoaList.sortColumn == columnName) {
