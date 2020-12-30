@@ -7000,7 +7000,7 @@ div.uk-form-danger input {
 }
 
 .table-header {
-  cursor: default;
+  cursor: pointer;
 }
 
 
