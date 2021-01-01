@@ -1,4 +1,4 @@
-<nav-tag>
+!<nav-tag>
   <nav .uk-navbar-container .uk-margin-small-top uk-navbar="offset: -10">
     <div .uk-navbar-left>
       <div .uk-navbar-item .uk-logo>
@@ -77,8 +77,8 @@
     \   },
     \   editMyProfile(event) {
     \     event.preventDefault()
-    \     var dataJsonUrl = window.history.state ? window.history.state.dataJsonUrl : "@{MyprojectR HomeDataR}"
-    \     this.context.showModalForm("@{MyprojectR EditMyprofileFormR}", dataJsonUrl)
+    \     var dataJsonUrl = window.history.state ? window.history.state.dataJsonUrl : "@{BackendR HomeDataR}"
+    \     this.context.showModalForm("@{BackendR EditMyprofileFormR}", dataJsonUrl)
     \   },
     \   changeLanguageDe(event) {
     \     event.preventDefault()

@@ -32,7 +32,7 @@ getAddDemocFormR demobId = do
     toWidget
       [whamlet|
       <h1>_{MsgDemocAddDemoc}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ AddDemocR demobId}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{BackendR $ AddDemocR demobId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -61,7 +61,7 @@ postAddDemocR demobId = do
       runDB $ do
         _ <- insert democ
         return ()
-      returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId}
+      returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemobDetailDataR demobId}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $
@@ -130,7 +130,7 @@ getEditDemocFormR democId = do
     toWidget
       [whamlet|
       <h1>_{MsgDemocEditDemoc}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ EditDemocR democId}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{BackendR $ EditDemocR democId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -162,8 +162,8 @@ postEditDemocR democId = do
             persistFields
         return uc
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ}
-        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ}
+        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemobDetailDataR $ democDemobId democ}
+        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ BackendR $ DemobDetailDataR $ democDemobId democ}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $
@@ -238,7 +238,7 @@ getDeleteDemocFormR democId = do
     toWidget
       [whamlet|
       <h1>_{MsgDemocDeleteDemoc}
-      <form #modal-form .uk-form-horizontal method=post action=@{MyprojectR $ DeleteDemocR democId}>
+      <form #modal-form .uk-form-horizontal method=post action=@{BackendR $ DeleteDemocR democId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -260,7 +260,7 @@ postDeleteDemocR democId = do
       ]
     delete democId
   urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ}
+  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemobDetailDataR $ democDemobId democ}
 
 -- gen post delete - end
 

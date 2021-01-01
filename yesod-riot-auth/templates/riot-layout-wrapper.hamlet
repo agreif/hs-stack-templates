@@ -16,15 +16,15 @@
 
     $if isDev
       <script src="@{StaticR js_riot_compiler_min_js}" type="text/javascript">
-      <script data-src="@{MyprojectR RiotBodyTagR}" type="riot">
-      <script data-src="@{MyprojectR RiotNavTagR}" type="riot">
-      <script data-src="@{MyprojectR RiotPaginationTagR}" type="riot">
-      <script data-src="@{MyprojectR RiotRawTagR}" type="riot">
-      <script data-src="@{MyprojectR RiotHomePageTagR}" type="riot">
-      <script data-src="@{MyprojectR RiotAdminPageTagR}" type="riot">
-      <script data-src="@{MyprojectR RiotDemoaListPageTagR}" type="riot">
-      <script data-src="@{MyprojectR RiotDemobListPageTagR}" type="riot">
-      <script data-src="@{MyprojectR RiotDemobDetailPageTagR}" type="riot">
+      <script data-src="@{BackendR RiotBodyTagR}" type="riot">
+      <script data-src="@{BackendR RiotNavTagR}" type="riot">
+      <script data-src="@{BackendR RiotPaginationTagR}" type="riot">
+      <script data-src="@{BackendR RiotRawTagR}" type="riot">
+      <script data-src="@{BackendR RiotHomePageTagR}" type="riot">
+      <script data-src="@{BackendR RiotAdminPageTagR}" type="riot">
+      <script data-src="@{BackendR RiotDemoaListPageTagR}" type="riot">
+      <script data-src="@{BackendR RiotDemobListPageTagR}" type="riot">
+      <script data-src="@{BackendR RiotDemobDetailPageTagR}" type="riot">
     $else
       <script src="@{StaticR js_riot_min_js}" type="text/javascript">
 

@@ -31,7 +31,7 @@
     \   },
     \   addDemob(event) {
     \     event.preventDefault()
-    \     this.context.showModalForm("@{MyprojectR AddDemobFormR}")
+    \     this.context.showModalForm("@{BackendR AddDemobFormR}")
     \     event.currentTarget.blur()
     \   },
     \   detailDemob(event, item) {

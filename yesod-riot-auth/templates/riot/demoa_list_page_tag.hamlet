@@ -47,7 +47,7 @@
     \   },
     \   addDemoa(event) {
     \     event.preventDefault()
-    \     this.context.showModalForm("@{MyprojectR AddDemoaFormR}")
+    \     this.context.showModalForm("@{BackendR AddDemoaFormR}")
     \     event.currentTarget.blur()
     \   },
     \   editDemoa(event, item) {

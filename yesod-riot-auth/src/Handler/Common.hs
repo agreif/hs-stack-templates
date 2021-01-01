@@ -394,8 +394,8 @@ mainNavData user mainNav = do
         { jDataNavItemId = Nothing,
           jDataNavItemLabel = msgHome,
           jDataNavItemIsActive = mainNav == MainNavHome,
-          jDataNavItemUrl = Just $ urlRenderer $ MyprojectR MyprojectHomeR,
-          jDataNavItemDataUrl = Just $ urlRenderer $ MyprojectR HomeDataR,
+          jDataNavItemUrl = Just $ urlRenderer $ BackendR BackendHomeR,
+          jDataNavItemDataUrl = Just $ urlRenderer $ BackendR HomeDataR,
           jDataNavItemBadge = Nothing,
           jDataNavItemDropdownItems = Nothing
         }
@@ -415,8 +415,8 @@ mainNavData user mainNav = do
              { jDataNavItemId = Nothing,
                jDataNavItemLabel = msgDemoas,
                jDataNavItemIsActive = mainNav == MainNavDemoa,
-               jDataNavItemUrl = Just $ urlRenderer $ MyprojectR DemoaListR,
-               jDataNavItemDataUrl = Just $ urlRenderer $ MyprojectR DemoaListDataR,
+               jDataNavItemUrl = Just $ urlRenderer $ BackendR DemoaListR,
+               jDataNavItemDataUrl = Just $ urlRenderer $ BackendR DemoaListDataR,
                jDataNavItemBadge = Nothing,
                jDataNavItemDropdownItems = Nothing
              }
@@ -425,8 +425,8 @@ mainNavData user mainNav = do
              { jDataNavItemId = Nothing,
                jDataNavItemLabel = msgDemobs,
                jDataNavItemIsActive = mainNav == MainNavDemob,
-               jDataNavItemUrl = Just $ urlRenderer $ MyprojectR DemobListR,
-               jDataNavItemDataUrl = Just $ urlRenderer $ MyprojectR DemobListDataR,
+               jDataNavItemUrl = Just $ urlRenderer $ BackendR DemobListR,
+               jDataNavItemDataUrl = Just $ urlRenderer $ BackendR DemobListDataR,
                jDataNavItemBadge = Nothing,
                jDataNavItemDropdownItems = Nothing
              }

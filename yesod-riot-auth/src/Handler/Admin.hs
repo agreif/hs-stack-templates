@@ -70,7 +70,7 @@ getAdminDataR = do
         jDataBreadcrumbItems =
           [ JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = msgHome,
-                jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomeDataR
+                jDataBreadcrumbItemDataUrl = urlRenderer $ BackendR HomeDataR
               },
             JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = msgAdmin,
@@ -79,8 +79,8 @@ getAdminDataR = do
           ],
         jDataCurrentLanguage = currentLanguage,
         jDataTranslation = translation,
-        jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl,
-        jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
+        jDataLanguageDeUrl = urlRenderer $ BackendR $ LanguageDeR currentDataUrl,
+        jDataLanguageEnUrl = urlRenderer $ BackendR $ LanguageEnR currentDataUrl
       }
   where
     gitInfo :: (String, String, String, String)

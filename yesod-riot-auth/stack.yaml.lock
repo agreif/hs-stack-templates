@@ -13,11 +13,11 @@ packages:
     git: https://github.com/agreif/hs-yesod-model-generator.git
     pantry-tree:
       size: 1812
-      sha256: ea53917dda30270d8113c04775f10c016ee7ccb463065364a30f1fc67e691582
-    commit: fb2b4d3503c03be5c5a090570d3d1d4ec2cba4fc
+      sha256: 4888a6d1865db4be480905bc5cafd60700b05099943e05e83dad7182755477ad
+    commit: 9e6b03ab791d64450d8b38913570bd6959e304ef
   original:
     git: https://github.com/agreif/hs-yesod-model-generator.git
-    commit: fb2b4d3503c03be5c5a090570d3d1d4ec2cba4fc
+    commit: 9e6b03ab791d64450d8b38913570bd6959e304ef
 - completed:
     hackage: pwstore-fast-2.4.4@sha256:9b6a37510d8b9f37f409a8ab3babac9181afcaaa3fce8ba1c131a7ed3de30698,1351
     pantry-tree:

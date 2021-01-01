@@ -7,7 +7,7 @@
 / HomeR GET
 /initdb/#Text InitDbR GET
 
-/myproject/admin AdminR:
+/backend/admin AdminR:
   home AdminHomeR GET
   adminData AdminDataR GET
 
@@ -24,8 +24,8 @@
   sendTestMailForm SendTestmailFormR GET
   sendTestMail SendTestmailR POST
 
-/myproject MyprojectR:
-  home MyprojectHomeR GET
+/backend BackendR:
+  home BackendHomeR GET
 
   riot/bodyTag RiotBodyTagR GET
   riot/navTag RiotNavTagR GET

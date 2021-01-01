@@ -23,7 +23,7 @@ import Text.Hamlet (hamletFile)
 
 getDemoaListR :: Handler Html
 getDemoaListR = do
-  let route = MyprojectR DemoaListDataR
+  let route = BackendR DemoaListDataR
   master <- getYesod
   let isDev = appDev $ appSettings master
   dataUrl <- getUrlRender <*> pure route
@@ -37,7 +37,7 @@ postDemoaListPageNumDataR pageNum = do
   urlRenderer <- getUrlRender
   returnJson $
     VFormSubmitSuccess
-      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
+      { fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemoaListPageNumDataR pageNum
       }
 
 getDemoaListPageNumDataR :: Int -> Handler Value
@@ -59,11 +59,11 @@ demoaListPageNumDataR pageNum = do
               Just $
                 JDataPageDemoaList
                   { jDataPageDemoaListDemoas = jDataDemoas,
-                    jDataPageDemoaListAddFormUrl = urlRenderer $ MyprojectR AddDemoaFormR,
+                    jDataPageDemoaListAddFormUrl = urlRenderer $ BackendR AddDemoaFormR,
                     jDataPageDemoaListPaginationItems = jDataPaginationItems,
-                    jDataPageDemoaListMyattrToggleSortUrl = urlRenderer $ MyprojectR $ ToggleSortDemoaMyattrR pageNum,
-                    jDataPageDemoaListOtherattrToggleSortUrl = urlRenderer $ MyprojectR $ ToggleSortDemoaOtherattrR pageNum,
-                    jDataPageDemoaListDummytextToggleSortUrl = urlRenderer $ MyprojectR $ ToggleSortDemoaDummytextR pageNum,
+                    jDataPageDemoaListMyattrToggleSortUrl = urlRenderer $ BackendR $ ToggleSortDemoaMyattrR pageNum,
+                    jDataPageDemoaListOtherattrToggleSortUrl = urlRenderer $ BackendR $ ToggleSortDemoaOtherattrR pageNum,
+                    jDataPageDemoaListDummytextToggleSortUrl = urlRenderer $ BackendR $ ToggleSortDemoaDummytextR pageNum,
                     jDataPageDemoaListSortColumn = maybeSortCol,
                     jDataPageDemoaListSortValue = maybeSortVal
                   }
@@ -72,7 +72,7 @@ demoaListPageNumDataR pageNum = do
   msgDemoa <- localizedMsg MsgDemoaDemoa
   currentLanguage <- getLanguage
   translation <- getTranslation
-  let currentDataUrl = urlRenderer $ MyprojectR DemoaListDataR
+  let currentDataUrl = urlRenderer $ BackendR DemoaListDataR
   returnJson
     JData
       { jDataAppName = appName,
@@ -83,7 +83,7 @@ demoaListPageNumDataR pageNum = do
         jDataHistoryState =
           Just
             JDataHistoryState
-              { jDataHistoryStateUrl = urlRenderer $ MyprojectR DemoaListR,
+              { jDataHistoryStateUrl = urlRenderer $ BackendR DemoaListR,
                 jDataHistoryStateTitle = msgDemoa
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
@@ -92,7 +92,7 @@ demoaListPageNumDataR pageNum = do
         jDataBreadcrumbItems =
           [ JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = msgHome,
-                jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomeDataR
+                jDataBreadcrumbItemDataUrl = urlRenderer $ BackendR HomeDataR
               },
             JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = msgDemoa,
@@ -101,8 +101,8 @@ demoaListPageNumDataR pageNum = do
           ],
         jDataCurrentLanguage = currentLanguage,
         jDataTranslation = translation,
-        jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl,
-        jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
+        jDataLanguageDeUrl = urlRenderer $ BackendR $ LanguageDeR currentDataUrl,
+        jDataLanguageEnUrl = urlRenderer $ BackendR $ LanguageEnR currentDataUrl
       }
 
 demoaListJDatas :: Int -> Handler ([JDataDemoa], Maybe [JDataPaginationItem])
@@ -110,7 +110,7 @@ demoaListJDatas pageNum = do
   maybeSortOpt <- curDemoaListSortOpt
   urlRenderer <- getUrlRender
   rowCount <- runDB $ count ([] :: [Filter Demoa])
-  paginationJDatas <- getPaginationJDatas rowCount demoaListPageSize pageNum 11 (MyprojectR . DemoaListPageNumDataR)
+  paginationJDatas <- getPaginationJDatas rowCount demoaListPageSize pageNum 11 (BackendR . DemoaListPageNumDataR)
   demoaEnts <- runDB $ loadDemoaTuples maybeSortOpt
   let demoaJDatas =
         map
@@ -118,8 +118,8 @@ demoaListJDatas pageNum = do
               JDataDemoa
                 { jDataDemoaEnt = demoaEnt,
                   jDataDemoaDummytext = demoaMyattr demoa <> pack (show $ demoaOtherattr demoa),
-                  jDataDemoaEditFormUrl = urlRenderer $ MyprojectR $ EditDemoaFormR demoaId,
-                  jDataDemoaDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteDemoaFormR demoaId
+                  jDataDemoaEditFormUrl = urlRenderer $ BackendR $ EditDemoaFormR demoaId,
+                  jDataDemoaDeleteFormUrl = urlRenderer $ BackendR $ DeleteDemoaFormR demoaId
                 }
           )
           demoaEnts
@@ -186,7 +186,7 @@ postToggleSortDemoaMyattrR pageNum = do
   urlRenderer <- getUrlRender
   returnJson $
     VFormSubmitSuccess
-      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
+      { fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemoaListPageNumDataR pageNum
       }
 
 postToggleSortDemoaOtherattrR :: Int -> Handler Value
@@ -210,7 +210,7 @@ postToggleSortDemoaOtherattrR pageNum = do
   urlRenderer <- getUrlRender
   returnJson $
     VFormSubmitSuccess
-      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
+      { fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemoaListPageNumDataR pageNum
       }
 
 postToggleSortDemoaDummytextR :: Int -> Handler Value
@@ -234,7 +234,7 @@ postToggleSortDemoaDummytextR pageNum = do
   urlRenderer <- getUrlRender
   returnJson $
     VFormSubmitSuccess
-      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
+      { fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemoaListPageNumDataR pageNum
       }
 
 -------------------------------------------------------
@@ -257,7 +257,7 @@ getAddDemoaFormR = do
     toWidget
       [whamlet|
       <h1>_{MsgDemoaAddDemoa}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ AddDemoaR}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{BackendR $ AddDemoaR}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -286,7 +286,7 @@ postAddDemoaR = do
       runDB $ do
         _ <- insert demoa
         return ()
-      returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemoaListDataR}
+      returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR DemoaListDataR}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $
@@ -380,7 +380,7 @@ getEditDemoaFormR demoaId = do
     toWidget
       [whamlet|
       <h1>_{MsgDemoaEditDemoa}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ EditDemoaR demoaId}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{BackendR $ EditDemoaR demoaId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -412,8 +412,8 @@ postEditDemoaR demoaId = do
             persistFields
         return uc
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListDataR}
-        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListDataR}
+        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemoaListDataR}
+        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ BackendR $ DemoaListDataR}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $
@@ -512,7 +512,7 @@ getDeleteDemoaFormR demoaId = do
     toWidget
       [whamlet|
       <h1>_{MsgDemoaDeleteDemoa}
-      <form #modal-form .uk-form-horizontal method=post action=@{MyprojectR $ DeleteDemoaR demoaId}>
+      <form #modal-form .uk-form-horizontal method=post action=@{BackendR $ DeleteDemoaR demoaId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -533,7 +533,7 @@ postDeleteDemoaR demoaId = do
       ]
     delete demoaId
   urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListDataR}
+  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemoaListDataR}
 
 -- gen post delete - end
 

@@ -14,11 +14,11 @@ import Import
 import Text.Hamlet (hamletFile)
 
 getHomeR :: Handler Html
-getHomeR = redirect $ MyprojectR MyprojectHomeR
+getHomeR = redirect $ BackendR BackendHomeR
 
-getMyprojectHomeR :: Handler Html
-getMyprojectHomeR = do
-  let route = MyprojectR HomeDataR
+getBackendHomeR :: Handler Html
+getBackendHomeR = do
+  let route = BackendR HomeDataR
   master <- getYesod
   let isDev = appDev $ appSettings master
   dataUrl <- getUrlRender <*> pure route
@@ -38,7 +38,7 @@ getHomeDataR = do
   msgHome <- localizedMsg MsgGlobalHome
   currentLanguage <- getLanguage
   translation <- getTranslation
-  let currentDataUrl = urlRenderer $ MyprojectR HomeDataR
+  let currentDataUrl = urlRenderer $ BackendR HomeDataR
   returnJson
     JData
       { jDataAppName = appName,
@@ -49,7 +49,7 @@ getHomeDataR = do
         jDataHistoryState =
           Just
             JDataHistoryState
-              { jDataHistoryStateUrl = urlRenderer $ MyprojectR MyprojectHomeR,
+              { jDataHistoryStateUrl = urlRenderer $ BackendR BackendHomeR,
                 jDataHistoryStateTitle = msgHome
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
@@ -63,8 +63,8 @@ getHomeDataR = do
           ],
         jDataCurrentLanguage = currentLanguage,
         jDataTranslation = translation,
-        jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl,
-        jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
+        jDataLanguageDeUrl = urlRenderer $ BackendR $ LanguageDeR currentDataUrl,
+        jDataLanguageEnUrl = urlRenderer $ BackendR $ LanguageEnR currentDataUrl
       }
 
 getRiotBodyTagR :: Handler Html

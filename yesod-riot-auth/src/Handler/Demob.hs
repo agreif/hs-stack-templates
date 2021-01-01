@@ -23,7 +23,7 @@ import Text.Hamlet (hamletFile)
 
 getDemobListR :: Handler Html
 getDemobListR = do
-  let route = MyprojectR DemobListDataR
+  let route = BackendR DemobListDataR
   master <- getYesod
   let isDev = appDev $ appSettings master
   dataUrl <- getUrlRender <*> pure route
@@ -37,7 +37,7 @@ postDemobListPageNumDataR pageNum = do
   urlRenderer <- getUrlRender
   returnJson $
     VFormSubmitSuccess
-      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobListPageNumDataR pageNum
+      { fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemobListPageNumDataR pageNum
       }
 
 getDemobListPageNumDataR :: Int -> Handler Value
@@ -57,7 +57,7 @@ demobListPageNumDataR pageNum = do
               Just $
                 JDataPageDemobList
                   { jDataPageDemobListDemobs = jDataDemobs,
-                    jDataPageDemobListAddFormUrl = urlRenderer $ MyprojectR AddDemobFormR,
+                    jDataPageDemobListAddFormUrl = urlRenderer $ BackendR AddDemobFormR,
                     jDataPageDemobListPaginationItems = jDataPaginationItems
                   }
           }
@@ -65,7 +65,7 @@ demobListPageNumDataR pageNum = do
   msgDemobs <- localizedMsg MsgDemobDemobs
   currentLanguage <- getLanguage
   translation <- getTranslation
-  let currentDataUrl = urlRenderer $ MyprojectR DemobListDataR
+  let currentDataUrl = urlRenderer $ BackendR DemobListDataR
   returnJson
     JData
       { jDataAppName = appName,
@@ -76,7 +76,7 @@ demobListPageNumDataR pageNum = do
         jDataHistoryState =
           Just
             JDataHistoryState
-              { jDataHistoryStateUrl = urlRenderer $ MyprojectR DemobListR,
+              { jDataHistoryStateUrl = urlRenderer $ BackendR DemobListR,
                 jDataHistoryStateTitle = msgDemobs
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
@@ -85,7 +85,7 @@ demobListPageNumDataR pageNum = do
         jDataBreadcrumbItems =
           [ JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = msgHome,
-                jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomeDataR
+                jDataBreadcrumbItemDataUrl = urlRenderer $ BackendR HomeDataR
               },
             JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = msgDemobs,
@@ -94,24 +94,24 @@ demobListPageNumDataR pageNum = do
           ],
         jDataCurrentLanguage = currentLanguage,
         jDataTranslation = translation,
-        jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl,
-        jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
+        jDataLanguageDeUrl = urlRenderer $ BackendR $ LanguageDeR currentDataUrl,
+        jDataLanguageEnUrl = urlRenderer $ BackendR $ LanguageEnR currentDataUrl
       }
 
 demobListJDatas :: Int -> Handler ([JDataDemob], Maybe [JDataPaginationItem])
 demobListJDatas pageNum = do
   urlRenderer <- getUrlRender
   rowCount <- runDB $ count ([] :: [Filter Demob])
-  paginationJDatas <- getPaginationJDatas rowCount demobListPageSize pageNum 11 (MyprojectR . DemobListPageNumDataR)
+  paginationJDatas <- getPaginationJDatas rowCount demobListPageSize pageNum 11 (BackendR . DemobListPageNumDataR)
   demobEnts <- runDB loadDemobTuples
   let demobJDatas =
         map
           ( \demobEnt@(Entity demobId _) ->
               JDataDemob
                 { jDataDemobEnt = demobEnt,
-                  jDataDemobDetailUrl = urlRenderer $ MyprojectR $ DemobDetailR demobId,
-                  jDataDemobDetailDataUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId,
-                  jDataDemobDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteDemobFormR demobId
+                  jDataDemobDetailUrl = urlRenderer $ BackendR $ DemobDetailR demobId,
+                  jDataDemobDetailDataUrl = urlRenderer $ BackendR $ DemobDetailDataR demobId,
+                  jDataDemobDeleteFormUrl = urlRenderer $ BackendR $ DeleteDemobFormR demobId
                 }
           )
           demobEnts
@@ -135,7 +135,7 @@ demobListPageSize = 5
 
 getDemobDetailR :: DemobId -> Handler Html
 getDemobDetailR demobId = do
-  let route = MyprojectR $ DemobDetailDataR demobId
+  let route = BackendR $ DemobDetailDataR demobId
   master <- getYesod
   let isDev = appDev $ appSettings master
   dataUrl <- getUrlRender <*> pure route
@@ -157,8 +157,8 @@ getDemobDetailDataR demobId = do
                 JDataPageDemobDetail
                   { jDataPageDemobDetailDemobEnt = Entity demobId demob,
                     jDataPageDemobDetailDemocs = jDataDemocs,
-                    jDataPageDemobDetailDemobEditFormUrl = urlRenderer $ MyprojectR $ EditDemobFormR demobId,
-                    jDataPageDemobDetailDemocAddFormUrl = urlRenderer $ MyprojectR $ AddDemocFormR demobId
+                    jDataPageDemobDetailDemobEditFormUrl = urlRenderer $ BackendR $ EditDemobFormR demobId,
+                    jDataPageDemobDetailDemocAddFormUrl = urlRenderer $ BackendR $ AddDemocFormR demobId
                   }
           }
   msgHome <- localizedMsg MsgGlobalHome
@@ -166,7 +166,7 @@ getDemobDetailDataR demobId = do
   msgDemob <- localizedMsg MsgDemobDemob
   currentLanguage <- getLanguage
   translation <- getTranslation
-  let currentDataUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId
+  let currentDataUrl = urlRenderer $ BackendR $ DemobDetailDataR demobId
   returnJson
     JData
       { jDataAppName = appName,
@@ -177,7 +177,7 @@ getDemobDetailDataR demobId = do
         jDataHistoryState =
           Just
             JDataHistoryState
-              { jDataHistoryStateUrl = urlRenderer $ MyprojectR $ DemobDetailR demobId,
+              { jDataHistoryStateUrl = urlRenderer $ BackendR $ DemobDetailR demobId,
                 jDataHistoryStateTitle = msgDemob
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
@@ -186,11 +186,11 @@ getDemobDetailDataR demobId = do
         jDataBreadcrumbItems =
           [ JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = msgHome,
-                jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomeDataR
+                jDataBreadcrumbItemDataUrl = urlRenderer $ BackendR HomeDataR
               },
             JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = msgDemobs,
-                jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR DemobListDataR
+                jDataBreadcrumbItemDataUrl = urlRenderer $ BackendR DemobListDataR
               },
             JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = demobMyattr demob,
@@ -199,8 +199,8 @@ getDemobDetailDataR demobId = do
           ],
         jDataCurrentLanguage = currentLanguage,
         jDataTranslation = translation,
-        jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl,
-        jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
+        jDataLanguageDeUrl = urlRenderer $ BackendR $ LanguageDeR currentDataUrl,
+        jDataLanguageEnUrl = urlRenderer $ BackendR $ LanguageEnR currentDataUrl
       }
 
 democJDatas :: DemobId -> Handler [JDataDemoc]
@@ -212,8 +212,8 @@ democJDatas demobId = do
       ( \democEnt@(Entity democId _) ->
           JDataDemoc
             { jDataDemocEnt = democEnt,
-              jDataDemocEditFormUrl = urlRenderer $ MyprojectR $ EditDemocFormR democId,
-              jDataDemocDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteDemocFormR democId
+              jDataDemocEditFormUrl = urlRenderer $ BackendR $ EditDemocFormR democId,
+              jDataDemocDeleteFormUrl = urlRenderer $ BackendR $ DeleteDemocFormR democId
             }
       )
       democTuples
@@ -244,7 +244,7 @@ getAddDemobFormR = do
     toWidget
       [whamlet|
       <h1>_{MsgDemobAddDemob}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ AddDemobR}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{BackendR $ AddDemobR}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -272,7 +272,7 @@ postAddDemobR = do
       runDB $ do
         _ <- insert demob
         return ()
-      returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemobListDataR}
+      returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR DemobListDataR}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $
@@ -341,7 +341,7 @@ getEditDemobFormR demobId = do
     toWidget
       [whamlet|
       <h1>_{MsgDemobEditDemob}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ EditDemobR demobId}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{BackendR $ EditDemobR demobId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -372,8 +372,8 @@ postEditDemobR demobId = do
             persistFields
         return uc
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId}
-        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId}
+        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemobDetailDataR demobId}
+        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ BackendR $ DemobDetailDataR demobId}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $
@@ -448,7 +448,7 @@ getDeleteDemobFormR demobId = do
     toWidget
       [whamlet|
       <h1>_{MsgDemobDeleteDemob}
-      <form #modal-form .uk-form-horizontal method=post action=@{MyprojectR $ DeleteDemobR demobId}>
+      <form #modal-form .uk-form-horizontal method=post action=@{BackendR $ DeleteDemobR demobId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -469,7 +469,7 @@ postDeleteDemobR demobId = do
       ]
     delete demobId
   urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobListDataR}
+  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemobListDataR}
 
 -- gen post delete - end
 

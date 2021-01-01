@@ -550,7 +550,7 @@ User-agent: *
 / HomeR GET
 /initdb/#Text InitDbR GET
 
-/myproject/admin AdminR:
+/backend/admin AdminR:
   home AdminHomeR GET
   adminData AdminDataR GET
 
@@ -567,8 +567,8 @@ User-agent: *
   sendTestMailForm SendTestmailFormR GET
   sendTestMail SendTestmailR POST
 
-/myproject MyprojectR:
-  home MyprojectHomeR GET
+/backend BackendR:
+  home BackendHomeR GET
 
   riot/bodyTag RiotBodyTagR GET
   riot/navTag RiotNavTagR GET
@@ -1194,9 +1194,9 @@ context =
                 bCrudModelAddFormEntityLoader = Nothing,
                 bCrudModelEditFormEntityLoader = Nothing,
                 bCrudModelDeleteFormEntityLoader = Nothing,
-                bCrudModelAddFormDataJsonUrl = Just "MyprojectR DemoaListDataR",
-                bCrudModelEditFormDataJsonUrl = Just "MyprojectR $ DemoaListDataR",
-                bCrudModelDeleteFormDataJsonUrl = Just "MyprojectR $ DemoaListDataR",
+                bCrudModelAddFormDataJsonUrl = Just "BackendR DemoaListDataR",
+                bCrudModelEditFormDataJsonUrl = Just "BackendR $ DemoaListDataR",
+                bCrudModelDeleteFormDataJsonUrl = Just "BackendR $ DemoaListDataR",
                 bCrudModelAddFormHasDefaultModel = False,
                 bCrudModelEditPostLoadsModel = False,
                 bCrudModelDeletePostLoadsModel = False,
@@ -1208,7 +1208,7 @@ context =
                 bCrudModelEditFormTitleMsg = Just "MsgDemoaEditDemoa",
                 bCrudModelDeleteFormTitleMsg = Just "MsgDemoaDeleteDemoa",
                 bCrudModelParentHsType = Nothing,
-                bCrudModelFormRouteHsType = "MyprojectR",
+                bCrudModelFormRouteHsType = "BackendR",
                 bCrudModelFields =
                   [ BCrudField
                       { bCrudFieldName = "myattr",
@@ -1321,9 +1321,9 @@ context =
                 bCrudModelAddFormEntityLoader = Nothing,
                 bCrudModelEditFormEntityLoader = Nothing,
                 bCrudModelDeleteFormEntityLoader = Nothing,
-                bCrudModelAddFormDataJsonUrl = Just "MyprojectR DemobListDataR",
-                bCrudModelEditFormDataJsonUrl = Just "MyprojectR $ DemobDetailDataR demobId",
-                bCrudModelDeleteFormDataJsonUrl = Just "MyprojectR $ DemobListDataR",
+                bCrudModelAddFormDataJsonUrl = Just "BackendR DemobListDataR",
+                bCrudModelEditFormDataJsonUrl = Just "BackendR $ DemobDetailDataR demobId",
+                bCrudModelDeleteFormDataJsonUrl = Just "BackendR $ DemobListDataR",
                 bCrudModelAddFormHasDefaultModel = False,
                 bCrudModelEditPostLoadsModel = False,
                 bCrudModelDeletePostLoadsModel = False,
@@ -1335,7 +1335,7 @@ context =
                 bCrudModelEditFormTitleMsg = Just "MsgDemobEditDemob",
                 bCrudModelDeleteFormTitleMsg = Just "MsgDemobDeleteDemob",
                 bCrudModelParentHsType = Nothing,
-                bCrudModelFormRouteHsType = "MyprojectR",
+                bCrudModelFormRouteHsType = "BackendR",
                 bCrudModelFields =
                   [ BCrudField
                       { bCrudFieldName = "myattr",
@@ -1404,9 +1404,9 @@ context =
                 bCrudModelAddFormEntityLoader = Nothing,
                 bCrudModelEditFormEntityLoader = Nothing,
                 bCrudModelDeleteFormEntityLoader = Nothing,
-                bCrudModelAddFormDataJsonUrl = Just "MyprojectR $ DemobDetailDataR demobId",
-                bCrudModelEditFormDataJsonUrl = Just "MyprojectR $ DemobDetailDataR $ democDemobId democ",
-                bCrudModelDeleteFormDataJsonUrl = Just "MyprojectR $ DemobDetailDataR $ democDemobId democ",
+                bCrudModelAddFormDataJsonUrl = Just "BackendR $ DemobDetailDataR demobId",
+                bCrudModelEditFormDataJsonUrl = Just "BackendR $ DemobDetailDataR $ democDemobId democ",
+                bCrudModelDeleteFormDataJsonUrl = Just "BackendR $ DemobDetailDataR $ democDemobId democ",
                 bCrudModelAddFormHasDefaultModel = False,
                 bCrudModelEditPostLoadsModel = True,
                 bCrudModelDeletePostLoadsModel = True,
@@ -1418,7 +1418,7 @@ context =
                 bCrudModelEditFormTitleMsg = Just "MsgDemocEditDemoc",
                 bCrudModelDeleteFormTitleMsg = Just "MsgDemocDeleteDemoc",
                 bCrudModelParentHsType = Just "Demob",
-                bCrudModelFormRouteHsType = "MyprojectR",
+                bCrudModelFormRouteHsType = "BackendR",
                 bCrudModelFields =
                   [ BCrudField
                       { bCrudFieldName = "demobId",
@@ -2494,7 +2494,7 @@ instance Yesod App where
   isAuthorized HomeR _ = do
     _ <- requireAuthId
     return Authorized
-  isAuthorized (MyprojectR _) _ = do
+  isAuthorized (BackendR _) _ = do
     _ <- requireAuthId
     return Authorized
   isAuthorized (AdminR _) _ = do
@@ -2810,7 +2810,7 @@ getAdminDataR = do
         jDataBreadcrumbItems =
           [ JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = msgHome,
-                jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomeDataR
+                jDataBreadcrumbItemDataUrl = urlRenderer $ BackendR HomeDataR
               },
             JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = msgAdmin,
@@ -2819,8 +2819,8 @@ getAdminDataR = do
           ],
         jDataCurrentLanguage = currentLanguage,
         jDataTranslation = translation,
-        jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl,
-        jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
+        jDataLanguageDeUrl = urlRenderer $ BackendR $ LanguageDeR currentDataUrl,
+        jDataLanguageEnUrl = urlRenderer $ BackendR $ LanguageEnR currentDataUrl
       }
   where
     gitInfo :: (String, String, String, String)
@@ -3268,8 +3268,8 @@ mainNavData user mainNav = do
         { jDataNavItemId = Nothing,
           jDataNavItemLabel = msgHome,
           jDataNavItemIsActive = mainNav == MainNavHome,
-          jDataNavItemUrl = Just $ urlRenderer $ MyprojectR MyprojectHomeR,
-          jDataNavItemDataUrl = Just $ urlRenderer $ MyprojectR HomeDataR,
+          jDataNavItemUrl = Just $ urlRenderer $ BackendR BackendHomeR,
+          jDataNavItemDataUrl = Just $ urlRenderer $ BackendR HomeDataR,
           jDataNavItemBadge = Nothing,
           jDataNavItemDropdownItems = Nothing
         }
@@ -3289,8 +3289,8 @@ mainNavData user mainNav = do
              { jDataNavItemId = Nothing,
                jDataNavItemLabel = msgDemoas,
                jDataNavItemIsActive = mainNav == MainNavDemoa,
-               jDataNavItemUrl = Just $ urlRenderer $ MyprojectR DemoaListR,
-               jDataNavItemDataUrl = Just $ urlRenderer $ MyprojectR DemoaListDataR,
+               jDataNavItemUrl = Just $ urlRenderer $ BackendR DemoaListR,
+               jDataNavItemDataUrl = Just $ urlRenderer $ BackendR DemoaListDataR,
                jDataNavItemBadge = Nothing,
                jDataNavItemDropdownItems = Nothing
              }
@@ -3299,8 +3299,8 @@ mainNavData user mainNav = do
              { jDataNavItemId = Nothing,
                jDataNavItemLabel = msgDemobs,
                jDataNavItemIsActive = mainNav == MainNavDemob,
-               jDataNavItemUrl = Just $ urlRenderer $ MyprojectR DemobListR,
-               jDataNavItemDataUrl = Just $ urlRenderer $ MyprojectR DemobListDataR,
+               jDataNavItemUrl = Just $ urlRenderer $ BackendR DemobListR,
+               jDataNavItemDataUrl = Just $ urlRenderer $ BackendR DemobListDataR,
                jDataNavItemBadge = Nothing,
                jDataNavItemDropdownItems = Nothing
              }
@@ -3971,7 +3971,7 @@ import Text.Hamlet (hamletFile)
 
 getDemoaListR :: Handler Html
 getDemoaListR = do
-  let route = MyprojectR DemoaListDataR
+  let route = BackendR DemoaListDataR
   master <- getYesod
   let isDev = appDev $ appSettings master
   dataUrl <- getUrlRender <*> pure route
@@ -3985,7 +3985,7 @@ postDemoaListPageNumDataR pageNum = do
   urlRenderer <- getUrlRender
   returnJson $
     VFormSubmitSuccess
-      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
+      { fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemoaListPageNumDataR pageNum
       }
 
 getDemoaListPageNumDataR :: Int -> Handler Value
@@ -4007,11 +4007,11 @@ demoaListPageNumDataR pageNum = do
               Just $
                 JDataPageDemoaList
                   { jDataPageDemoaListDemoas = jDataDemoas,
-                    jDataPageDemoaListAddFormUrl = urlRenderer $ MyprojectR AddDemoaFormR,
+                    jDataPageDemoaListAddFormUrl = urlRenderer $ BackendR AddDemoaFormR,
                     jDataPageDemoaListPaginationItems = jDataPaginationItems,
-                    jDataPageDemoaListMyattrToggleSortUrl = urlRenderer $ MyprojectR $ ToggleSortDemoaMyattrR pageNum,
-                    jDataPageDemoaListOtherattrToggleSortUrl = urlRenderer $ MyprojectR $ ToggleSortDemoaOtherattrR pageNum,
-                    jDataPageDemoaListDummytextToggleSortUrl = urlRenderer $ MyprojectR $ ToggleSortDemoaDummytextR pageNum,
+                    jDataPageDemoaListMyattrToggleSortUrl = urlRenderer $ BackendR $ ToggleSortDemoaMyattrR pageNum,
+                    jDataPageDemoaListOtherattrToggleSortUrl = urlRenderer $ BackendR $ ToggleSortDemoaOtherattrR pageNum,
+                    jDataPageDemoaListDummytextToggleSortUrl = urlRenderer $ BackendR $ ToggleSortDemoaDummytextR pageNum,
                     jDataPageDemoaListSortColumn = maybeSortCol,
                     jDataPageDemoaListSortValue = maybeSortVal
                   }
@@ -4020,7 +4020,7 @@ demoaListPageNumDataR pageNum = do
   msgDemoa <- localizedMsg MsgDemoaDemoa
   currentLanguage <- getLanguage
   translation <- getTranslation
-  let currentDataUrl = urlRenderer $ MyprojectR DemoaListDataR
+  let currentDataUrl = urlRenderer $ BackendR DemoaListDataR
   returnJson
     JData
       { jDataAppName = appName,
@@ -4031,7 +4031,7 @@ demoaListPageNumDataR pageNum = do
         jDataHistoryState =
           Just
             JDataHistoryState
-              { jDataHistoryStateUrl = urlRenderer $ MyprojectR DemoaListR,
+              { jDataHistoryStateUrl = urlRenderer $ BackendR DemoaListR,
                 jDataHistoryStateTitle = msgDemoa
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
@@ -4040,7 +4040,7 @@ demoaListPageNumDataR pageNum = do
         jDataBreadcrumbItems =
           [ JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = msgHome,
-                jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomeDataR
+                jDataBreadcrumbItemDataUrl = urlRenderer $ BackendR HomeDataR
               },
             JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = msgDemoa,
@@ -4049,8 +4049,8 @@ demoaListPageNumDataR pageNum = do
           ],
         jDataCurrentLanguage = currentLanguage,
         jDataTranslation = translation,
-        jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl,
-        jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
+        jDataLanguageDeUrl = urlRenderer $ BackendR $ LanguageDeR currentDataUrl,
+        jDataLanguageEnUrl = urlRenderer $ BackendR $ LanguageEnR currentDataUrl
       }
 
 demoaListJDatas :: Int -> Handler ([JDataDemoa], Maybe [JDataPaginationItem])
@@ -4058,7 +4058,7 @@ demoaListJDatas pageNum = do
   maybeSortOpt <- curDemoaListSortOpt
   urlRenderer <- getUrlRender
   rowCount <- runDB $ count ([] :: [Filter Demoa])
-  paginationJDatas <- getPaginationJDatas rowCount demoaListPageSize pageNum 11 (MyprojectR . DemoaListPageNumDataR)
+  paginationJDatas <- getPaginationJDatas rowCount demoaListPageSize pageNum 11 (BackendR . DemoaListPageNumDataR)
   demoaEnts <- runDB $ loadDemoaTuples maybeSortOpt
   let demoaJDatas =
         map
@@ -4066,8 +4066,8 @@ demoaListJDatas pageNum = do
               JDataDemoa
                 { jDataDemoaEnt = demoaEnt,
                   jDataDemoaDummytext = demoaMyattr demoa <> pack (show $ demoaOtherattr demoa),
-                  jDataDemoaEditFormUrl = urlRenderer $ MyprojectR $ EditDemoaFormR demoaId,
-                  jDataDemoaDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteDemoaFormR demoaId
+                  jDataDemoaEditFormUrl = urlRenderer $ BackendR $ EditDemoaFormR demoaId,
+                  jDataDemoaDeleteFormUrl = urlRenderer $ BackendR $ DeleteDemoaFormR demoaId
                 }
           )
           demoaEnts
@@ -4134,7 +4134,7 @@ postToggleSortDemoaMyattrR pageNum = do
   urlRenderer <- getUrlRender
   returnJson $
     VFormSubmitSuccess
-      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
+      { fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemoaListPageNumDataR pageNum
       }
 
 postToggleSortDemoaOtherattrR :: Int -> Handler Value
@@ -4158,7 +4158,7 @@ postToggleSortDemoaOtherattrR pageNum = do
   urlRenderer <- getUrlRender
   returnJson $
     VFormSubmitSuccess
-      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
+      { fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemoaListPageNumDataR pageNum
       }
 
 postToggleSortDemoaDummytextR :: Int -> Handler Value
@@ -4182,7 +4182,7 @@ postToggleSortDemoaDummytextR pageNum = do
   urlRenderer <- getUrlRender
   returnJson $
     VFormSubmitSuccess
-      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListPageNumDataR pageNum
+      { fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemoaListPageNumDataR pageNum
       }
 
 -------------------------------------------------------
@@ -4205,7 +4205,7 @@ getAddDemoaFormR = do
     toWidget
       [whamlet|
       <h1>_{MsgDemoaAddDemoa}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ AddDemoaR}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{BackendR $ AddDemoaR}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -4234,7 +4234,7 @@ postAddDemoaR = do
       runDB $ do
         _ <- insert demoa
         return ()
-      returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemoaListDataR}
+      returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR DemoaListDataR}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $
@@ -4328,7 +4328,7 @@ getEditDemoaFormR demoaId = do
     toWidget
       [whamlet|
       <h1>_{MsgDemoaEditDemoa}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ EditDemoaR demoaId}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{BackendR $ EditDemoaR demoaId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -4360,8 +4360,8 @@ postEditDemoaR demoaId = do
             persistFields
         return uc
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListDataR}
-        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListDataR}
+        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemoaListDataR}
+        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ BackendR $ DemoaListDataR}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $
@@ -4460,7 +4460,7 @@ getDeleteDemoaFormR demoaId = do
     toWidget
       [whamlet|
       <h1>_{MsgDemoaDeleteDemoa}
-      <form #modal-form .uk-form-horizontal method=post action=@{MyprojectR $ DeleteDemoaR demoaId}>
+      <form #modal-form .uk-form-horizontal method=post action=@{BackendR $ DeleteDemoaR demoaId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -4481,7 +4481,7 @@ postDeleteDemoaR demoaId = do
       ]
     delete demoaId
   urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemoaListDataR}
+  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemoaListDataR}
 
 -- gen post delete - end
 
@@ -4519,7 +4519,7 @@ import Text.Hamlet (hamletFile)
 
 getDemobListR :: Handler Html
 getDemobListR = do
-  let route = MyprojectR DemobListDataR
+  let route = BackendR DemobListDataR
   master <- getYesod
   let isDev = appDev $ appSettings master
   dataUrl <- getUrlRender <*> pure route
@@ -4533,7 +4533,7 @@ postDemobListPageNumDataR pageNum = do
   urlRenderer <- getUrlRender
   returnJson $
     VFormSubmitSuccess
-      { fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobListPageNumDataR pageNum
+      { fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemobListPageNumDataR pageNum
       }
 
 getDemobListPageNumDataR :: Int -> Handler Value
@@ -4553,7 +4553,7 @@ demobListPageNumDataR pageNum = do
               Just $
                 JDataPageDemobList
                   { jDataPageDemobListDemobs = jDataDemobs,
-                    jDataPageDemobListAddFormUrl = urlRenderer $ MyprojectR AddDemobFormR,
+                    jDataPageDemobListAddFormUrl = urlRenderer $ BackendR AddDemobFormR,
                     jDataPageDemobListPaginationItems = jDataPaginationItems
                   }
           }
@@ -4561,7 +4561,7 @@ demobListPageNumDataR pageNum = do
   msgDemobs <- localizedMsg MsgDemobDemobs
   currentLanguage <- getLanguage
   translation <- getTranslation
-  let currentDataUrl = urlRenderer $ MyprojectR DemobListDataR
+  let currentDataUrl = urlRenderer $ BackendR DemobListDataR
   returnJson
     JData
       { jDataAppName = appName,
@@ -4572,7 +4572,7 @@ demobListPageNumDataR pageNum = do
         jDataHistoryState =
           Just
             JDataHistoryState
-              { jDataHistoryStateUrl = urlRenderer $ MyprojectR DemobListR,
+              { jDataHistoryStateUrl = urlRenderer $ BackendR DemobListR,
                 jDataHistoryStateTitle = msgDemobs
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
@@ -4581,7 +4581,7 @@ demobListPageNumDataR pageNum = do
         jDataBreadcrumbItems =
           [ JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = msgHome,
-                jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomeDataR
+                jDataBreadcrumbItemDataUrl = urlRenderer $ BackendR HomeDataR
               },
             JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = msgDemobs,
@@ -4590,24 +4590,24 @@ demobListPageNumDataR pageNum = do
           ],
         jDataCurrentLanguage = currentLanguage,
         jDataTranslation = translation,
-        jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl,
-        jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
+        jDataLanguageDeUrl = urlRenderer $ BackendR $ LanguageDeR currentDataUrl,
+        jDataLanguageEnUrl = urlRenderer $ BackendR $ LanguageEnR currentDataUrl
       }
 
 demobListJDatas :: Int -> Handler ([JDataDemob], Maybe [JDataPaginationItem])
 demobListJDatas pageNum = do
   urlRenderer <- getUrlRender
   rowCount <- runDB $ count ([] :: [Filter Demob])
-  paginationJDatas <- getPaginationJDatas rowCount demobListPageSize pageNum 11 (MyprojectR . DemobListPageNumDataR)
+  paginationJDatas <- getPaginationJDatas rowCount demobListPageSize pageNum 11 (BackendR . DemobListPageNumDataR)
   demobEnts <- runDB loadDemobTuples
   let demobJDatas =
         map
           ( \demobEnt@(Entity demobId _) ->
               JDataDemob
                 { jDataDemobEnt = demobEnt,
-                  jDataDemobDetailUrl = urlRenderer $ MyprojectR $ DemobDetailR demobId,
-                  jDataDemobDetailDataUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId,
-                  jDataDemobDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteDemobFormR demobId
+                  jDataDemobDetailUrl = urlRenderer $ BackendR $ DemobDetailR demobId,
+                  jDataDemobDetailDataUrl = urlRenderer $ BackendR $ DemobDetailDataR demobId,
+                  jDataDemobDeleteFormUrl = urlRenderer $ BackendR $ DeleteDemobFormR demobId
                 }
           )
           demobEnts
@@ -4631,7 +4631,7 @@ demobListPageSize = 5
 
 getDemobDetailR :: DemobId -> Handler Html
 getDemobDetailR demobId = do
-  let route = MyprojectR $ DemobDetailDataR demobId
+  let route = BackendR $ DemobDetailDataR demobId
   master <- getYesod
   let isDev = appDev $ appSettings master
   dataUrl <- getUrlRender <*> pure route
@@ -4653,8 +4653,8 @@ getDemobDetailDataR demobId = do
                 JDataPageDemobDetail
                   { jDataPageDemobDetailDemobEnt = Entity demobId demob,
                     jDataPageDemobDetailDemocs = jDataDemocs,
-                    jDataPageDemobDetailDemobEditFormUrl = urlRenderer $ MyprojectR $ EditDemobFormR demobId,
-                    jDataPageDemobDetailDemocAddFormUrl = urlRenderer $ MyprojectR $ AddDemocFormR demobId
+                    jDataPageDemobDetailDemobEditFormUrl = urlRenderer $ BackendR $ EditDemobFormR demobId,
+                    jDataPageDemobDetailDemocAddFormUrl = urlRenderer $ BackendR $ AddDemocFormR demobId
                   }
           }
   msgHome <- localizedMsg MsgGlobalHome
@@ -4662,7 +4662,7 @@ getDemobDetailDataR demobId = do
   msgDemob <- localizedMsg MsgDemobDemob
   currentLanguage <- getLanguage
   translation <- getTranslation
-  let currentDataUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId
+  let currentDataUrl = urlRenderer $ BackendR $ DemobDetailDataR demobId
   returnJson
     JData
       { jDataAppName = appName,
@@ -4673,7 +4673,7 @@ getDemobDetailDataR demobId = do
         jDataHistoryState =
           Just
             JDataHistoryState
-              { jDataHistoryStateUrl = urlRenderer $ MyprojectR $ DemobDetailR demobId,
+              { jDataHistoryStateUrl = urlRenderer $ BackendR $ DemobDetailR demobId,
                 jDataHistoryStateTitle = msgDemob
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
@@ -4682,11 +4682,11 @@ getDemobDetailDataR demobId = do
         jDataBreadcrumbItems =
           [ JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = msgHome,
-                jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR HomeDataR
+                jDataBreadcrumbItemDataUrl = urlRenderer $ BackendR HomeDataR
               },
             JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = msgDemobs,
-                jDataBreadcrumbItemDataUrl = urlRenderer $ MyprojectR DemobListDataR
+                jDataBreadcrumbItemDataUrl = urlRenderer $ BackendR DemobListDataR
               },
             JDataBreadcrumbItem
               { jDataBreadcrumbItemLabel = demobMyattr demob,
@@ -4695,8 +4695,8 @@ getDemobDetailDataR demobId = do
           ],
         jDataCurrentLanguage = currentLanguage,
         jDataTranslation = translation,
-        jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl,
-        jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
+        jDataLanguageDeUrl = urlRenderer $ BackendR $ LanguageDeR currentDataUrl,
+        jDataLanguageEnUrl = urlRenderer $ BackendR $ LanguageEnR currentDataUrl
       }
 
 democJDatas :: DemobId -> Handler [JDataDemoc]
@@ -4708,8 +4708,8 @@ democJDatas demobId = do
       ( \democEnt@(Entity democId _) ->
           JDataDemoc
             { jDataDemocEnt = democEnt,
-              jDataDemocEditFormUrl = urlRenderer $ MyprojectR $ EditDemocFormR democId,
-              jDataDemocDeleteFormUrl = urlRenderer $ MyprojectR $ DeleteDemocFormR democId
+              jDataDemocEditFormUrl = urlRenderer $ BackendR $ EditDemocFormR democId,
+              jDataDemocDeleteFormUrl = urlRenderer $ BackendR $ DeleteDemocFormR democId
             }
       )
       democTuples
@@ -4740,7 +4740,7 @@ getAddDemobFormR = do
     toWidget
       [whamlet|
       <h1>_{MsgDemobAddDemob}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ AddDemobR}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{BackendR $ AddDemobR}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -4768,7 +4768,7 @@ postAddDemobR = do
       runDB $ do
         _ <- insert demob
         return ()
-      returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR DemobListDataR}
+      returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR DemobListDataR}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $
@@ -4837,7 +4837,7 @@ getEditDemobFormR demobId = do
     toWidget
       [whamlet|
       <h1>_{MsgDemobEditDemob}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ EditDemobR demobId}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{BackendR $ EditDemobR demobId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -4868,8 +4868,8 @@ postEditDemobR demobId = do
             persistFields
         return uc
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId}
-        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId}
+        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemobDetailDataR demobId}
+        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ BackendR $ DemobDetailDataR demobId}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $
@@ -4944,7 +4944,7 @@ getDeleteDemobFormR demobId = do
     toWidget
       [whamlet|
       <h1>_{MsgDemobDeleteDemob}
-      <form #modal-form .uk-form-horizontal method=post action=@{MyprojectR $ DeleteDemobR demobId}>
+      <form #modal-form .uk-form-horizontal method=post action=@{BackendR $ DeleteDemobR demobId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -4965,7 +4965,7 @@ postDeleteDemobR demobId = do
       ]
     delete demobId
   urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobListDataR}
+  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemobListDataR}
 
 -- gen post delete - end
 
@@ -5012,7 +5012,7 @@ getAddDemocFormR demobId = do
     toWidget
       [whamlet|
       <h1>_{MsgDemocAddDemoc}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ AddDemocR demobId}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{BackendR $ AddDemocR demobId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -5041,7 +5041,7 @@ postAddDemocR demobId = do
       runDB $ do
         _ <- insert democ
         return ()
-      returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR demobId}
+      returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemobDetailDataR demobId}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $
@@ -5110,7 +5110,7 @@ getEditDemocFormR democId = do
     toWidget
       [whamlet|
       <h1>_{MsgDemocEditDemoc}
-      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{MyprojectR $ EditDemocR democId}>
+      <form #modal-form .uk-form-horizontal method=post onsubmit="return false;" action=@{BackendR $ EditDemocR democId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -5142,8 +5142,8 @@ postEditDemocR democId = do
             persistFields
         return uc
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ}
-        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ}
+        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemobDetailDataR $ democDemobId democ}
+        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ BackendR $ DemobDetailDataR $ democDemobId democ}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $
@@ -5218,7 +5218,7 @@ getDeleteDemocFormR democId = do
     toWidget
       [whamlet|
       <h1>_{MsgDemocDeleteDemoc}
-      <form #modal-form .uk-form-horizontal method=post action=@{MyprojectR $ DeleteDemocR democId}>
+      <form #modal-form .uk-form-horizontal method=post action=@{BackendR $ DeleteDemocR democId}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -5240,7 +5240,7 @@ postDeleteDemocR democId = do
       ]
     delete democId
   urlRenderer <- getUrlRender
-  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR $ DemobDetailDataR $ democDemobId democ}
+  returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR $ DemobDetailDataR $ democDemobId democ}
 
 -- gen post delete - end
 
@@ -5269,11 +5269,11 @@ import Import
 import Text.Hamlet (hamletFile)
 
 getHomeR :: Handler Html
-getHomeR = redirect $ MyprojectR MyprojectHomeR
+getHomeR = redirect $ BackendR BackendHomeR
 
-getMyprojectHomeR :: Handler Html
-getMyprojectHomeR = do
-  let route = MyprojectR HomeDataR
+getBackendHomeR :: Handler Html
+getBackendHomeR = do
+  let route = BackendR HomeDataR
   master <- getYesod
   let isDev = appDev $ appSettings master
   dataUrl <- getUrlRender <*> pure route
@@ -5293,7 +5293,7 @@ getHomeDataR = do
   msgHome <- localizedMsg MsgGlobalHome
   currentLanguage <- getLanguage
   translation <- getTranslation
-  let currentDataUrl = urlRenderer $ MyprojectR HomeDataR
+  let currentDataUrl = urlRenderer $ BackendR HomeDataR
   returnJson
     JData
       { jDataAppName = appName,
@@ -5304,7 +5304,7 @@ getHomeDataR = do
         jDataHistoryState =
           Just
             JDataHistoryState
-              { jDataHistoryStateUrl = urlRenderer $ MyprojectR MyprojectHomeR,
+              { jDataHistoryStateUrl = urlRenderer $ BackendR BackendHomeR,
                 jDataHistoryStateTitle = msgHome
               },
         jDataCsrfHeaderName = TE.decodeUtf8 $ CI.original defaultCsrfHeaderName,
@@ -5318,8 +5318,8 @@ getHomeDataR = do
           ],
         jDataCurrentLanguage = currentLanguage,
         jDataTranslation = translation,
-        jDataLanguageDeUrl = urlRenderer $ MyprojectR $ LanguageDeR currentDataUrl,
-        jDataLanguageEnUrl = urlRenderer $ MyprojectR $ LanguageEnR currentDataUrl
+        jDataLanguageDeUrl = urlRenderer $ BackendR $ LanguageDeR currentDataUrl,
+        jDataLanguageEnUrl = urlRenderer $ BackendR $ LanguageEnR currentDataUrl
       }
 
 getRiotBodyTagR :: Handler Html
@@ -5659,8 +5659,8 @@ postEditMyprofileR = do
         user' <- runDB $ get404 userId
         sendPasswordResetMail user' passwd
       if updateCount == 1
-        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ MyprojectR HomeDataR}
-        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ MyprojectR HomeDataR}
+        then returnJson $ VFormSubmitSuccess {fsSuccessDataJsonUrl = urlRenderer $ BackendR HomeDataR}
+        else returnJson $ VFormSubmitStale {fsStaleDataJsonUrl = urlRenderer $ BackendR HomeDataR}
     _ -> do
       resultHtml <- formLayout [whamlet|^{formWidget}|]
       returnJson $
@@ -5684,7 +5684,7 @@ getEditMyprofileFormR = do
     toWidget
       [whamlet|
       <h1>_{MsgGlobalEditMyProfile}
-      <form #modal-form .uk-form-horizontal method=post action=@{MyprojectR $ EditMyprofileR}>
+      <form #modal-form .uk-form-horizontal method=post action=@{BackendR $ EditMyprofileR}>
         <div #modal-form-widget>
           ^{formWidget}
       |]
@@ -44725,15 +44725,15 @@ var t,e;t=this,e=function(t){"use strict";function e(t){return t.replace(/-(\w)/
 
     $if isDev
       <script src="@{StaticR js_riot_compiler_min_js}" type="text/javascript">
-      <script data-src="@{MyprojectR RiotBodyTagR}" type="riot">
-      <script data-src="@{MyprojectR RiotNavTagR}" type="riot">
-      <script data-src="@{MyprojectR RiotPaginationTagR}" type="riot">
-      <script data-src="@{MyprojectR RiotRawTagR}" type="riot">
-      <script data-src="@{MyprojectR RiotHomePageTagR}" type="riot">
-      <script data-src="@{MyprojectR RiotAdminPageTagR}" type="riot">
-      <script data-src="@{MyprojectR RiotDemoaListPageTagR}" type="riot">
-      <script data-src="@{MyprojectR RiotDemobListPageTagR}" type="riot">
-      <script data-src="@{MyprojectR RiotDemobDetailPageTagR}" type="riot">
+      <script data-src="@{BackendR RiotBodyTagR}" type="riot">
+      <script data-src="@{BackendR RiotNavTagR}" type="riot">
+      <script data-src="@{BackendR RiotPaginationTagR}" type="riot">
+      <script data-src="@{BackendR RiotRawTagR}" type="riot">
+      <script data-src="@{BackendR RiotHomePageTagR}" type="riot">
+      <script data-src="@{BackendR RiotAdminPageTagR}" type="riot">
+      <script data-src="@{BackendR RiotDemoaListPageTagR}" type="riot">
+      <script data-src="@{BackendR RiotDemobListPageTagR}" type="riot">
+      <script data-src="@{BackendR RiotDemobDetailPageTagR}" type="riot">
     $else
       <script src="@{StaticR js_riot_min_js}" type="text/javascript">
 
@@ -45106,7 +45106,7 @@ var t,e;t=this,e=function(t){"use strict";function e(t){return t.replace(/-(\w)/
     \   },
     \   addDemoa(event) {
     \     event.preventDefault()
-    \     this.context.showModalForm("@{MyprojectR AddDemoaFormR}")
+    \     this.context.showModalForm("@{BackendR AddDemoaFormR}")
     \     event.currentTarget.blur()
     \   },
     \   editDemoa(event, item) {
@@ -45244,7 +45244,7 @@ var t,e;t=this,e=function(t){"use strict";function e(t){return t.replace(/-(\w)/
     \   },
     \   addDemob(event) {
     \     event.preventDefault()
-    \     this.context.showModalForm("@{MyprojectR AddDemobFormR}")
+    \     this.context.showModalForm("@{BackendR AddDemobFormR}")
     \     event.currentTarget.blur()
     \   },
     \   detailDemob(event, item) {
@@ -45307,7 +45307,7 @@ var t,e;t=this,e=function(t){"use strict";function e(t){return t.replace(/-(\w)/
     \ }
 
 {-# START_FILE templates/riot/nav_tag.hamlet #-}
-<nav-tag>
+!<nav-tag>
   <nav .uk-navbar-container .uk-margin-small-top uk-navbar="offset: -10">
     <div .uk-navbar-left>
       <div .uk-navbar-item .uk-logo>
@@ -45386,8 +45386,8 @@ var t,e;t=this,e=function(t){"use strict";function e(t){return t.replace(/-(\w)/
     \   },
     \   editMyProfile(event) {
     \     event.preventDefault()
-    \     var dataJsonUrl = window.history.state ? window.history.state.dataJsonUrl : "@{MyprojectR HomeDataR}"
-    \     this.context.showModalForm("@{MyprojectR EditMyprofileFormR}", dataJsonUrl)
+    \     var dataJsonUrl = window.history.state ? window.history.state.dataJsonUrl : "@{BackendR HomeDataR}"
+    \     this.context.showModalForm("@{BackendR EditMyprofileFormR}", dataJsonUrl)
     \   },
     \   changeLanguageDe(event) {
     \     event.preventDefault()
