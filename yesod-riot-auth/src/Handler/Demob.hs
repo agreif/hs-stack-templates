@@ -57,7 +57,6 @@ demobListPageNumDataR pageNum = do
               Just $
                 JDataPageDemobList
                   { jDataPageDemobListDemobs = jDataDemobs,
-                    jDataPageDemobListAddFormUrl = urlRenderer $ BackendR AddDemobFormR,
                     jDataPageDemobListPaginationItems = jDataPaginationItems
                   }
           }

@@ -315,14 +315,14 @@ instance ToJSON JDataDemoa where
 
 data JDataPageDemobList = JDataPageDemobList
   { jDataPageDemobListDemobs :: [JDataDemob],
-    jDataPageDemobListAddFormUrl :: Text,
     jDataPageDemobListPaginationItems :: Maybe [JDataPaginationItem]
   }
 
 instance ToJSON JDataPageDemobList where
   toJSON o =
     object
-      [ "demobs" .= jDataPageDemobListDemobs o
+      [ "demobs" .= jDataPageDemobListDemobs o,
+        "paginationItems" .= jDataPageDemobListPaginationItems o
       ]
 
 data JDataDemob = JDataDemob
