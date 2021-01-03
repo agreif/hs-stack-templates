@@ -4609,7 +4609,7 @@ demobListJDatas pageNum = do
     loadDemobTuples = do
       let pageSize = fromIntegral demobListPageSize
       E.select $ E.from $ \(da) -> do
-        E.orderBy [E.desc (da E.^. DemobId)]
+        E.orderBy [E.asc (da E.^. DemobId)]
         E.offset ((fromIntegral pageNum - 1) * pageSize)
         E.limit pageSize
         return (da)
