@@ -344,10 +344,3 @@ configEmailFrom = do
   case maybeResult of
     Just result -> return result
     Nothing -> return ""
-
-configMehrwertSteuer :: YesodDB App Double
-configMehrwertSteuer = do
-  maybeResult <- maybeConfigDouble "mehrwert_steuer"
-  case maybeResult of
-    Just result -> return result
-    Nothing -> return 0
