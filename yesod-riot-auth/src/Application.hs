@@ -11,6 +11,7 @@ module Application
   ( getApplicationDev,
     appMain,
     develMain,
+    genRiotFilesMain,
     makeFoundation,
     makeLogWare,
 
@@ -57,6 +58,7 @@ import Network.Wai.Handler.Warp
     setHost,
     setOnException,
     setPort,
+    setServerName,
   )
 import Network.Wai.Middleware.RequestLogger
   ( Destination (Logger),
@@ -144,6 +146,7 @@ warpSettings :: App -> Settings
 warpSettings foundation =
   setPort (appPort $ appSettings foundation)
     $ setHost (appHost $ appSettings foundation)
+    $ setServerName ""
     $ setOnException
       ( \_req e ->
           when (defaultShouldDisplayException e) $
@@ -187,27 +190,33 @@ appMain = do
   foundation <- makeFoundation settings
   -- Generate a WAI Application from the foundation
   app <- makeApplication foundation
-  genStaticRiotJsFiles settings
   -- Run the application with Warp
   runSettings (warpSettings foundation) app
 
-genStaticRiotJsFiles :: AppSettings -> IO ()
-genStaticRiotJsFiles settings = do
+genRiotFilesMain :: IO ()
+genRiotFilesMain = do
+  settings <-
+    loadYamlSettingsArgs
+      [configSettingsYmlValue]
+      useEnv
+  let dir = riotDir settings
   createDirectoryIfMissing True dir
-  writeRiotFile getRiotBodyTagR "body_tag.riot"
-  writeRiotFile getRiotNavTagR "nav_tag.riot"
-  writeRiotFile getRiotRawTagR "raw_tag.riot"
-  writeRiotFile getRiotPaginationTagR "pagination_tag.riot"
-  writeRiotFile getRiotHomePageTagR "home_page_tag.riot"
-  writeRiotFile getRiotAdminPageTagR "admin_page_tag.riot"
-  writeRiotFile getRiotDemoaListPageTagR "demoa_list_page_tag.riot"
-  writeRiotFile getRiotDemobListPageTagR "demob_list_page_tag.riot"
-  writeRiotFile getRiotDemobDetailPageTagR "demob_detail_page_tag.riot"
+  writeRiotFile dir getRiotBodyTagR "body_tag.riot"
+  writeRiotFile dir getRiotNavTagR "nav_tag.riot"
+  writeRiotFile dir getRiotRawTagR "raw_tag.riot"
+  writeRiotFile dir getRiotPaginationTagR "pagination_tag.riot"
+  writeRiotFile dir getRiotHomePageTagR "home_page_tag.riot"
+  writeRiotFile dir getRiotAdminPageTagR "admin_page_tag.riot"
+  writeRiotFile dir getRiotDemoaListPageTagR "demoa_list_page_tag.riot"
+  writeRiotFile dir getRiotDemobListPageTagR "demob_list_page_tag.riot"
+  writeRiotFile dir getRiotDemobDetailPageTagR "demob_detail_page_tag.riot"
   where
-    dir :: FilePath
-    dir = appStaticDir settings ++ "/js/riot/"
-    writeRiotFile :: Handler Html -> String -> IO ()
-    writeRiotFile handlerFunc jsFilename = do
+    riotDir :: AppSettings -> FilePath
+    riotDir settings = appStaticDir settings ++ "/js/riot/"
+    writeRiotFile :: FilePath -> Handler Html -> String -> IO ()
+    writeRiotFile dir handlerFunc jsFilename = do
+      print $ "gen riot file: " ++ dir ++ jsFilename
+      handler $ $logInfo $ "gen riot file: " ++ pack jsFilename
       h <- handler handlerFunc
       withSinkFileCautious (dir ++ jsFilename) $ \sink ->
         runConduit $ sourceLazy (renderHtml h) .| sink

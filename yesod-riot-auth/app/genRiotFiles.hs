@@ -1,4 +1,4 @@
-[200~import Application (genRiotFilesMain)
+import Application (genRiotFilesMain)
 import Prelude (IO)
 
 main :: IO ()

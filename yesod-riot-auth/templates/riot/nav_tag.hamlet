@@ -21,11 +21,11 @@
         <li>
           <a href="#">
             {context.data.translation.msgGlobalLanguage}
-          <div id="languageMenuItem" .uk-navbar-dropdown>
+          <div .uk-navbar-dropdown>
             <ul .uk-nav .uk-navbar-dropdown-nav>
-              <li uk-toggle="target: #languageMenuItem" class="{getLangDeActiveClasses(context.data.currentLanguage)}">
+              <li class="{getLangDeActiveClasses(context.data.currentLanguage)}">
                 <a onclick="{changeLanguageDe}">DE
-              <li uk-toggle="target: #languageMenuItem" class="{getLangEnActiveClasses(context.data.currentLanguage)}">
+              <li class="{getLangEnActiveClasses(context.data.currentLanguage)}">
                 <a onclick="{changeLanguageEn}">EN
         <li>
           <a onclick="{editMyProfile}">

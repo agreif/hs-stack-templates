@@ -84,6 +84,32 @@ executables:
     when:
     - condition: flag(library-only)
       buildable: false
+  yesod-riot-auth-hash-passwd:
+    main: passwd.hs
+    source-dirs: app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    dependencies:
+    - yesod-riot-auth
+    when:
+    - condition: flag(static)
+      ld-options:
+      - -static
+      - -pthread
+  yesod-riot-auth-gen-riot-files:
+    main: genRiotFiles.hs
+    source-dirs: app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    dependencies:
+    - yesod-riot-auth
+    when:
+    - condition: flag(static)
+      ld-options:
+      - -static
+      - -pthread
 
 # Test suite
 tests:
